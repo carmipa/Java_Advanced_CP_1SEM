@@ -4,6 +4,17 @@ Este repositório centraliza os trabalhos desenvolvidos na disciplina **Java Adv
 
 ---
 
+## 📚 Disciplina do Semestre
+
+**Java Advanced**  
+   - Product Design e Next.js (construindo front-ends modernos)  
+   - API REST, Spring Framework e Spring Data  
+   - Thymeleaf, internacionalização (i18n) e segurança (Spring Security)  
+   - JWT, autenticação e integração com Inteligência Artificial  
+   - Spring Cloud e microsserviços
+   - 
+---
+
 ## 🎯 CP1 2025 - Bank
 
 **Integrantes do Grupo:**  
