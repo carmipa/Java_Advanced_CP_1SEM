@@ -12,7 +12,7 @@ Este repositório centraliza os trabalhos desenvolvidos na disciplina **Java Adv
    - Thymeleaf, internacionalização (i18n) e segurança (Spring Security)  
    - JWT, autenticação e integração com Inteligência Artificial  
    - Spring Cloud e microsserviços
-   - 
+     
 ---
 
 ## 🎯 CP1 2025 - Bank
