@@ -2,111 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="97a927a4-71c6-49a6-b5a7-8f952fc37b25" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/semestral/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/AgendaController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/ClientesController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/OficinaController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/OrcamentoController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/PagamentoController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/PecasController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/Controller/VeiculoController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/agendaDAO/AgendaDAOImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/agendaDAO/AgendaDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/agendaDAO/AgendaDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/clientesDAO/ClientesDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/clientesDAO/ClientesDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/clientesDAO/ClientesDaoImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/oficinaDAO/OficinaDAOImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/oficinaDAO/OficinaDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/oficinaDAO/OficinaDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/orcarmentoDAO/OrcamentoDAOImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/orcarmentoDAO/OrcamentoDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/orcarmentoDAO/OrcamentoDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/pagamentoDAO/PagamentoDAOImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/pagamentoDAO/PagamentoDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/pagamentoDAO/PagamentoDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/pecasDAO/PecasDAOImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/pecasDAO/PecasDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/pecasDAO/PecasDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/veiculoDAO/VeiculoDAOImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/veiculoDAO/VeiculoDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DAO/veiculoDAO/VeiculoDaoFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/AgendaDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/ClientesDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/ContatoDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/EnderecoDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/OficinaDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/OrcamentoDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/PagamentoDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/PecasDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/DTO/VeiculoDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/config/DatabaseConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/config/DatabaseConnection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/config/DatabaseConnectionFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/config/DatabaseConnectionImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/agendaException/AgendaNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/agendaException/AgendaNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/agendaException/AgendaUnsupportedServiceOperationExcept.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/clientesException/ClientesNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/clientesException/ClientesNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/clientesException/ClientesUnsupportedServiceOperationExcept.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/oficinaException/OficinaNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/oficinaException/OficinaNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/oficinaException/OficinaUnsupportedServiceOperationExcept.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/orcamentoException/OrcamentoNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/orcamentoException/OrcamentoNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/orcamentoException/OrcamentoUnsupportedServiceOperationException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/pagamentoException/PagamentoNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/pagamentoException/PagamentoNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/pagamentoException/PagamentoUnsupportedServiceOperationException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/pecasException/PecasNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/pecasException/PecasNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/pecasException/PecasUnsupportedServiceOperationException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/veiculoException/VeiculoNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/veiculoException/VeiculoNotSavedException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/exceptions/veiculoException/VeiculoUnsupportedServiceOperationException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/externalInterface/CepService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/interfacesModel/IOrcamento.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/interfacesModel/IPagamento.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/interfacesModel/IPecas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/main/SemestralApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Agenda.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Autenticar.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Clientes.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Contato.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Endereco.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Oficina.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Orcamento.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Pagamento.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Pecas.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/model/Veiculo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/agendaService/AgendaService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/agendaService/AgendaServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/agendaService/AgendaServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/clientesService/ClientesService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/clientesService/ClientesServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/clientesService/ClientesServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/oficinaService/OficinaService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/oficinaService/OficinaServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/oficinaService/OficinaServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/orcamentoService/OrcamentoService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/orcamentoService/OrcamentoServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/orcamentoService/OrcamentoServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/pagamentoService/PagamentoService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/pagamentoService/PagamentoServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/pagamentoService/PagamentoServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/pecasService/PecasService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/pecasService/PecasServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/pecasService/PecasServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/veiculoService/VeiculoService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/veiculoService/VeiculoServiceFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/java/br/com/fiap/semestral/service/veiculoService/VeiculoServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/semestral/src/test/java/br/com/fiap/semestral/SemestralApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/google-java-format.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/material_theme_project_new.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/projeto-semestral-web.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/next.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/postcss.config.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/file.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/globe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/next.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/vercel.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/window.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/categories/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/dashboard/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/globals.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/transaction/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/compenents/nav-bar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/tsconfig.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,9 +37,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2twTo5E8YdOw4C7pFPxkbac68YI" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -128,6 +49,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/FIAP-2025/1_semestre_fiap-2025/Java_Advanced/projeto-semestral",
@@ -138,8 +60,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.24978.46" />
-        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-IU-243.24978.46" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
       </set>
     </attachedChunks>
   </component>
@@ -152,6 +73,7 @@
       <option name="presentableId" value="Default" />
       <updated>1741262309784</updated>
       <workItem from="1741262310975" duration="5000" />
+      <workItem from="1743418931713" duration="10000" />
     </task>
     <servers />
   </component>

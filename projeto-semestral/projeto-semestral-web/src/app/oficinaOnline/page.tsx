@@ -1,13 +1,13 @@
-import NavBar from "@/compenents/nav-bar";
+import NavBar from "@/components/nav-bar";
 
-export default function TransactionPage(){
+export default function OficinaPage(){
     return(
         <>
-            <NavBar active="movimentações"/>
+            <NavBar active="oficinaOnline"/>
 
             <main className="Flex justify-center">
                 <div className="bg-slate-900 p-6 m-6 rounded min-w-1/3">
-                    <h2>Movimentações</h2>
+                    <h2>Oficina on-line</h2>
                 </div>
             </main>
         </>
