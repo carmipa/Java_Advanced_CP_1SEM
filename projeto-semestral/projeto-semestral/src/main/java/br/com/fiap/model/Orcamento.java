@@ -1,116 +1,72 @@
 package br.com.fiap.model;
 
-import java.util.Objects;
+import br.com.fiap.model.relacionamentos.ClienteOrcamento;
+import br.com.fiap.model.relacionamentos.OficinaOrcamento;
+import br.com.fiap.model.relacionamentos.PagamentoOrcamento;
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
+import java.math.BigDecimal; // Usar BigDecimal para valores monetários/precisos
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Orcamento {
+@Entity
+@Table(name = "ORCAMENTOS") // Nome exato da tabela no DDL
 
-	private Long codigo;
-	private String dataOrcamento;
-	private double maoDeObra;
-	private double valorHora;
-	private int quantidadeHoras;
-	private double valorTotal;
-	private Oficina oficina;
-	private Pecas pecas;
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+// Excluir coleções LAZY do toString
+@ToString(exclude = {"clienteOrcamentos", "oficinaOrcamentos", "pagamentoOrcamentos"})
+// --------------
+public class Orcamento implements Serializable {
 
-	public Orcamento() {
-		super();
-	}
+	private static final long serialVersionUID = 1L;
 
-	public Orcamento(Long codigo, double valorTotal, int quantidadeHoras, double valorHora, double maoDeObra, String dataOrcamento) {
-		this.codigo = codigo;
-		this.valorTotal = valorTotal;
-		this.quantidadeHoras = quantidadeHoras;
-		this.valorHora = valorHora;
-		this.maoDeObra = maoDeObra;
-		this.dataOrcamento = dataOrcamento;
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orcamento_seq_gen")
+	@SequenceGenerator(name = "orcamento_seq_gen", sequenceName = "ORCAMENTOS_ID_ORC_SEQ", allocationSize = 1)
+	@Column(name = "ID_ORC")
+	private Long id; // Renomeado de 'codigo'
 
-	public Long getCodigo() {
-		return codigo;
-	}
+	@Column(name = "DATA_ORCAMENTO", nullable = false)
+	private LocalDate dataOrcamento; // Alterado para LocalDate
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
+	// Usando BigDecimal para precisão monetária/decimal
+	@Column(name = "VALOR_MAODEOBRA", nullable = false, precision = 10, scale = 2) // Definir precisão e escala conforme necessário
+	private BigDecimal maoDeObra; // Alterado para BigDecimal
 
-	public String getDataOrcamento() {
-		return dataOrcamento;
-	}
+	@Column(name = "VALOR_HORA", nullable = false, precision = 10, scale = 2)
+	private BigDecimal valorHora; // Alterado para BigDecimal
 
-	public void setDataOrcamento(String dataOrcamento) {
-		this.dataOrcamento = dataOrcamento;
-	}
+	@Column(name = "QUANTIDADE_HORAS", nullable = false)
+	private Integer quantidadeHoras; // Alterado para Integer (compatível com NUMBER)
 
-	public double getMaoDeObra() {
-		return maoDeObra;
-	}
+	@Column(name = "VALOR_TOTAL", nullable = false, precision = 10, scale = 2)
+	private BigDecimal valorTotal; // Alterado para BigDecimal
 
-	public void setMaoDeObra(double maoDeObra) {
-		this.maoDeObra = maoDeObra;
-	}
+	// === RELACIONAMENTOS INDIRETOS (Via Tabelas de Junção) ===
+	// Removidos os campos diretos: private Oficina oficina; private Pecas pecas;
+	// O campo 'pecas' foi removido pois não há FK ou tabela de junção direta Orcamento<->Pecas no DDL.
+	// Adicionados relacionamentos @OneToMany para as ENTIDADES DE JUNÇÃO (que precisam ser criadas)
 
-	public double getValorHora() {
-		return valorHora;
-	}
+	// Relacionamento com Clientes (via Tabela CO -> Entidade ClienteOrcamento)
+	@OneToMany(mappedBy = "orcamento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<ClienteOrcamento> clienteOrcamentos = new ArrayList<>(); // Assume entidade ClienteOrcamento
 
-	public void setValorHora(double valorHora) {
-		this.valorHora = valorHora;
-	}
+	// Relacionamento com Oficinas (via Tabela OFO -> Entidade OficinaOrcamento)
+	@OneToMany(mappedBy = "orcamento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<OficinaOrcamento> oficinaOrcamentos = new ArrayList<>(); // Assume entidade OficinaOrcamento
 
-	public int getQuantidadeHoras() {
-		return quantidadeHoras;
-	}
+	// Relacionamento com Pagamentos (via Tabela PAO -> Entidade PagamentoOrcamento)
+	@OneToMany(mappedBy = "orcamento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<PagamentoOrcamento> pagamentoOrcamentos = new ArrayList<>(); // Assume entidade PagamentoOrcamento
 
-	public void setQuantidadeHoras(int quantidadeHoras) {
-		this.quantidadeHoras = quantidadeHoras;
-	}
+	// ===========================================================
 
-	public double getValorTotal() {
-		return valorTotal;
-	}
-
-	public void setValorTotal(double valorTotal) {
-		this.valorTotal = valorTotal;
-	}
-
-	public Oficina getOficina() {
-		return oficina;
-	}
-
-	public void setOficina(Oficina oficina) {
-		this.oficina = oficina;
-	}
-
-	public Pecas getPecas() {
-		return pecas;
-	}
-
-	public void setPecas(Pecas pecas) {
-		this.pecas = pecas;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Orcamento orcamento)) return false;
-        return Double.compare(maoDeObra, orcamento.maoDeObra) == 0 && Double.compare(valorHora, orcamento.valorHora) == 0 && quantidadeHoras == orcamento.quantidadeHoras && Double.compare(valorTotal, orcamento.valorTotal) == 0 && Objects.equals(codigo, orcamento.codigo) && Objects.equals(dataOrcamento, orcamento.dataOrcamento) && Objects.equals(oficina, orcamento.oficina) && Objects.equals(pecas, orcamento.pecas);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, dataOrcamento, maoDeObra, valorHora, quantidadeHoras, valorTotal, oficina, pecas);
-	}
-
-	@Override
-	public String toString() {
-		return "Orcamento{" +
-				"codigo=" + codigo +
-				", dataOrcamento='" + dataOrcamento + '\'' +
-				", maoDeObra=" + maoDeObra +
-				", valorHora=" + valorHora +
-				", quantidadeHoras=" + quantidadeHoras +
-				", valorTotal=" + valorTotal +
-				'}';
-	}
+	// Getters, Setters, Construtores, equals, hashCode, toString gerados pelo Lombok
 }

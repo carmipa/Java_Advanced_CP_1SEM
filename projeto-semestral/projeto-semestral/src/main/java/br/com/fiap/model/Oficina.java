@@ -1,126 +1,78 @@
 package br.com.fiap.model;
 
-import java.util.Objects;
+import br.com.fiap.model.relacionamentos.AgendaOficina;
+import br.com.fiap.model.relacionamentos.OficinaOrcamento;
+import br.com.fiap.model.relacionamentos.OficinaPeca;
+import br.com.fiap.model.relacionamentos.OficinaVeiculo;
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList; // Para inicializar listas
+import java.util.List;       // Para coleções de relacionamentos
 
-public class Oficina {
+@Entity
+@Table(name = "OFICINAS") // Nome exato da tabela no DDL
 
-	private Long codigo;
-	private String DataOficina;
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+// Excluir coleções LAZY do toString para evitar erros
+@ToString(exclude = {"agendaOficinas", "oficinaVeiculos", "oficinaPecas", "oficinaOrcamentos"})
+// --------------
+public class Oficina implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "oficina_seq_gen")
+	@SequenceGenerator(name = "oficina_seq_gen", sequenceName = "OFICINAS_ID_OFIC_SEQ", allocationSize = 1)
+	@Column(name = "ID_OFIC")
+	private Long id; // Renomeado de 'codigo'
+
+	@Column(name = "DATA_OFICINA", nullable = false)
+	private LocalDate dataOficina; // Alterado para LocalDate, nome para camelCase
+
+	@Column(name = "DESCRICAO_PROBLEMA", length = 500, nullable = false)
 	private String descricaoProblema;
+
+	@Column(name = "DIAGNOSTICO", length = 4000, nullable = false)
 	private String diagnostico;
+
+	@Column(name = "PARTES_AFETADAS", length = 500, nullable = false)
 	private String partesAfetadas;
-	private int horasTrabalhadas;
-	private Agenda agenda;
-	private Veiculo veiculo;
-	private Pecas peca;
 
-	public Oficina() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	// --- ATENÇÃO: HORAS_TRABALHADAS é VARCHAR2 no DDL ---
+	@Column(name = "HORAS_TRABALHADAS", length = 5, nullable = false)
+	private String horasTrabalhadas; // Mapeado como String para corresponder ao DDL.
+	// Idealmente, esta coluna deveria ser NUMBER no banco.
+	// Você precisará converter para número na sua lógica de negócio.
+	// ----------------------------------------------------
 
-	public Oficina(String dataOficina, String descricaoProblema, Long codigo, String diagnostico, String partesAfetadas, int horasTrabalhadas) {
-		DataOficina = dataOficina;
-		this.descricaoProblema = descricaoProblema;
-		this.codigo = codigo;
-		this.diagnostico = diagnostico;
-		this.partesAfetadas = partesAfetadas;
-		this.horasTrabalhadas = horasTrabalhadas;
-	}
+	// === RELACIONAMENTOS INDIRETOS (Via Tabelas de Junção) ===
+	// Removidos os campos diretos: private Agenda agenda; private Veiculo veiculo; private Pecas peca;
+	// Adicionados relacionamentos @OneToMany para as ENTIDADES DE JUNÇÃO (que precisam ser criadas)
 
-	public Long getCodigo() {
-		return codigo;
-	}
+	// Relacionamento com Agendamentos (via Tabela AO -> Entidade AgendaOficina)
+	@OneToMany(mappedBy = "oficina", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<AgendaOficina> agendaOficinas = new ArrayList<>(); // Assume entidade AgendaOficina
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
+	// Relacionamento com Veículos (via Tabela OV -> Entidade OficinaVeiculo)
+	@OneToMany(mappedBy = "oficina", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<OficinaVeiculo> oficinaVeiculos = new ArrayList<>(); // Assume entidade OficinaVeiculo
 
-	public String getDataOficina() {
-		return DataOficina;
-	}
+	// Relacionamento com Peças (via Tabela OFP -> Entidade OficinaPeca)
+	@OneToMany(mappedBy = "oficina", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<OficinaPeca> oficinaPecas = new ArrayList<>(); // Assume entidade OficinaPeca
 
-	public void setDataOficina(String dataOficina) {
-		DataOficina = dataOficina;
-	}
+	// Relacionamento com Orçamentos (via Tabela OFO -> Entidade OficinaOrcamento)
+	@OneToMany(mappedBy = "oficina", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<OficinaOrcamento> oficinaOrcamentos = new ArrayList<>(); // Assume entidade OficinaOrcamento
 
-	public String getDescricaoProblema() {
-		return descricaoProblema;
-	}
+	// ===========================================================
 
-	public void setDescricaoProblema(String descricaoProblema) {
-		this.descricaoProblema = descricaoProblema;
-	}
-
-	public String getDiagnostico() {
-		return diagnostico;
-	}
-
-	public void setDiagnostico(String diagnostico) {
-		this.diagnostico = diagnostico;
-	}
-
-	public String getPartesAfetadas() {
-		return partesAfetadas;
-	}
-
-	public void setPartesAfetadas(String partesAfetadas) {
-		this.partesAfetadas = partesAfetadas;
-	}
-
-	public int getHorasTrabalhadas() {
-		return horasTrabalhadas;
-	}
-
-	public void setHorasTrabalhadas(int horasTrabalhadas) {
-		this.horasTrabalhadas = horasTrabalhadas;
-	}
-
-	public Agenda getAgenda() {
-		return agenda;
-	}
-
-	public void setAgenda(Agenda agenda) {
-		this.agenda = agenda;
-	}
-
-	public Veiculo getVeiculo() {
-		return veiculo;
-	}
-
-	public void setVeiculo(Veiculo veiculo) {
-		this.veiculo = veiculo;
-	}
-
-	public Pecas getPeca() {
-		return peca;
-	}
-
-	public void setPeca(Pecas peca) {
-		this.peca = peca;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Oficina oficina)) return false;
-        return horasTrabalhadas == oficina.horasTrabalhadas && Objects.equals(codigo, oficina.codigo) && Objects.equals(DataOficina, oficina.DataOficina) && Objects.equals(descricaoProblema, oficina.descricaoProblema) && Objects.equals(diagnostico, oficina.diagnostico) && Objects.equals(partesAfetadas, oficina.partesAfetadas) && Objects.equals(agenda, oficina.agenda) && Objects.equals(veiculo, oficina.veiculo) && Objects.equals(peca, oficina.peca);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, DataOficina, descricaoProblema, diagnostico, partesAfetadas, horasTrabalhadas, agenda, veiculo, peca);
-	}
-
-	@Override
-	public String toString() {
-		return "Oficina{" +
-				"codigo=" + codigo +
-				", DataOficina='" + DataOficina + '\'' +
-				", descricaoProblema='" + descricaoProblema + '\'' +
-				", diagnostico='" + diagnostico + '\'' +
-				", partesAfetadas='" + partesAfetadas + '\'' +
-				", horasTrabalhadas=" + horasTrabalhadas +
-				'}';
-	}
+	// Getters, Setters, Construtores, equals, hashCode, toString gerados pelo Lombok
 }

@@ -1,66 +1,52 @@
 package br.com.fiap.model;
 
-import java.util.Objects;
+import jakarta.persistence.*;   // Importações JPA
+import lombok.*;                // Importações Lombok
+import java.time.LocalDate;     // Importa LocalDate para datas
+import java.io.Serializable;    // Para implementar Serializable
 
-public class Agenda {
+@Entity // Marca como Entidade JPA
+@Table(name = "AGENDAR") // Nome exato da tabela no DDL
 
-	private Long codigo;
-	private String dataAgendamento;
-	private String obsAgenda;
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor // Construtor padrão obrigatório para JPA
+@AllArgsConstructor // Construtor com todos os campos
+@EqualsAndHashCode(of = "id") // equals e hashCode baseados apenas no campo 'id'
+@ToString
+//---------------
+public class Agenda implements Serializable { // Boa prática implementar Serializable
 
-	public Agenda() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	private static final long serialVersionUID = 1L;
 
-	public Agenda(Long codigo, String dataAgendamento, String obsAgenda) {
-		this.codigo = codigo;
-		this.dataAgendamento = dataAgendamento;
-		this.obsAgenda = obsAgenda;
-	}
+	@Id // Marca como chave primária
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "agenda_seq_gen") // Geração via Sequence
+	@SequenceGenerator(name = "agenda_seq_gen", sequenceName = "AGENDAR_ID_AGE_SEQ", allocationSize = 1) // Configura a sequence do DDL
+	@Column(name = "ID_AGE") // Mapeia para a coluna ID_AGE do banco
+	private Long id; // Renomeado de 'codigo' para 'id' por convenção
 
-	public Long getCodigo() {
-		return codigo;
-	}
+	@Column(name = "DATA_AGENDAMENTO", nullable = false) // Mapeia para DATA_AGENDAMENTO, não nulo
+	private LocalDate dataAgendamento; // Tipo alterado para LocalDate (adequado para DATE do Oracle)
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
+	@Column(name = "OBS_AGENDAMENTO", length = 400, nullable = true) // Mapeia para OBS_AGENDAMENTO, tamanho 400, permite nulo
+	private String observacao; // Renomeado de 'obsAgenda' para 'observacao' para clareza (opcional)
 
-	public String getDataAgendamento() {
-		return dataAgendamento;
-	}
+	// === MÉTODOS MANUAIS REMOVIDOS ===
+	// Os métodos manuais (getCodigo, setCodigo, getDataAgendamento, setDataAgendamento,
+	// getObsAgenda, setObsAgenda, construtores, equals, hashCode, toString) foram removidos
+	// pois são gerados pelo Lombok (@Getter, @Setter, @NoArgsConstructor, @AllArgsConstructor,
+	// @EqualsAndHashCode, @ToString).
+	// ==================================
 
-	public void setDataAgendamento(String dataAgendamento) {
-		this.dataAgendamento = dataAgendamento;
-	}
+	// Se houver relacionamentos com outras tabelas (ex: Cliente, Veiculo),
+	// eles seriam adicionados aqui com @ManyToOne, @OneToOne, etc.
+	// Exemplo (baseado na tabela de junção AO e AV do DDL):
+    /*
+    @OneToMany(mappedBy = "agenda") // Assumindo que existe uma entidade AgendaOficina com um campo 'agenda'
+    private List<AgendaOficina> agendaOficinas;
 
-	public String getObsAgenda() {
-		return obsAgenda;
-	}
-
-	public void setObsAgenda(String obsAgenda) {
-		this.obsAgenda = obsAgenda;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Agenda agenda)) return false;
-        return Objects.equals(codigo, agenda.codigo) && Objects.equals(dataAgendamento, agenda.dataAgendamento) && Objects.equals(obsAgenda, agenda.obsAgenda);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, dataAgendamento, obsAgenda);
-	}
-
-	@Override
-	public String toString() {
-		return "Agenda{" +
-				"codigo=" + codigo +
-				", dataAgendamento='" + dataAgendamento + '\'' +
-				", obsAgenda='" + obsAgenda + '\'' +
-				'}';
-	}
+    @OneToMany(mappedBy = "agenda") // Assumindo que existe uma entidade AgendaVeiculo com um campo 'agenda'
+    private List<AgendaVeiculo> agendaVeiculos;
+    */
 }

@@ -1,120 +1,72 @@
 package br.com.fiap.model;
 
-import java.util.Objects;
+import br.com.fiap.model.relacionamentos.OficinaPeca;
+import br.com.fiap.model.relacionamentos.PecaVeiculo;
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
+import java.math.BigDecimal; // Para valores monetários/precisos
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Pecas {
+@Entity
+@Table(name = "PECAS") // Nome exato da tabela no DDL
 
-	private Long codigo;
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+// Excluir coleções LAZY do toString
+@ToString(exclude = {"oficinaPecas", "pecaVeiculos"})
+// --------------
+public class Pecas implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pecas_seq_gen")
+	@SequenceGenerator(name = "pecas_seq_gen", sequenceName = "PECAS_ID_PEC_SEQ", allocationSize = 1)
+	@Column(name = "ID_PEC")
+	private Long id; // Renomeado de 'codigo'
+
+	@Column(name = "TIPO_VEICULO", length = 10, nullable = false)
 	private String tipoVeiculo;
+
+	@Column(name = "FABRICANTE", length = 50, nullable = false)
 	private String fabricante;
-	private String descricao;
-	private String dataCompra;
-	private double preco;
-	private double desconto;
-	private double totalDesconto;
 
-	public Pecas() {
-		super();
-	}
+	// Atenção: Nome da coluna no DDL parece ser "DESCRICA_PECA"
+	@Column(name = "DESCRICA_PECA", length = 50, nullable = false)
+	private String descricao; // Campo Java 'descricao' mapeado para 'DESCRICA_PECA'
 
-	public Pecas(Long codigo, String tipoVeiculo, String fabricante, String descricao, String dataCompra, double preco, double desconto, double totalDesconto) {
-		this.codigo = codigo;
-		this.tipoVeiculo = tipoVeiculo;
-		this.fabricante = fabricante;
-		this.descricao = descricao;
-		this.dataCompra = dataCompra;
-		this.preco = preco;
-		this.desconto = desconto;
-		this.totalDesconto = totalDesconto;
-	}
+	@Column(name = "DATA_COMPRA", nullable = false)
+	private LocalDate dataCompra; // Alterado para LocalDate
 
-	public Long getCodigo() {
-		return codigo;
-	}
+	// Usando BigDecimal para precisão
+	@Column(name = "PRECO", nullable = false, precision = 10, scale = 2)
+	private BigDecimal preco; // Alterado para BigDecimal
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
+	@Column(name = "DESCONTO", nullable = false, precision = 10, scale = 2)
+	private BigDecimal desconto; // Alterado para BigDecimal
 
-	public String getTipoVeiculo() {
-		return tipoVeiculo;
-	}
+	@Column(name = "TOTAL_DESCONTO", nullable = false, precision = 10, scale = 2)
+	private BigDecimal totalDesconto; // Alterado para BigDecimal
 
-	public void setTipoVeiculo(String tipoVeiculo) {
-		this.tipoVeiculo = tipoVeiculo;
-	}
+	// === RELACIONAMENTOS INDIRETOS (Via Tabelas de Junção) ===
+	// Adicionados relacionamentos @OneToMany para as ENTIDADES DE JUNÇÃO (que precisam ser criadas)
 
-	public String getFabricante() {
-		return fabricante;
-	}
+	// Relacionamento com Oficinas (via Tabela OFP -> Entidade OficinaPeca)
+	@OneToMany(mappedBy = "peca", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<OficinaPeca> oficinaPecas = new ArrayList<>(); // Assume entidade OficinaPeca com campo 'peca'
 
-	public void setFabricante(String fabricante) {
-		this.fabricante = fabricante;
-	}
+	// Relacionamento com Veículos (via Tabela PV -> Entidade PecaVeiculo)
+	@OneToMany(mappedBy = "peca", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<PecaVeiculo> pecaVeiculos = new ArrayList<>(); // Assume entidade PecaVeiculo com campo 'peca'
 
-	public String getDescricao() {
-		return descricao;
-	}
+	// ===========================================================
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public String getDataCompra() {
-		return dataCompra;
-	}
-
-	public void setDataCompra(String dataCompra) {
-		this.dataCompra = dataCompra;
-	}
-
-	public double getPreco() {
-		return preco;
-	}
-
-	public void setPreco(double preco) {
-		this.preco = preco;
-	}
-
-	public double getDesconto() {
-		return desconto;
-	}
-
-	public void setDesconto(double desconto) {
-		this.desconto = desconto;
-	}
-
-	public double getTotalDesconto() {
-		return totalDesconto;
-	}
-
-	public void setTotalDesconto(double totalDesconto) {
-		this.totalDesconto = totalDesconto;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Pecas pecas)) return false;
-        return Double.compare(preco, pecas.preco) == 0 && Double.compare(desconto, pecas.desconto) == 0 && Double.compare(totalDesconto, pecas.totalDesconto) == 0 && Objects.equals(codigo, pecas.codigo) && Objects.equals(tipoVeiculo, pecas.tipoVeiculo) && Objects.equals(fabricante, pecas.fabricante) && Objects.equals(descricao, pecas.descricao) && Objects.equals(dataCompra, pecas.dataCompra);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, tipoVeiculo, fabricante, descricao, dataCompra, preco, desconto, totalDesconto);
-	}
-
-	@Override
-	public String toString() {
-		return "Pecas{" +
-				"codigo=" + codigo +
-				", tipoVeiculo='" + tipoVeiculo + '\'' +
-				", fabricante='" + fabricante + '\'' +
-				", descricao='" + descricao + '\'' +
-				", dataCompra='" + dataCompra + '\'' +
-				", preco=" + preco +
-				", desconto=" + desconto +
-				", totalDesconto=" + totalDesconto +
-				'}';
-	}
+	// Getters, Setters, Construtores, equals, hashCode, toString gerados pelo Lombok
 }

@@ -1,77 +1,38 @@
 package br.com.fiap.model;
 
-import java.util.Objects;
+import jakarta.persistence.*;   // Importações JPA
+import lombok.*;                // Lombok
+import java.io.Serializable;
 
-public class Contato {
+@Entity // Marca como Entidade JPA
+@Table(name = "TB_CONTATOS") // Mapeia para a tabela TB_CONTATOS
 
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "codigo")
+@ToString
+//---------------
+public class Contato implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id // Chave Primária
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contato_seq_gen")
+	@SequenceGenerator(name = "contato_seq_gen", sequenceName = "CONTATOS_ID_CONT_SEQ", allocationSize = 1) // Usa a sequence do DDL
+	@Column(name = "ID_CONT") // Mapeia para a coluna ID_CONT
 	private Long codigo;
+
+	@Column(name = "CELULAR", length = 20, nullable = false) // Mapeia para CELULAR
 	private String celular;
+
+	@Column(name = "EMAIL", length = 50, nullable = false) // Mapeia para EMAIL
 	private String email;
-	private String contato;
 
-	public Contato() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	@Column(name = "CONTATO", length = 100, nullable = false) // Mapeia para CONTATO (Nome do campo Java e da coluna são diferentes aqui, mas ok)
+	private String contato; // O nome do campo Java é 'contato', a coluna é 'CONTATO'
 
-	public Contato(Long codigo, String celular, String email, String contato) {
-		this.codigo = codigo;
-		this.celular = celular;
-		this.email = email;
-		this.contato = contato;
-	}
-
-	public Long getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getCelular() {
-		return celular;
-	}
-
-	public void setCelular(String celular) {
-		this.celular = celular;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getContato() {
-		return contato;
-	}
-
-	public void setContato(String contato) {
-		this.contato = contato;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Contato contato1)) return false;
-        return Objects.equals(codigo, contato1.codigo) && Objects.equals(celular, contato1.celular) && Objects.equals(email, contato1.email) && Objects.equals(contato, contato1.contato);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, celular, email, contato);
-	}
-
-	@Override
-	public String toString() {
-		return "Contato{" +
-				"codigo=" + codigo +
-				", celular='" + celular + '\'' +
-				", email='" + email + '\'' +
-				", contato='" + contato + '\'' +
-				'}';
-	}
+	// Getters, Setters, Construtores, equals, hashCode, toString gerados pelo Lombok
 }
