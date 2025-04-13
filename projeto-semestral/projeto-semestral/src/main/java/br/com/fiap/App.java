@@ -3,8 +3,10 @@ package br.com.fiap.main;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean; // <-- Importar @Bean
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.client.RestTemplate; // <-- Importar RestTemplate
 
+@EnableJpaRepositories
 @SpringBootApplication(scanBasePackages = "br.com.fiap")
 public class App {
 
