@@ -1,138 +1,120 @@
+// --- src/main/java/br/com/fiap/Controller/OrcamentoController.java ---
 package br.com.fiap.Controller;
 
-import br.com.fiap.DTO.OrcamentoDto;
-import br.com.fiap.exceptions.orcamentoException.OrcamentoNotFoundException;
-import br.com.fiap.exceptions.orcamentoException.OrcamentoNotSavedException;
-import br.com.fiap.exceptions.orcamentoException.OrcamentoUnsupportedServiceOperationException;
-import br.com.fiap.model.Orcamento;
-import br.com.fiap.service.orcamentoService.OrcamentoService;
-import br.com.fiap.service.orcamentoService.OrcamentoServiceFactory;
+import br.com.fiap.dto.orcamento.OrcamentoRequestDto;
+import br.com.fiap.dto.orcamento.OrcamentoResponseDto;
+import br.com.fiap.exception.OrcamentoNotFoundException;
+import br.com.fiap.service.orcamento.OrcamentoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
-@RestController // Define que essa classe é um controlador REST (retorna dados, normalmente em JSON)
-@RequestMapping("/rest/orcamento") // Define a rota base para os endpoints deste controlador
+@RestController
+@RequestMapping("/rest/orcamento")
+@CrossOrigin(origins = "http://localhost:3000")
 public class OrcamentoController {
 
-    // Cria a instância do serviço de orçamento utilizando um factory para desacoplar a criação do serviço
-    private final OrcamentoService orcamentoService = OrcamentoServiceFactory.create();
+    private static final Logger log = LoggerFactory.getLogger(OrcamentoController.class);
 
-    // Logger para registrar mensagens e erros
-    private static final Logger logger = LoggerFactory.getLogger(OrcamentoController.class);
+    @Autowired
+    private OrcamentoService orcamentoService;
 
-    /**
-     * Endpoint para criação de um novo orçamento.
-     * Método HTTP POST que recebe um objeto OrcamentoDto no corpo da requisição.
-     */
-    @PostMapping
-    public ResponseEntity<?> add(@RequestBody OrcamentoDto input) {
-        // Verifica se o DTO não possui código, pois esse método é destinado somente à criação de novos orçamentos
-        if (input.getCodigo() != null) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("mensagem", "Este método só permite a criação de novos orçamentos sem código"));
-        }
-        try {
-            // Cria uma nova instância da entidade Orcamento e popula com os dados do DTO
-            Orcamento orcamento = new Orcamento();
-            orcamento.setDataOrcamento(input.getDataOrcamento());
-            orcamento.setMaoDeObra(input.getMaoDeObra());
-            orcamento.setValorHora(input.getValorHora());
-            orcamento.setQuantidadeHoras(input.getQuantidadeHoras());
-            orcamento.setValorTotal(input.getValorTotal());
-
-            // Chama o serviço para criar o orçamento e obtém a entidade persistida
-            orcamento = orcamentoService.create(orcamento);
-
-            // Retorna o orçamento criado com status HTTP 201 (Created)
-            return ResponseEntity.status(HttpStatus.CREATED).body(orcamento);
-        } catch (OrcamentoUnsupportedServiceOperationException e) {
-            // Se a operação não for suportada, retorna status 400 (Bad Request) com a mensagem de erro
-            return ResponseEntity.badRequest().body(Map.of("mensagem", e.getMessage()));
-        } catch (SQLException | OrcamentoNotSavedException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error)
-            logger.error("Erro ao criar orçamento: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar inserir um orçamento"));
-        }
-    }
-
-    /**
-     * Endpoint para recuperar todos os orçamentos.
-     * Método HTTP GET na rota /rest/orcamento/all.
-     */
     @GetMapping("/all")
-    public ResponseEntity<List<Orcamento>> findAll() {
-        // Chama o serviço para obter a lista de orçamentos
-        List<Orcamento> orcamentos = orcamentoService.findAll();
-        // Se a lista estiver vazia ou nula, retorna status 204 (No Content)
-        if (orcamentos == null || orcamentos.isEmpty()) {
+    @Cacheable("orcamentos")
+    @Operation(summary = "Listar todos os orçamentos")
+    public ResponseEntity<List<OrcamentoResponseDto>> findAll() {
+        log.info("Requisição para listar todos os orçamentos");
+        List<OrcamentoResponseDto> orcamentos = orcamentoService.findAll();
+        if (orcamentos.isEmpty()) {
+            log.info("Nenhum orçamento encontrado.");
             return ResponseEntity.noContent().build();
         }
-        // Retorna a lista de orçamentos com status 200 (OK)
+        log.info("Retornando {} orçamentos.", orcamentos.size());
         return ResponseEntity.ok(orcamentos);
     }
 
-    /**
-     * Endpoint para atualizar um orçamento existente.
-     * Método HTTP PUT que recebe o ID do orçamento na URL e os novos dados no corpo da requisição.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody OrcamentoDto input) {
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar orçamento por ID")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<OrcamentoResponseDto> findById(@PathVariable Long id) {
+        log.info("Requisição para buscar orçamento por ID: {}", id);
         try {
-            // Cria uma instância da entidade Orcamento e popula com os dados do DTO, definindo o ID para atualização
-            Orcamento orcamento = new Orcamento();
-            orcamento.setCodigo(id);
-            orcamento.setDataOrcamento(input.getDataOrcamento());
-            orcamento.setMaoDeObra(input.getMaoDeObra());
-            orcamento.setValorHora(input.getValorHora());
-            orcamento.setQuantidadeHoras(input.getQuantidadeHoras());
-            orcamento.setValorTotal(input.getValorTotal());
-
-            // Chama o serviço para atualizar o orçamento e obtém a entidade atualizada
-            Orcamento updated = orcamentoService.update(orcamento);
-
-            // Retorna o orçamento atualizado com status 200 (OK)
-            return ResponseEntity.ok(updated);
+            OrcamentoResponseDto orcamento = orcamentoService.findById(id);
+            log.info("Orçamento encontrado: {}", id);
+            return ResponseEntity.ok(orcamento);
         } catch (OrcamentoNotFoundException e) {
-            // Se o orçamento não for encontrado para atualização, retorna status 404 (Not Found)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensagem", "Orçamento não encontrado para atualização"));
-        } catch (SQLException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error)
-            logger.error("Erro ao atualizar orçamento: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar atualizar o orçamento"));
+            log.warn("Orçamento não encontrado para o ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro inesperado ao buscar orçamento ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    /**
-     * Endpoint para deletar um orçamento.
-     * Método HTTP DELETE que recebe o ID do orçamento a ser removido na URL.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    @PostMapping
+    @CacheEvict(value = "orcamentos", allEntries = true)
+    @Operation(summary = "Criar novo orçamento")
+    @ApiResponses(value = {@ApiResponse(responseCode = "201"), @ApiResponse(responseCode = "400")})
+    public ResponseEntity<OrcamentoResponseDto> create(@RequestBody @Valid OrcamentoRequestDto orcamentoDto) {
+        log.info("Requisição para criar novo orçamento: {}", orcamentoDto.getDataOrcamento());
         try {
-            // Chama o serviço para deletar o orçamento pelo ID informado
+            // Lógica de cálculo pode estar no service
+            OrcamentoResponseDto savedOrcamento = orcamentoService.create(orcamentoDto);
+            log.info("Orçamento criado com ID: {}", savedOrcamento.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedOrcamento);
+        } catch (Exception e) {
+            log.error("Erro ao criar orçamento: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    @CacheEvict(value = "orcamentos", allEntries = true)
+    @Operation(summary = "Atualizar orçamento")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404"), @ApiResponse(responseCode = "400")})
+    public ResponseEntity<OrcamentoResponseDto> update(@PathVariable Long id, @RequestBody @Valid OrcamentoRequestDto orcamentoDto) {
+        log.info("Requisição para atualizar orçamento ID: {}", id);
+        try {
+            OrcamentoResponseDto updatedOrcamento = orcamentoService.update(id, orcamentoDto);
+            log.info("Orçamento ID {} atualizado.", id);
+            return ResponseEntity.ok(updatedOrcamento);
+        } catch (OrcamentoNotFoundException e) {
+            log.warn("Orçamento não encontrado para atualização, ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro ao atualizar orçamento ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @CacheEvict(value = "orcamentos", allEntries = true)
+    @Operation(summary = "Deletar orçamento")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info("Requisição para deletar orçamento ID: {}", id);
+        try {
             orcamentoService.deleteById(id);
-            // Retorna status 204 (No Content) indicando que a exclusão foi bem-sucedida
+            log.info("Orçamento ID {} deletado.", id);
             return ResponseEntity.noContent().build();
         } catch (OrcamentoNotFoundException e) {
-            // Registra aviso e retorna status 404 (Not Found) se o orçamento não for encontrado para exclusão
-            logger.warn("Orçamento não encontrado para exclusão: ID " + id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensagem", "Orçamento não encontrado para exclusão"));
-        } catch (SQLException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error) em caso de erro inesperado
-            logger.error("Erro ao deletar orçamento: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar deletar o orçamento"));
+            log.warn("Orçamento não encontrado para exclusão, ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro ao deletar orçamento ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    // Endpoints para gerenciar relacionamentos (Orcamento <-> Cliente, Orcamento <-> Pagamento, etc.)
 }

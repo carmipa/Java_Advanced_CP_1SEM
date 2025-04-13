@@ -1,8 +1,10 @@
+// --- src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java ---
 package br.com.fiap.service.oficina;
 
 import br.com.fiap.dto.oficina.OficinaRequestDto;
 import br.com.fiap.dto.oficina.OficinaResponseDto;
-import br.com.fiap.exception.OficinaNotFoundException; // Sua exceção customizada
+import br.com.fiap.exception.OficinaNotFoundException;
+import br.com.fiap.mapper.OficinaMapper; // Importar Mapper
 import br.com.fiap.model.Oficina;
 import br.com.fiap.repository.OficinaRepository;
 import org.slf4j.Logger;
@@ -18,10 +20,12 @@ public class OficinaServiceImpl implements OficinaService {
 
     private static final Logger log = LoggerFactory.getLogger(OficinaServiceImpl.class);
     private final OficinaRepository oficinaRepository;
+    private final OficinaMapper oficinaMapper; // <-- Injetar Mapper
 
     @Autowired
-    public OficinaServiceImpl(OficinaRepository oficinaRepository) {
+    public OficinaServiceImpl(OficinaRepository oficinaRepository, OficinaMapper oficinaMapper) { // <-- Injetar
         this.oficinaRepository = oficinaRepository;
+        this.oficinaMapper = oficinaMapper; // <-- Inicializar
     }
 
     @Override
@@ -29,7 +33,7 @@ public class OficinaServiceImpl implements OficinaService {
     public List<OficinaResponseDto> findAll() {
         log.info("Buscando todas as oficinas");
         return oficinaRepository.findAll().stream()
-                .map(this::mapEntityToResponseDto)
+                .map(oficinaMapper::toResponseDto) // <-- Usar Mapper
                 .collect(Collectors.toList());
     }
 
@@ -38,7 +42,7 @@ public class OficinaServiceImpl implements OficinaService {
     public OficinaResponseDto findById(Long id) {
         log.info("Buscando oficina por ID: {}", id);
         Oficina oficina = findOficinaById(id);
-        return mapEntityToResponseDto(oficina);
+        return oficinaMapper.toResponseDto(oficina); // <-- Usar Mapper
     }
 
     @Override
@@ -46,10 +50,10 @@ public class OficinaServiceImpl implements OficinaService {
     public OficinaResponseDto create(OficinaRequestDto oficinaDto) {
         log.info("Criando nova oficina");
         try {
-            Oficina oficina = mapRequestDtoToEntity(oficinaDto);
+            Oficina oficina = oficinaMapper.toEntity(oficinaDto); // <-- Usar Mapper
             Oficina savedOficina = oficinaRepository.save(oficina);
             log.info("Oficina criada com ID: {}", savedOficina.getId());
-            return mapEntityToResponseDto(savedOficina);
+            return oficinaMapper.toResponseDto(savedOficina); // <-- Usar Mapper
         } catch (Exception e) {
             log.error("Erro ao criar oficina: {}", e.getMessage(), e);
             throw new RuntimeException("Falha ao criar oficina", e);
@@ -61,17 +65,17 @@ public class OficinaServiceImpl implements OficinaService {
     public OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto) {
         log.info("Atualizando oficina com ID: {}", id);
         Oficina existingOficina = findOficinaById(id);
-        updateEntityFromDto(existingOficina, oficinaDto);
+        oficinaMapper.updateEntityFromDto(oficinaDto, existingOficina); // <-- Usar Mapper
         Oficina updatedOficina = oficinaRepository.save(existingOficina);
         log.info("Oficina atualizada com ID: {}", updatedOficina.getId());
-        return mapEntityToResponseDto(updatedOficina);
+        return oficinaMapper.toResponseDto(updatedOficina); // <-- Usar Mapper
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
         log.info("Deletando oficina com ID: {}", id);
-        Oficina oficina = findOficinaById(id);
+        Oficina oficina = findOficinaById(id); // Verifica existência
         try {
             oficinaRepository.delete(oficina);
             log.info("Oficina deletada com ID: {}", id);
@@ -81,41 +85,14 @@ public class OficinaServiceImpl implements OficinaService {
         }
     }
 
-    // --- Mapeamento ---
+    // --- Método auxiliar ---
     private Oficina findOficinaById(Long id) {
         return oficinaRepository.findById(id)
                 .orElseThrow(() -> new OficinaNotFoundException("Oficina não encontrada com ID: " + id));
     }
 
-    private OficinaResponseDto mapEntityToResponseDto(Oficina entity) {
-        // Implementar mapeamento (ou usar MapStruct)
-        OficinaResponseDto dto = new OficinaResponseDto();
-        dto.setId(entity.getId());
-        dto.setDataOficina(entity.getDataOficina());
-        dto.setDescricaoProblema(entity.getDescricaoProblema());
-        dto.setDiagnostico(entity.getDiagnostico());
-        dto.setPartesAfetadas(entity.getPartesAfetadas());
-        dto.setHorasTrabalhadas(entity.getHorasTrabalhadas()); // Mantém como String
-        return dto;
-    }
-
-    private Oficina mapRequestDtoToEntity(OficinaRequestDto dto) {
-        // Implementar mapeamento (ou usar MapStruct)
-        Oficina entity = new Oficina();
-        entity.setDataOficina(dto.getDataOficina());
-        entity.setDescricaoProblema(dto.getDescricaoProblema());
-        entity.setDiagnostico(dto.getDiagnostico());
-        entity.setPartesAfetadas(dto.getPartesAfetadas());
-        entity.setHorasTrabalhadas(dto.getHorasTrabalhadas()); // Mantém como String
-        return entity;
-    }
-
-    private void updateEntityFromDto(Oficina entity, OficinaRequestDto dto) {
-        // Implementar mapeamento (ou usar MapStruct)
-        entity.setDataOficina(dto.getDataOficina());
-        entity.setDescricaoProblema(dto.getDescricaoProblema());
-        entity.setDiagnostico(dto.getDiagnostico());
-        entity.setPartesAfetadas(dto.getPartesAfetadas());
-        entity.setHorasTrabalhadas(dto.getHorasTrabalhadas()); // Mantém como String
-    }
+    // REMOVER os métodos manuais de mapeamento:
+    // mapEntityToResponseDto(Oficina entity)
+    // mapRequestDtoToEntity(OficinaRequestDto dto)
+    // updateEntityFromDto(Oficina entity, OficinaRequestDto dto)
 }

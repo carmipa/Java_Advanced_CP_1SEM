@@ -1,8 +1,10 @@
+// --- src/main/java/br/com/fiap/service/pecas/PecasServiceImpl.java ---
 package br.com.fiap.service.pecas;
 
 import br.com.fiap.dto.pecas.PecasRequestDto;
 import br.com.fiap.dto.pecas.PecasResponseDto;
-import br.com.fiap.exception.PecasNotFoundException; // Sua exceção customizada
+import br.com.fiap.exception.PecasNotFoundException;
+import br.com.fiap.mapper.PecasMapper; // Importar Mapper
 import br.com.fiap.model.Pecas;
 import br.com.fiap.repository.PecasRepository;
 import org.slf4j.Logger;
@@ -18,10 +20,12 @@ public class PecasServiceImpl implements PecasService {
 
     private static final Logger log = LoggerFactory.getLogger(PecasServiceImpl.class);
     private final PecasRepository pecasRepository;
+    private final PecasMapper pecasMapper; // <-- Injetar Mapper
 
     @Autowired
-    public PecasServiceImpl(PecasRepository pecasRepository) {
+    public PecasServiceImpl(PecasRepository pecasRepository, PecasMapper pecasMapper) { // <-- Injetar
         this.pecasRepository = pecasRepository;
+        this.pecasMapper = pecasMapper; // <-- Inicializar
     }
 
     @Override
@@ -29,7 +33,7 @@ public class PecasServiceImpl implements PecasService {
     public List<PecasResponseDto> findAll() {
         log.info("Buscando todas as peças");
         return pecasRepository.findAll().stream()
-                .map(this::mapEntityToResponseDto)
+                .map(pecasMapper::toResponseDto) // <-- Usar Mapper
                 .collect(Collectors.toList());
     }
 
@@ -38,19 +42,19 @@ public class PecasServiceImpl implements PecasService {
     public PecasResponseDto findById(Long id) {
         log.info("Buscando peça por ID: {}", id);
         Pecas peca = findPecaById(id);
-        return mapEntityToResponseDto(peca);
+        return pecasMapper.toResponseDto(peca); // <-- Usar Mapper
     }
 
     @Override
     @Transactional
     public PecasResponseDto create(PecasRequestDto pecasDto) {
         log.info("Criando nova peça");
-        // Adicionar Lógica de Negócio aqui (ex: calcular totalDesconto?)
+        // Adicionar lógica de cálculo se necessário
         try {
-            Pecas peca = mapRequestDtoToEntity(pecasDto);
+            Pecas peca = pecasMapper.toEntity(pecasDto); // <-- Usar Mapper
             Pecas savedPeca = pecasRepository.save(peca);
             log.info("Peça criada com ID: {}", savedPeca.getId());
-            return mapEntityToResponseDto(savedPeca);
+            return pecasMapper.toResponseDto(savedPeca); // <-- Usar Mapper
         } catch (Exception e) {
             log.error("Erro ao criar peça: {}", e.getMessage(), e);
             throw new RuntimeException("Falha ao criar peça", e);
@@ -62,18 +66,18 @@ public class PecasServiceImpl implements PecasService {
     public PecasResponseDto update(Long id, PecasRequestDto pecasDto) {
         log.info("Atualizando peça com ID: {}", id);
         Pecas existingPeca = findPecaById(id);
-        updateEntityFromDto(existingPeca, pecasDto);
-        // Recalcular totalDesconto se necessário?
+        pecasMapper.updateEntityFromDto(pecasDto, existingPeca); // <-- Usar Mapper
+        // Recalcular campos se necessário
         Pecas updatedPeca = pecasRepository.save(existingPeca);
         log.info("Peça atualizada com ID: {}", updatedPeca.getId());
-        return mapEntityToResponseDto(updatedPeca);
+        return pecasMapper.toResponseDto(updatedPeca); // <-- Usar Mapper
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
         log.info("Deletando peça com ID: {}", id);
-        Pecas peca = findPecaById(id);
+        Pecas peca = findPecaById(id); // Verifica existência
         try {
             pecasRepository.delete(peca);
             log.info("Peça deletada com ID: {}", id);
@@ -83,47 +87,14 @@ public class PecasServiceImpl implements PecasService {
         }
     }
 
-    // --- Mapeamento ---
+    // --- Método auxiliar ---
     private Pecas findPecaById(Long id) {
         return pecasRepository.findById(id)
                 .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + id));
     }
 
-    private PecasResponseDto mapEntityToResponseDto(Pecas entity) {
-        // Implementar mapeamento (ou usar MapStruct)
-        PecasResponseDto dto = new PecasResponseDto();
-        dto.setId(entity.getId());
-        dto.setTipoVeiculo(entity.getTipoVeiculo());
-        dto.setFabricante(entity.getFabricante());
-        dto.setDescricao(entity.getDescricao());
-        dto.setDataCompra(entity.getDataCompra());
-        dto.setPreco(entity.getPreco());
-        dto.setDesconto(entity.getDesconto());
-        dto.setTotalDesconto(entity.getTotalDesconto());
-        return dto;
-    }
-
-    private Pecas mapRequestDtoToEntity(PecasRequestDto dto) {
-        // Implementar mapeamento (ou usar MapStruct)
-        Pecas entity = new Pecas();
-        entity.setTipoVeiculo(dto.getTipoVeiculo());
-        entity.setFabricante(dto.getFabricante());
-        entity.setDescricao(dto.getDescricao());
-        entity.setDataCompra(dto.getDataCompra());
-        entity.setPreco(dto.getPreco());
-        entity.setDesconto(dto.getDesconto());
-        entity.setTotalDesconto(dto.getTotalDesconto()); // Ou calcular
-        return entity;
-    }
-
-    private void updateEntityFromDto(Pecas entity, PecasRequestDto dto) {
-        // Implementar mapeamento (ou usar MapStruct)
-        entity.setTipoVeiculo(dto.getTipoVeiculo());
-        entity.setFabricante(dto.getFabricante());
-        entity.setDescricao(dto.getDescricao());
-        entity.setDataCompra(dto.getDataCompra());
-        entity.setPreco(dto.getPreco());
-        entity.setDesconto(dto.getDesconto());
-        entity.setTotalDesconto(dto.getTotalDesconto()); // Ou recalcular
-    }
+    // REMOVER os métodos manuais de mapeamento:
+    // mapEntityToResponseDto(Pecas entity)
+    // mapRequestDtoToEntity(PecasRequestDto dto)
+    // updateEntityFromDto(Pecas entity, PecasRequestDto dto)
 }

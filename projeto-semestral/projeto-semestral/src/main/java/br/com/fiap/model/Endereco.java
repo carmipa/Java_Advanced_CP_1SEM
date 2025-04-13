@@ -7,7 +7,7 @@ import lombok.*;                                   // Lombok
 import java.io.Serializable; // Necessário se for parte de chave composta ou relacionamento complexo
 
 @Entity // Marca como Entidade JPA
-@Table(name = "TB_ENDERECOS") // Mapeia para a tabela TB_ENDERECOS
+@Table(name = "ENDERECOS") // Mapeia para a tabela TB_ENDERECOS
 
 // --- Lombok ---
 @Getter

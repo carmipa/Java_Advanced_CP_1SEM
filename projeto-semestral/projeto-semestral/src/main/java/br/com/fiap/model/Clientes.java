@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDate; // Importa LocalDate para datas
 
 @Entity
-@Table(name = "TB_CLIENTES") // Nome exato da tabela no DDL
+@Table(name = "CLIENTES") // Nome exato da tabela no DDL
 
 // --- Lombok ---
 @Getter

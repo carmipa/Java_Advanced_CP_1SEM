@@ -1,147 +1,119 @@
+// --- src/main/java/br/com/fiap/Controller/VeiculoController.java ---
 package br.com.fiap.Controller;
 
-import br.com.fiap.DTO.VeiculoDto;
-import br.com.fiap.exceptions.veiculoException.VeiculoNotFoundException;
-import br.com.fiap.exceptions.veiculoException.VeiculoNotSavedException;
-import br.com.fiap.exceptions.veiculoException.VeiculoUnsupportedServiceOperationException;
-import br.com.fiap.model.Veiculo;
-import br.com.fiap.service.veiculoService.VeiculoService;
-import br.com.fiap.service.veiculoService.VeiculoServiceFactory;
+import br.com.fiap.dto.veiculo.VeiculoRequestDto;
+import br.com.fiap.dto.veiculo.VeiculoResponseDto;
+import br.com.fiap.exception.VeiculoNotFoundException;
+import br.com.fiap.service.veiculo.VeiculoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
-@RestController // Define que a classe é um controlador REST e seus métodos retornarão dados (normalmente em JSON)
-@RequestMapping("/rest/veiculo") // Define a rota base para os endpoints deste controlador
+@RestController
+@RequestMapping("/rest/veiculo")
+@CrossOrigin(origins = "http://localhost:3000")
 public class VeiculoController {
 
-    // Cria a instância do serviço de veículo utilizando um factory para desacoplar a criação do serviço
-    private final VeiculoService veiculoService = VeiculoServiceFactory.create();
+    private static final Logger log = LoggerFactory.getLogger(VeiculoController.class);
 
-    // Logger para registrar mensagens e erros
-    private static final Logger logger = LoggerFactory.getLogger(VeiculoController.class);
+    @Autowired
+    private VeiculoService veiculoService;
 
-    /**
-     * Endpoint para criação de um novo veículo.
-     * Método HTTP POST que recebe um objeto VeiculoDto no corpo da requisição.
-     */
-    @PostMapping
-    public ResponseEntity<?> add(@RequestBody VeiculoDto input) {
-        // Verifica se o DTO não possui código, garantindo que esse método seja usado apenas para criação
-        if (input.getCodigo() != null) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("mensagem", "Este método só permite a criação de novos veículos sem código"));
-        }
-        try {
-            // Cria uma nova instância da entidade Veiculo e popula com os dados do DTO
-            Veiculo veiculo = new Veiculo();
-            // Suponha que aqui você defina as propriedades do veículo a partir do DTO
-            veiculo.setTipoVeiculo(input.getTipoVeiculo());
-            veiculo.setRenavam(input.getRenavam());
-            veiculo.setPlaca(input.getPlaca());
-            veiculo.setProprietario(input.getProprietario());
-            veiculo.setModelo(input.getModelo());
-            veiculo.setCor(input.getCor());
-            veiculo.setMontadora(input.getMontadora());
-            veiculo.setMotor(input.getMotor());
-            veiculo.setAnofabricacao(input.getAnofabricacao());
-
-            // Chama o serviço para criar o veículo e obtém a entidade persistida
-            veiculo = veiculoService.create(veiculo);
-
-            // Retorna o veículo criado com status HTTP 201 (Created)
-            return ResponseEntity.status(HttpStatus.CREATED).body(veiculo);
-        } catch (VeiculoUnsupportedServiceOperationException e) {
-            // Retorna status 400 (Bad Request) se a operação não for suportada
-            return ResponseEntity.badRequest().body(Map.of("mensagem", e.getMessage()));
-        } catch (SQLException | VeiculoNotSavedException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error) para erros inesperados
-            logger.error("Erro ao criar veículo: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar inserir um veículo"));
-        }
-    }
-
-    /**
-     * Endpoint para recuperar todos os veículos.
-     * Método HTTP GET na rota /rest/veiculo/all.
-     */
     @GetMapping("/all")
-    public ResponseEntity<List<Veiculo>> findAll() {
-        // Chama o serviço para obter a lista de veículos
-        List<Veiculo> veiculos = veiculoService.findall();
-        // Se a lista estiver vazia ou nula, retorna status 204 (No Content)
-        if (veiculos == null || veiculos.isEmpty()) {
+    @Cacheable("veiculos")
+    @Operation(summary = "Listar todos os veículos")
+    public ResponseEntity<List<VeiculoResponseDto>> findAll() {
+        log.info("Requisição para listar todos os veículos");
+        List<VeiculoResponseDto> veiculos = veiculoService.findAll();
+        if (veiculos.isEmpty()) {
+            log.info("Nenhum veículo encontrado.");
             return ResponseEntity.noContent().build();
         }
-        // Retorna a lista de veículos com status 200 (OK)
+        log.info("Retornando {} veículos.", veiculos.size());
         return ResponseEntity.ok(veiculos);
     }
 
-    /**
-     * Endpoint para atualizar um veículo existente.
-     * Método HTTP PUT que recebe o ID do veículo na URL e os novos dados no corpo da requisição.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody VeiculoDto input) {
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar veículo por ID")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<VeiculoResponseDto> findById(@PathVariable Long id) {
+        log.info("Requisição para buscar veículo por ID: {}", id);
         try {
-            // Cria uma instância da entidade Veiculo e popula com os dados do DTO, definindo o ID para atualização
-            Veiculo veiculo = new Veiculo();
-            veiculo.setCodigo(id);
-            veiculo.setTipoVeiculo(input.getTipoVeiculo());
-            veiculo.setRenavam(input.getRenavam());
-            veiculo.setPlaca(input.getPlaca());
-            veiculo.setProprietario(input.getProprietario());
-            veiculo.setModelo(input.getModelo());
-            veiculo.setCor(input.getCor());
-            veiculo.setMontadora(input.getMontadora());
-            veiculo.setMotor(input.getMotor());
-            veiculo.setAnofabricacao(input.getAnofabricacao());
-
-            // Chama o serviço para atualizar o veículo e obtém a entidade atualizada
-            Veiculo updated = veiculoService.update(veiculo);
-
-            // Retorna o veículo atualizado com status 200 (OK)
-            return ResponseEntity.ok(updated);
+            VeiculoResponseDto veiculo = veiculoService.findById(id);
+            log.info("Veículo encontrado: {}", id);
+            return ResponseEntity.ok(veiculo);
         } catch (VeiculoNotFoundException e) {
-            // Retorna status 404 (Not Found) se o veículo não for encontrado para atualização
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensagem", "Veículo não encontrado para atualização"));
-        } catch (SQLException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error) para erros inesperados
-            logger.error("Erro ao atualizar veículo: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar atualizar o veículo"));
+            log.warn("Veículo não encontrado para o ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro inesperado ao buscar veículo ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    /**
-     * Endpoint para deletar um veículo.
-     * Método HTTP DELETE que recebe o ID do veículo a ser removido na URL.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    @PostMapping
+    @CacheEvict(value = "veiculos", allEntries = true)
+    @Operation(summary = "Criar novo veículo")
+    @ApiResponses(value = {@ApiResponse(responseCode = "201"), @ApiResponse(responseCode = "400")})
+    public ResponseEntity<VeiculoResponseDto> create(@RequestBody @Valid VeiculoRequestDto veiculoDto) {
+        log.info("Requisição para criar novo veículo: {}", veiculoDto.getPlaca());
         try {
-            // Chama o serviço para deletar o veículo pelo ID informado
+            VeiculoResponseDto savedVeiculo = veiculoService.create(veiculoDto);
+            log.info("Veículo criado com ID: {}", savedVeiculo.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedVeiculo);
+        } catch (Exception e) {
+            log.error("Erro ao criar veículo: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    @CacheEvict(value = "veiculos", allEntries = true)
+    @Operation(summary = "Atualizar veículo")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404"), @ApiResponse(responseCode = "400")})
+    public ResponseEntity<VeiculoResponseDto> update(@PathVariable Long id, @RequestBody @Valid VeiculoRequestDto veiculoDto) {
+        log.info("Requisição para atualizar veículo ID: {}", id);
+        try {
+            VeiculoResponseDto updatedVeiculo = veiculoService.update(id, veiculoDto);
+            log.info("Veículo ID {} atualizado.", id);
+            return ResponseEntity.ok(updatedVeiculo);
+        } catch (VeiculoNotFoundException e) {
+            log.warn("Veículo não encontrado para atualização, ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro ao atualizar veículo ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @CacheEvict(value = "veiculos", allEntries = true)
+    @Operation(summary = "Deletar veículo")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info("Requisição para deletar veículo ID: {}", id);
+        try {
             veiculoService.deleteById(id);
-            // Retorna status 204 (No Content) indicando que a exclusão foi bem-sucedida
+            log.info("Veículo ID {} deletado.", id);
             return ResponseEntity.noContent().build();
         } catch (VeiculoNotFoundException e) {
-            // Registra aviso e retorna status 404 (Not Found) se o veículo não for encontrado para exclusão
-            logger.warn("Veículo não encontrado para exclusão: ID " + id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensagem", "Veículo não encontrado para exclusão"));
-        } catch (SQLException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error) para erros inesperados
-            logger.error("Erro ao deletar veículo: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar deletar o veículo"));
+            log.warn("Veículo não encontrado para exclusão, ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("Erro ao deletar veículo ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    // Endpoints para gerenciar relacionamentos (Veiculo <-> Agenda, Veiculo <-> Cliente, etc.)
 }

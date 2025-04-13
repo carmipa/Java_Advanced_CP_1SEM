@@ -5,7 +5,7 @@ import lombok.*;                // Lombok
 import java.io.Serializable;
 
 @Entity // Marca como Entidade JPA
-@Table(name = "TB_CONTATOS") // Mapeia para a tabela TB_CONTATOS
+@Table(name = "CONTATOS") // Mapeia para a tabela TB_CONTATOS
 
 // --- Lombok ---
 @Getter

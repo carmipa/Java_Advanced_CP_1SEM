@@ -1,132 +1,191 @@
+// --- src/main/java/br/com/fiap/Controller/AgendaController.java ---
 package br.com.fiap.Controller;
 
-import br.com.fiap.DTO.AgendaDto;
-import br.com.fiap.exceptions.agendaException.AgendaNotFoundException;
-import br.com.fiap.exceptions.agendaException.AgendaNotSavedException;
-import br.com.fiap.exceptions.agendaException.AgendaUnsupportedServiceOperationExcept;
-import br.com.fiap.model.Agenda;
-import br.com.fiap.service.agendaService.AgendaService;
-import br.com.fiap.service.agendaService.AgendaServiceFactory;
+import br.com.fiap.dto.agenda.AgendaRequestDto;
+import br.com.fiap.dto.agenda.AgendaResponseDto;
+import br.com.fiap.dto.veiculo.VeiculoResponseDto;
+import br.com.fiap.exception.AgendaNotFoundException;
+// Importar VeiculoNotFoundException se for usá-la
+// import br.com.fiap.exception.VeiculoNotFoundException;
+import br.com.fiap.service.agenda.AgendaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
-@RestController // Indica que esta classe é um controlador REST (os métodos retornarão dados, normalmente em JSON)
-@RequestMapping("/rest/agenda") // Define o caminho base para os endpoints deste controlador
+@RestController
+@RequestMapping("/rest/agenda")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AgendaController {
 
-    // Cria uma instância do serviço de agenda utilizando um factory para desacoplar a criação do serviço
-    private final AgendaService agendaService = AgendaServiceFactory.create();
+    private static final Logger log = LoggerFactory.getLogger(AgendaController.class);
 
-    // Logger para registrar mensagens de log
-    private static final Logger logger = LoggerFactory.getLogger(AgendaController.class);
+    @Autowired
+    private AgendaService agendaService;
 
-    /**
-     * Endpoint para criação de uma nova agenda.
-     * Método HTTP POST que recebe um objeto AgendaDto no corpo da requisição.
-     */
-    @PostMapping
-    public ResponseEntity<?> add(@RequestBody AgendaDto input) {
-        // Verifica se o DTO não possui um código (pois este método é destinado apenas à criação de novas agendas)
-        if (input.getCodigo() != null) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("mensagem", "Este método só permite a criação de novas agendas sem código"));
-        }
-        try {
-            // Cria uma nova instância da entidade Agenda e popula com os dados do DTO
-            Agenda agenda = new Agenda();
-            agenda.setDataAgendamento(input.getDataAgendamento());
-            agenda.setObsAgenda(input.getObsAgenda());
-
-            // Chama o serviço para criar a agenda e armazena o objeto persistido
-            agenda = agendaService.create(agenda);
-
-            // Retorna a agenda criada com status HTTP 201 (Created)
-            return ResponseEntity.status(HttpStatus.CREATED).body(agenda);
-        } catch (AgendaUnsupportedServiceOperationExcept e) {
-            // Se a operação não for suportada, retorna status 400 (Bad Request) com a mensagem de erro
-            return ResponseEntity.badRequest().body(Map.of("mensagem", e.getMessage()));
-        } catch (SQLException | AgendaNotSavedException e) {
-            // Registra o erro no log e retorna status 500 (Internal Server Error)
-            logger.error("Erro ao criar agenda: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar inserir uma agenda"));
-        }
-    }
-
-    /**
-     * Endpoint para recuperar todas as agendas.
-     * Método HTTP GET na rota /rest/agenda/all.
-     */
     @GetMapping("/all")
-    public ResponseEntity<List<Agenda>> findAll() {
-        // Chama o serviço para obter a lista de agendas
-        List<Agenda> agendas = agendaService.findAll();
-        // Se a lista estiver vazia, retorna status 204 (No Content)
-        if (agendas == null || agendas.isEmpty()) {
+    @Cacheable("agendas")
+    @Operation(summary = "Listar todas as agendas")
+    public ResponseEntity<List<AgendaResponseDto>> findAll() {
+        log.info("Requisição para listar todas as agendas recebida");
+        List<AgendaResponseDto> agendas = agendaService.findAll();
+        if (agendas.isEmpty()) {
+            log.info("Nenhuma agenda encontrada.");
             return ResponseEntity.noContent().build();
         }
-        // Caso existam agendas, retorna a lista com status 200 (OK)
+        log.info("Retornando {} agendas.", agendas.size());
         return ResponseEntity.ok(agendas);
     }
 
-    /**
-     * Endpoint para atualizar uma agenda existente.
-     * Método HTTP PUT que recebe o ID da agenda na URL e os novos dados no corpo da requisição.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AgendaDto input) {
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar agenda por ID")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<AgendaResponseDto> findById(@PathVariable Long id) {
+        log.info("Requisição para buscar agenda por ID: {}", id);
         try {
-            // Cria uma instância da entidade Agenda e popula com os dados do DTO, definindo o ID a ser atualizado
-            Agenda agenda = new Agenda();
-            agenda.setCodigo(id);
-            agenda.setDataAgendamento(input.getDataAgendamento());
-            agenda.setObsAgenda(input.getObsAgenda());
-
-            // Chama o serviço para atualizar a agenda e armazena o objeto atualizado
-            Agenda updated = agendaService.update(agenda);
-
-            // Retorna a agenda atualizada com status 200 (OK)
-            return ResponseEntity.ok(updated);
-        } catch (AgendaNotFoundException e) {
-            // Se a agenda não for encontrada para atualização, retorna status 404 (Not Found)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensagem", "Agenda não encontrada para atualização"));
-        } catch (SQLException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error)
-            logger.error("Erro ao atualizar agenda: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar atualizar a agenda"));
+            AgendaResponseDto agenda = agendaService.findById(id);
+            log.info("Agenda encontrada: {}", agenda.getId());
+            return ResponseEntity.ok(agenda);
+        } catch (AgendaNotFoundException e) { // Captura específica
+            log.warn("Agenda não encontrada para o ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) { // Captura genérica para outros erros
+            log.error("Erro inesperado ao buscar agenda por ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    /**
-     * Endpoint para deletar uma agenda.
-     * Método HTTP DELETE que recebe o ID da agenda a ser removida na URL.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    @PostMapping
+    @CacheEvict(value = "agendas", allEntries = true)
+    @Operation(summary = "Criar nova agenda")
+    @ApiResponses(value = { @ApiResponse(responseCode = "201"), @ApiResponse(responseCode = "400")})
+    public ResponseEntity<?> create(@RequestBody @Valid AgendaRequestDto agendaDto) { // Usar wildcard <?> ou um DTO de erro
+        log.info("Requisição para criar nova agenda recebida: {}", agendaDto.getDataAgendamento());
         try {
-            // Chama o serviço para deletar a agenda pelo ID informado
+            AgendaResponseDto savedAgenda = agendaService.create(agendaDto);
+            log.info("Agenda criada com sucesso com ID: {}", savedAgenda.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedAgenda);
+        } catch (Exception e) {
+            log.error("Erro ao criar agenda: {}", e.getMessage(), e);
+            // Pode retornar uma mensagem de erro mais específica no corpo se desejar
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao criar agenda.");
+        }
+    }
+
+    @PutMapping("/{id}")
+    @CacheEvict(value = "agendas", allEntries = true)
+    @Operation(summary = "Atualizar agenda")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404"), @ApiResponse(responseCode = "400")})
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AgendaRequestDto agendaDto) { // Usar wildcard <?> ou um DTO de erro
+        log.info("Requisição para atualizar agenda ID: {}", id);
+        try {
+            AgendaResponseDto updatedAgenda = agendaService.update(id, agendaDto);
+            log.info("Agenda ID {} atualizada com sucesso.", id);
+            return ResponseEntity.ok(updatedAgenda);
+        } catch (AgendaNotFoundException e) { // Captura específica
+            log.warn("Agenda não encontrada para atualização, ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) { // Captura genérica
+            log.error("Erro ao atualizar agenda ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao atualizar agenda.");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @CacheEvict(value = "agendas", allEntries = true)
+    @Operation(summary = "Deletar agenda")
+    @ApiResponses(value = { @ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info("Requisição para deletar agenda ID: {}", id);
+        try {
             agendaService.deleteById(id);
-            // Retorna status 204 (No Content) indicando que a exclusão foi bem-sucedida
+            log.info("Agenda ID {} deletada com sucesso.", id);
             return ResponseEntity.noContent().build();
-        } catch (AgendaNotFoundException e) {
-            // Registra aviso e retorna status 404 (Not Found) caso a agenda não seja encontrada
-            logger.warn("Agenda não encontrada para exclusão: ID " + id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensagem", "Agenda não encontrada para exclusão"));
-        } catch (SQLException e) {
-            // Registra o erro e retorna status 500 (Internal Server Error)
-            logger.error("Erro ao deletar agenda: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("mensagem", "Erro inesperado ao tentar deletar a agenda"));
+        } catch (AgendaNotFoundException e) { // Captura específica
+            log.warn("Agenda não encontrada para exclusão, ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) { // Captura genérica (poderia ser mais específica para DataIntegrityViolationException -> CONFLICT)
+            log.error("Erro ao deletar agenda ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // --- Endpoints de Relacionamento (Exemplo Agenda <-> Veiculo) ---
+
+    @PostMapping("/{agendaId}/veiculos/{veiculoId}")
+    @Operation(summary = "Associar Veículo")
+    @ApiResponses(value = { @ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<Void> associarVeiculo(@PathVariable Long agendaId, @PathVariable Long veiculoId) {
+        log.info("Requisição para associar veículo ID {} à agenda ID {}", veiculoId, agendaId);
+        try {
+            agendaService.associarVeiculo(agendaId, veiculoId);
+            log.info("Veículo {} associado à agenda {} com sucesso", veiculoId, agendaId);
+            return ResponseEntity.noContent().build();
+            // } catch (AgendaNotFoundException | VeiculoNotFoundException e) { // << CORREÇÃO APLICADA AQUI TAMBÉM
+        } catch (AgendaNotFoundException e) { // Captura AgendaNotFound
+            log.warn("Erro ao associar veículo {} à agenda {}: {}", veiculoId, agendaId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Retorna 404
+            // } catch (VeiculoNotFoundException e) { // Captura VeiculoNotFound (se existir e for lançada pelo service)
+            //     log.warn("Erro ao associar veículo {} à agenda {}: {}", veiculoId, agendaId, e.getMessage());
+            //     return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Retorna 404
+        } catch (UnsupportedOperationException e) { // Captura a exceção de método não implementado
+            log.error("Funcionalidade 'associarVeiculo' não implementada no serviço.");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build(); // 501 Not Implemented
+        } catch (Exception e) { // Captura outros erros
+            log.error("Erro inesperado ao associar veículo {} à agenda {}: {}", veiculoId, agendaId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/{agendaId}/veiculos/{veiculoId}")
+    @Operation(summary = "Desassociar Veículo")
+    @ApiResponses(value = { @ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<Void> desassociarVeiculo(@PathVariable Long agendaId, @PathVariable Long veiculoId) {
+        log.info("Requisição para desassociar veículo ID {} da agenda ID {}", veiculoId, agendaId);
+        try {
+            agendaService.desassociarVeiculo(agendaId, veiculoId);
+            log.info("Veículo {} desassociado da agenda {} com sucesso", veiculoId, agendaId);
+            return ResponseEntity.noContent().build();
+            // } catch (AssociacaoNaoEncontradaException e) { // Exemplo de exceção específica para associação
+            //     log.warn("Erro ao desassociar veículo {} da agenda {}: {}", veiculoId, agendaId, e.getMessage());
+            //     return ResponseEntity.notFound().build();
+        } catch (UnsupportedOperationException e) { // Captura a exceção de método não implementado
+            log.error("Funcionalidade 'desassociarVeiculo' não implementada no serviço.");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build(); // 501 Not Implemented
+        } catch (Exception e) { // Captura outros erros
+            log.error("Erro inesperado ao desassociar veículo {} da agenda {}: {}", veiculoId, agendaId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{agendaId}/veiculos")
+    @Operation(summary = "Listar Veículos da Agenda")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404")})
+    public ResponseEntity<?> findVeiculosByAgendaId(@PathVariable Long agendaId) { // Retorna wildcard ou DTO de erro
+        log.info("Requisição para listar veículos da agenda ID {}", agendaId);
+        try {
+            List<VeiculoResponseDto> veiculos = agendaService.findVeiculosByAgendaId(agendaId);
+            log.info("Retornando {} veículos para a agenda {}", veiculos.size(), agendaId);
+            return ResponseEntity.ok(veiculos);
+        } catch (AgendaNotFoundException e) { // Captura específica
+            log.warn("Agenda não encontrada para listar veículos, ID: {}", agendaId);
+            return ResponseEntity.notFound().build();
+        } catch (UnsupportedOperationException e) { // Captura a exceção de método não implementado
+            log.error("Funcionalidade 'findVeiculosByAgendaId' não implementada no serviço.");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build(); // 501 Not Implemented
+        } catch (Exception e) { // Captura genérica
+            log.error("Erro inesperado ao listar veículos da agenda {}: {}", agendaId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao listar veículos.");
         }
     }
 }

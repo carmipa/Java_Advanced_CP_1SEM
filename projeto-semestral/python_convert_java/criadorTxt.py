@@ -9,7 +9,7 @@ pasta_script = os.path.dirname(os.path.abspath(__file__))
 # Caminho onde o arquivo final será salvo
 pasta_saida = os.path.join(pasta_script, 'arquivoCompleto')
 os.makedirs(pasta_saida, exist_ok=True)
-arquivo_final = os.path.join(pasta_saida, 'resultado.txt')
+arquivo_final = os.path.join(pasta_saida, 'projeto-semestral.txt')
 
 # Função para juntar todos os arquivos .java em um .txt único
 def juntar_java_em_txt_unico(raiz_projeto, arquivo_destino):
