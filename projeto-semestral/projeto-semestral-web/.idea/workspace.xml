@@ -5,44 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddce8be9-886a-4acb-9483-40a7f67e752e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/backupDB/application.properties.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/backupDB/sql.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/dto/pagamento/PagamentoResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/AgendaMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/ClienteMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/ContatoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/EnderecoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/OficinaMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/OrcamentoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/PagamentoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/PecasMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/mapper/VeiculoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/clientes/alterar/[idCliente]/[idEndereco]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/clientes/buscar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/clientes/cadastrar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/clientes/deletar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/clientes/listar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/clientes/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/AgendaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/AgendaController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/ClientesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/ClientesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/OficinaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/OficinaController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/OrcamentoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/OrcamentoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/PagamentoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/PagamentoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/PecasController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/PecasController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/VeiculoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/VeiculoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/dto/pagamento/PagamentoResponeDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/main/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/cadastrar/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/inicio/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/inicio/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nav-bar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nav-bar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/model/Clientes.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/model/Clientes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/model/Contato.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/model/Contato.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/model/Endereco.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/model/Endereco.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/agenda/AgendaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/agenda/AgendaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/agenda/AgendaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/agenda/AgendaServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/clientes/ClienteServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/clientes/ClienteServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/orcamento/OrcamentoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/orcamento/OrcamentoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/pagamento/PagamentoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/pagamento/PagamentoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/pecas/PecasServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/pecas/PecasServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/veiculo/VeiculoServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/veiculo/VeiculoServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/test/java/br/com/fiap/ProjetoSemestralApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/test/java/br/com/fiap/ProjetoSemestralApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python_convert_java/criadorTxt.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python_convert_java/criadorTxt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,28 +31,31 @@
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="2v5ql4s406oM6GGcMNCgFhHN7AP" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/FIAP-2025/1_semestre_fiap-2025/CP2025_primeiro_semestre/Java_Advanced_CP_1SEM/projeto-semestral/projeto-semestral-web&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.idesettings.emmet.xml&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\FIAP-2025\\1_semestre_fiap-2025\\CP2025_primeiro_semestre\\Java_Advanced_CP_1SEM\\projeto-semestral\\projeto-semestral-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/FIAP-2025/1_semestre_fiap-2025/CP2025_primeiro_semestre/Java_Advanced_CP_1SEM/projeto-semestral/projeto-semestral-web/src/app/clientes/deletar",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.idesettings.emmet.xml",
+    "ts.external.directory.path": "D:\\FIAP-2025\\1_semestre_fiap-2025\\CP2025_primeiro_semestre\\Java_Advanced_CP_1SEM\\projeto-semestral\\projeto-semestral-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -86,6 +64,15 @@
         <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\FIAP-2025\1_semestre_fiap-2025\CP2025_primeiro_semestre\Java_Advanced_CP_1SEM\projeto-semestral\projeto-semestral-web\src\app\clientes\deletar" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\FIAP-2025\1_semestre_fiap-2025\CP2025_primeiro_semestre\Java_Advanced_CP_1SEM\projeto-semestral\projeto-semestral-web\src\app\clientes\alterar\[idCliente]\[idEndereco]" />
+      <recent name="D:\FIAP-2025\1_semestre_fiap-2025\CP2025_primeiro_semestre\Java_Advanced_CP_1SEM\projeto-semestral\projeto-semestral-web\src\app\clientes" />
+    </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -108,7 +95,7 @@
       <workItem from="1743446669306" duration="4393000" />
       <workItem from="1743466837199" duration="3000" />
       <workItem from="1744577611015" duration="1926000" />
-      <workItem from="1744588244084" duration="371000" />
+      <workItem from="1744588244084" duration="8735000" />
     </task>
     <servers />
   </component>

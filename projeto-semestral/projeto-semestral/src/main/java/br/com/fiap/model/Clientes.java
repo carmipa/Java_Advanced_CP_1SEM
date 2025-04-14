@@ -16,8 +16,8 @@ import java.time.LocalDate; // Importa LocalDate para datas
 // --------------
 public class Clientes {
 
-	@EmbeddedId // Define que a chave primária é composta e definida por ClienteId
-	private ClienteId id;
+	@EmbeddedId
+	private ClienteId id = new ClienteId(); // <<< ADICIONE = new ClienteId(); AQUI
 
 	// --- Relacionamento com Endereco (Obrigatório e parte da PK) ---
 	@ManyToOne(fetch = FetchType.LAZY, optional = false) // Relacionamento com Endereco. optional=false porque a FK não pode ser nula
