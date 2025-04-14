@@ -1,141 +1,89 @@
 package br.com.fiap.model;
 
-import java.util.Objects;
+import br.com.fiap.model.relacionamentos.AgendaVeiculo;
+import br.com.fiap.model.relacionamentos.ClienteVeiculo;
+import br.com.fiap.model.relacionamentos.OficinaVeiculo;
+import br.com.fiap.model.relacionamentos.PecaVeiculo;
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
+import java.time.LocalDate; // Usar LocalDate para mapear DATE
+import java.util.ArrayList;
+import java.util.List;
 
-public class Veiculo {
+@Entity
+@Table(name = "VEICULOS") // Nome exato da tabela no DDL
 
-	private Long codigo;
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+// Excluir coleções LAZY do toString
+@ToString(exclude = {"agendaVeiculos", "clienteVeiculos", "oficinaVeiculos", "pecaVeiculos"})
+// --------------
+public class Veiculo implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "veiculo_seq_gen")
+	@SequenceGenerator(name = "veiculo_seq_gen", sequenceName = "VEICULOS_ID_VEI_SEQ", allocationSize = 1)
+	@Column(name = "ID_VEI") // Mapeia para ID_VEI (conforme DDL)
+	private Long id; // Renomeado de 'codigo'
+
+	@Column(name = "TIPO_VEICULO", length = 15, nullable = false)
 	private String tipoVeiculo;
+
+	@Column(name = "RENAVAM", length = 13, nullable = false, unique = true) // Renavam geralmente é único
 	private String renavam;
+
+	@Column(name = "PLACA", length = 7, nullable = false, unique = true) // Placa geralmente é única
 	private String placa;
-	private String proprietario;
+
+	@Column(name = "MODELO", length = 100, nullable = false)
 	private String modelo;
-	private String cor;
+
+	@Column(name = "PROPRIETARIO", length = 50, nullable = false) // Mapeado conforme DDL
+	private String proprietario;
+
+	@Column(name = "MONTADORA", length = 100, nullable = false)
 	private String montadora;
+
+	@Column(name = "COR", length = 50, nullable = false)
+	private String cor;
+
+	@Column(name = "MOTOR", length = 50, nullable = false)
 	private String motor;
-	private String anofabricacao;
 
-	public Veiculo() {
-	}
+	// --- ATENÇÃO: ANO_FABRICACAO é DATE no DDL ---
+	@Column(name = "ANO_FABRICACAO", nullable = false)
+	private LocalDate anoFabricacao; // Mapeado como LocalDate para corresponder ao tipo DATE do DDL.
+	// Se você realmente só precisa do ano, talvez fosse melhor a coluna ser NUMBER no banco
+	// e o tipo aqui ser Integer. Usar DATE para armazenar só o ano é incomum.
+	// -------------------------------------------
 
-	public Veiculo(Long codigo, String tipoVeiculo, String renavam, String placa, String proprietario, String modelo, String cor, String montadora, String motor, String anofabricacao) {
-		this.codigo = codigo;
-		this.tipoVeiculo = tipoVeiculo;
-		this.renavam = renavam;
-		this.placa = placa;
-		this.proprietario = proprietario;
-		this.modelo = modelo;
-		this.cor = cor;
-		this.montadora = montadora;
-		this.motor = motor;
-		this.anofabricacao = anofabricacao;
-	}
+	// === RELACIONAMENTOS INDIRETOS (Via Tabelas de Junção) ===
+	// Adicionados relacionamentos @OneToMany para as ENTIDADES DE JUNÇÃO (que precisam ser criadas)
 
-	public Long getCodigo() {
-		return codigo;
-	}
+	// Relacionamento com Agendamentos (via Tabela AV -> Entidade AgendaVeiculo)
+	@OneToMany(mappedBy = "veiculo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<AgendaVeiculo> agendaVeiculos = new ArrayList<>(); // Assume entidade AgendaVeiculo
 
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
+	// Relacionamento com Clientes (via Tabela CV -> Entidade ClienteVeiculo)
+	@OneToMany(mappedBy = "veiculo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<ClienteVeiculo> clienteVeiculos = new ArrayList<>(); // Assume entidade ClienteVeiculo
 
-	public String getTipoVeiculo() {
-		return tipoVeiculo;
-	}
+	// Relacionamento com Oficinas (via Tabela OV -> Entidade OficinaVeiculo)
+	@OneToMany(mappedBy = "veiculo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<OficinaVeiculo> oficinaVeiculos = new ArrayList<>(); // Assume entidade OficinaVeiculo
 
-	public void setTipoVeiculo(String tipoVeiculo) {
-		this.tipoVeiculo = tipoVeiculo;
-	}
+	// Relacionamento com Peças (via Tabela PV -> Entidade PecaVeiculo)
+	@OneToMany(mappedBy = "veiculo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<PecaVeiculo> pecaVeiculos = new ArrayList<>(); // Assume entidade PecaVeiculo
 
-	public String getRenavam() {
-		return renavam;
-	}
+	// ===========================================================
 
-	public void setRenavam(String renavam) {
-		this.renavam = renavam;
-	}
-
-	public String getPlaca() {
-		return placa;
-	}
-
-	public void setPlaca(String placa) {
-		this.placa = placa;
-	}
-
-	public String getProprietario() {
-		return proprietario;
-	}
-
-	public void setProprietario(String proprietario) {
-		this.proprietario = proprietario;
-	}
-
-	public String getModelo() {
-		return modelo;
-	}
-
-	public void setModelo(String modelo) {
-		this.modelo = modelo;
-	}
-
-	public String getCor() {
-		return cor;
-	}
-
-	public void setCor(String cor) {
-		this.cor = cor;
-	}
-
-	public String getMontadora() {
-		return montadora;
-	}
-
-	public void setMontadora(String montadora) {
-		this.montadora = montadora;
-	}
-
-	public String getMotor() {
-		return motor;
-	}
-
-	public void setMotor(String motor) {
-		this.motor = motor;
-	}
-
-	public String getAnofabricacao() {
-		return anofabricacao;
-	}
-
-	public void setAnofabricacao(String anofabricacao) {
-		this.anofabricacao = anofabricacao;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Veiculo veiculo)) return false;
-        return Objects.equals(codigo, veiculo.codigo) && Objects.equals(tipoVeiculo, veiculo.tipoVeiculo) && Objects.equals(renavam, veiculo.renavam) && Objects.equals(placa, veiculo.placa) && Objects.equals(proprietario, veiculo.proprietario) && Objects.equals(modelo, veiculo.modelo) && Objects.equals(cor, veiculo.cor) && Objects.equals(montadora, veiculo.montadora) && Objects.equals(motor, veiculo.motor) && Objects.equals(anofabricacao, veiculo.anofabricacao);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(codigo, tipoVeiculo, renavam, placa, proprietario, modelo, cor, montadora, motor, anofabricacao);
-	}
-
-	@Override
-	public String toString() {
-		return "Veiculo{" +
-				"codigo=" + codigo +
-				", tipoVeiculo='" + tipoVeiculo + '\'' +
-				", renavam='" + renavam + '\'' +
-				", placa='" + placa + '\'' +
-				", proprietario='" + proprietario + '\'' +
-				", modelo='" + modelo + '\'' +
-				", cor='" + cor + '\'' +
-				", montadora='" + montadora + '\'' +
-				", motor='" + motor + '\'' +
-				", anofabricacao='" + anofabricacao + '\'' +
-				'}';
-	}
+	// Getters, Setters, Construtores, equals, hashCode, toString gerados pelo Lombok
 }

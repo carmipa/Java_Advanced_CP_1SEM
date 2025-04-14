@@ -12,7 +12,7 @@ export default function InicioPage() {
                         Descubra uma nova forma de cuidar do seu veículo com praticidade e eficiência. Experimente nossa plataforma e agende seu serviço online.
                     </p>
                     <button className="px-6 py-3 font-semibold text-white transition bg-[#075985] rounded-md shadow hover:bg-[#075985]/90">
-                        <a href="/cadastrar">Agende seu serviço</a>
+
                     </button>
                 </section>
             </main>

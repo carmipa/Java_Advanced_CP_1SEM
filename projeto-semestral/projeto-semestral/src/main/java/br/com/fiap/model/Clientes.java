@@ -1,172 +1,84 @@
 package br.com.fiap.model;
+import br.com.fiap.model.relacionamentos.ClienteId;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDate; // Importa LocalDate para datas
 
-import java.util.Objects;
+@Entity
+@Table(name = "CLIENTES") // Nome exato da tabela no DDL
 
+// --- Lombok ---
+@Getter
+@Setter
+@NoArgsConstructor // Construtor padrão obrigatório para JPA
+@AllArgsConstructor // Construtor com todos os campos (opcional, mas útil)
+@ToString(exclude = {"endereco", "contato", "autenticar"}) // Excluir relacionamentos LAZY
+// --------------
 public class Clientes {
 
-	private Long codigo;
-	private String tipoCliente;
-	private String nome;
-	private String sobrenome;
-	private String sexo;
-	private String tipoDocumento;
-	private String numeroDocumento;
-	private String dataNascimento;
-	private String atividadeProfissional;
+	@EmbeddedId
+	private ClienteId id = new ClienteId(); // <<< ADICIONE = new ClienteId(); AQUI
+
+	// --- Relacionamento com Endereco (Obrigatório e parte da PK) ---
+	@ManyToOne(fetch = FetchType.LAZY, optional = false) // Relacionamento com Endereco. optional=false porque a FK não pode ser nula
+	@MapsId("enderecoId") // Diz que o atributo 'enderecoId' DENTRO do 'id' (@EmbeddedId) deve usar o ID desta entidade Endereco
+	@JoinColumn(name = "ENDERECOS_ID_END", nullable = false) // Nome exato da coluna FK no DDL. Não pode ser nulo.
 	private Endereco endereco;
+	// -----------------------------------------------------------
+
+	// --- Demais Colunas Mapeadas Exatamente como no DDL ---
+	@Column(name = "TIPO_CLIENTE", length = 2, nullable = false)
+	private String tipoCliente;
+
+	@Column(name = "NOME", length = 50, nullable = false)
+	private String nome;
+
+	@Column(name = "SOBRENOME", length = 50, nullable = false)
+	private String sobrenome;
+
+	@Column(name = "SEXO", length = 2, nullable = false)
+	private String sexo;
+
+	@Column(name = "TIPO_DOCUMENTO", length = 10, nullable = false)
+	private String tipoDocumento;
+
+	@Column(name = "NUMERO_DOCUMENTO", length = 20, nullable = false, unique = true) // Ajustado unique=true pois geralmente documentos são únicos
+	private String numeroDocumento;
+
+	@Column(name = "DATA_NASCIMENTO", nullable = false) // Nome exato da coluna no DDL
+	private LocalDate dataNascimento; // Tipo LocalDate para coluna DATE
+
+	@Column(name = "ATIVIDADE_PROFISSIONAL", length = 50, nullable = false)
+	private String atividadeProfissional;
+
+	// --- Relacionamentos Opcionais (FKs permitem NULO no DDL) ---
+	@ManyToOne(fetch = FetchType.LAZY) // Pode ser ManyToOne ou OneToOne dependendo da regra de negócio
+	@JoinColumn(name = "CONTATOS_ID_CONT", nullable = true) // Nome exato da FK, permite nulo
 	private Contato contato;
 
-	// Construtor padrão
-	public Clientes() {
-	}
+	@OneToOne(fetch = FetchType.LAZY) // Geralmente autenticação é 1-para-1
+	@JoinColumn(name = "AUTENTICAR_ID_AUT", nullable = true) // Nome exato da FK, permite nulo
+	private Autenticar autenticar; // Assume que existe uma entidade Autenticar mapeada para TB_AUTENTICAR
+	// ---------------------------------------------------------
 
-	// Construtor completo
-	public Clientes(Long codigo, Contato contato, Endereco endereco, String atividadeProfissional, String dataNascimento, String numeroDocumento, String tipoDocumento, String sexo, String sobrenome, String nome, String tipoCliente) {
-		this.codigo = codigo;
-		this.contato = contato;
-		this.endereco = endereco;
-		this.atividadeProfissional = atividadeProfissional;
-		this.dataNascimento = dataNascimento;
-		this.numeroDocumento = numeroDocumento;
-		this.tipoDocumento = tipoDocumento;
-		this.sexo = sexo;
-		this.sobrenome = sobrenome;
-		this.nome = nome;
-		this.tipoCliente = tipoCliente;
-	}
-
-	// Novo construtor que aceita apenas Long e String
-	public Clientes(Long codigo, String nome) {
-		this.codigo = codigo;
-		this.nome = nome;
-	}
-
-	// Getters e setters
-	public Long getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getTipoCliente() {
-		return tipoCliente;
-	}
-
-	public void setTipoCliente(String tipoCliente) {
-		this.tipoCliente = tipoCliente;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getSobrenome() {
-		return sobrenome;
-	}
-
-	public void setSobrenome(String sobrenome) {
-		this.sobrenome = sobrenome;
-	}
-
-	public String getSexo() {
-		return sexo;
-	}
-
-	public void setSexo(String sexo) {
-		this.sexo = sexo;
-	}
-
-	public String getTipoDocumento() {
-		return tipoDocumento;
-	}
-
-	public void setTipoDocumento(String tipoDocumento) {
-		this.tipoDocumento = tipoDocumento;
-	}
-
-	public String getNumeroDocumento() {
-		return numeroDocumento;
-	}
-
-	public void setNumeroDocumento(String numeroDocumento) {
-		this.numeroDocumento = numeroDocumento;
-	}
-
-	public String getDataNascimento() {
-		return dataNascimento;
-	}
-
-	public void setDataNascimento(String dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
-
-	public String getAtividadeProfissional() {
-		return atividadeProfissional;
-	}
-
-	public void setAtividadeProfissional(String atividadeProfissional) {
-		this.atividadeProfissional = atividadeProfissional;
-	}
-
-	public Endereco getEndereco() {
-		return endereco;
-	}
-
-	public void setEndereco(Endereco endereco) {
-		this.endereco = endereco;
-	}
-
-	public Contato getContato() {
-		return contato;
-	}
-
-	public void setContato(Contato contato) {
-		this.contato = contato;
-	}
-
+	// --- equals() e hashCode() baseados no ID composto ---
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof Clientes)) return false;
+		if (o == null || getClass() != o.getClass()) return false;
 		Clientes clientes = (Clientes) o;
-		return Objects.equals(codigo, clientes.codigo) &&
-				Objects.equals(tipoCliente, clientes.tipoCliente) &&
-				Objects.equals(nome, clientes.nome) &&
-				Objects.equals(sobrenome, clientes.sobrenome) &&
-				Objects.equals(sexo, clientes.sexo) &&
-				Objects.equals(tipoDocumento, clientes.tipoDocumento) &&
-				Objects.equals(numeroDocumento, clientes.numeroDocumento) &&
-				Objects.equals(dataNascimento, clientes.dataNascimento) &&
-				Objects.equals(atividadeProfissional, clientes.atividadeProfissional) &&
-				Objects.equals(endereco, clientes.endereco) &&
-				Objects.equals(contato, clientes.contato);
+		// Só são iguais se o ID composto não for nulo e for igual ao do outro objeto.
+		return id != null && id.equals(clientes.id);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigo, tipoCliente, nome, sobrenome, sexo, tipoDocumento, numeroDocumento, dataNascimento, atividadeProfissional, endereco, contato);
+		// Se o ID não for nulo, usa o hashCode dele, senão usa um valor baseado na classe.
+		return id != null ? id.hashCode() : getClass().hashCode();
 	}
+	// ------------------------------------------------------
 
-	@Override
-	public String toString() {
-		return "Clientes{" +
-				"codigo=" + codigo +
-				", tipoCliente='" + tipoCliente + '\'' +
-				", nome='" + nome + '\'' +
-				", sobrenome='" + sobrenome + '\'' +
-				", sexo='" + sexo + '\'' +
-				", tipoDocumento='" + tipoDocumento + '\'' +
-				", numeroDocumento='" + numeroDocumento + '\'' +
-				", dataNascimento='" + dataNascimento + '\'' +
-				", atividadeProfissional='" + atividadeProfissional + '\'' +
-				", endereco=" + endereco +
-				", contato=" + contato +
-				'}';
-	}
+	// NOTA: Não usamos @GeneratedValue aqui porque a trigger CLIENTES_ID_CLI_TRG
+	// no banco de dados já cuida de gerar o ID_CLI usando a sequence CLIENTES_ID_CLI_SEQ.
+	// O JPA pegará o valor gerado pelo banco após a inserção.
 }
