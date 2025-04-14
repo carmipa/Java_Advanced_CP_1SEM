@@ -290,11 +290,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean; // <-- Importar @Bean
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.client.RestTemplate; // <-- Importar RestTemplate
 
 @EnableJpaRepositories
 @SpringBootApplication
+@ComponentScan(basePackages = "br.com.fiap")
 @EnableCaching
 @OpenAPIDefinition(info = @Info(title = "PROJETO-SEMESTRAL-1.0", description = "REFATORAÇÃO DO CHALLENGE 2024", version = "v1"))
 public class App {
@@ -661,6 +663,52 @@ public class ClientesController {
     //     DELETE /rest/clientes/{idCliente}/{idEndereco}/veiculos/{veiculoId}
     //     GET /rest/clientes/{idCliente}/{idEndereco}/veiculos
 }
+================================================================================
+
+/* --- src\main\java\br\com\fiap\Controller\IaController.java --- */
+// Arquivo: src/main/java/br/com/fiap/Controller/IaController.java
+package br.com.fiap.Controller;
+
+// Removido import do GoogleGeminiService temporariamente
+// import br.com.fiap.service.ia.GoogleGeminiService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+// Removido import Autowired temporariamente
+// import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/rest/ia")
+@CrossOrigin(origins = "http://localhost:3000")
+@Tag(name = "IA Service", description = "Endpoint para interação com a IA Generativa")
+public class IaController {
+
+    private static final Logger log = LoggerFactory.getLogger(IaController.class);
+
+    // Removida injeção do IaService temporariamente
+    // @Autowired
+    // private GoogleGeminiService iaService;
+
+    @GetMapping("/diagnostico")
+    @Operation(summary = "Gerar Diagnóstico via IA (TESTE)", description = "Recebe a descrição e retorna texto fixo.")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Teste OK") })
+    public ResponseEntity<String> gerarDiagnostico(
+            @Parameter(description = "Descrição do problema (ignorada no teste)", required = true)
+            @RequestParam String descricao) {
+
+        log.info(">>> TESTE: Endpoint /rest/ia/diagnostico ATINGIDO com descrição: '{}'", descricao);
+
+        // Retorna uma string fixa para teste, sem chamar o serviço real
+        return ResponseEntity.ok("TESTE - Endpoint IA Atingido!");
+    }
+}
+
 ================================================================================
 
 /* --- src\main\java\br\com\fiap\Controller\OficinaController.java --- */
@@ -2540,8 +2588,8 @@ import java.time.LocalDate; // Importa LocalDate para datas
 // --------------
 public class Clientes {
 
-	@EmbeddedId // Define que a chave primária é composta e definida por ClienteId
-	private ClienteId id;
+	@EmbeddedId
+	private ClienteId id = new ClienteId(); // <<< ADICIONE = new ClienteId(); AQUI
 
 	// --- Relacionamento com Endereco (Obrigatório e parte da PK) ---
 	@ManyToOne(fetch = FetchType.LAZY, optional = false) // Relacionamento com Endereco. optional=false porque a FK não pode ser nula
@@ -4153,6 +4201,173 @@ public class ClienteServiceImpl implements ClienteService { // Implementa a inte
 }
 ================================================================================
 
+/* --- src\main\java\br\com\fiap\service\ia\GoogleGeminiService.java --- */
+// ===========================================================================
+// 1. Interface (Arquivo: src/main/java/br/com/fiap/service/ia/GoogleGeminiService.java)
+// ===========================================================================
+package br.com.fiap.service.ia;
+
+/**
+ * Interface definindo o contrato para serviços que geram diagnósticos via API Google Gemini.
+ */
+public interface GoogleGeminiService { // <<< Interface Renomeada
+
+    /**
+     * Gera um diagnóstico sugerido com base na descrição do problema.
+     * @param descricaoProblema A descrição fornecida pelo usuário.
+     * @return Uma string com o diagnóstico sugerido pela IA, ou uma mensagem de erro/padrão.
+     */
+    String gerarDiagnostico(String descricaoProblema);
+}
+================================================================================
+
+/* --- src\main\java\br\com\fiap\service\ia\GoogleGeminiServiceImpl.java --- */
+package br.com.fiap.service.ia;
+
+import com.fasterxml.jackson.databind.JsonNode; // <<< Importa JsonNode do Jackson
+import com.fasterxml.jackson.databind.ObjectMapper; // <<< Importa ObjectMapper do Jackson
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Service
+public class GoogleGeminiServiceImpl implements GoogleGeminiService {
+
+    private static final Logger log = LoggerFactory.getLogger(GoogleGeminiServiceImpl.class);
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    // ObjectMapper para parsear JSON (pode ser injetado ou criado)
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${gemini.api.key}")
+    private String apiKey;
+
+    @Value("${gemini.api.endpoint}")
+    private String apiEndpoint;
+
+    @Override
+    public String gerarDiagnostico(String descricaoProblema) {
+        if (apiKey == null || apiKey.isBlank() || apiKey.startsWith("SUA_CHAVE")) {
+            log.warn("Chave da API Gemini não configurada."); return "Diagnóstico IA não configurado (API Key)."; }
+        if (apiEndpoint == null || apiEndpoint.isBlank() || apiEndpoint.startsWith("URL_DA_API")) {
+            log.warn("Endpoint da API Gemini não configurado."); return "Diagnóstico IA não configurado (Endpoint)."; }
+
+        log.info("Chamando API Gemini via RestTemplate para: '{}'", descricaoProblema);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        // Autenticação via ?key=... na URL
+
+        // Adapte o corpo JSON e o prompt à API Gemini
+        String prompt = String.format( /* ... seu prompt ... */
+                "Aja como um mecânico experiente. Gere um possível diagnóstico técnico conciso (max 1-2 frases), liste as prováveis partes afetadas (max 3-4 itens em lista simples) e estime um número de horas de trabalho (apenas o número, ex: '2.5') para um veículo com o seguinte problema descrito pelo cliente: \"%s\"",
+                descricaoProblema.replace("\"", "\\\""));
+        String requestBodyJson = String.format("""
+                {
+                  "contents": [{"parts":[{"text": "%s"}]}]
+                }
+                """, prompt); // <<< Confirme se esta estrutura está correta para sua API/modelo
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBodyJson, headers);
+
+        String urlWithKey = UriComponentsBuilder.fromHttpUrl(apiEndpoint)
+                .queryParam("key", apiKey)
+                .toUriString();
+        log.debug("URL da API Gemini sendo chamada: {}", apiEndpoint);
+
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(urlWithKey, requestEntity, String.class);
+
+            if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+                String responseBody = responseEntity.getBody();
+                log.debug("Resposta crua da IA: {}", responseBody);
+
+                // <<< Chama a função de extração implementada >>>
+                String diagnosticoGerado = extrairDiagnosticoDaResposta(responseBody);
+
+                if (diagnosticoGerado == null || diagnosticoGerado.isBlank() || diagnosticoGerado.contains("Falha ao extrair")) {
+                    log.error("Não foi possível extrair diagnóstico da resposta da IA.");
+                    return diagnosticoGerado; // Retorna a mensagem de falha da extração
+                }
+
+                log.info("Diagnóstico gerado pela IA recebido.");
+                return diagnosticoGerado;
+            } else {
+                log.error("Erro na chamada para API Gemini: Status {}", responseEntity.getStatusCode());
+                // Tenta extrair mensagem de erro do corpo, se houver
+                String errorBody = responseEntity.getBody();
+                String errorMessage = errorBody != null ? extrairMensagemDeErroDaResposta(errorBody) : String.format("Erro da IA (%s)", responseEntity.getStatusCode());
+                return errorMessage;
+            }
+        } catch (RestClientException e) {
+            log.error("Erro de comunicação ao chamar API Gemini: {}", e.getMessage());
+            return "Erro de comunicação com a IA.";
+        } catch (Exception e) {
+            log.error("Erro inesperado ao processar diagnóstico da IA: {}", e.getMessage(), e);
+            return "Erro inesperado ao processar diagnóstico.";
+        }
+    }
+
+    /**
+     * Extrai o texto do diagnóstico da resposta JSON da API Gemini.
+     * Adapte esta lógica à estrutura EXATA da resposta da sua API/modelo.
+     * @param responseBodyJson A string JSON retornada pela API.
+     * @return O texto do diagnóstico extraído ou uma mensagem de erro.
+     */
+    private String extrairDiagnosticoDaResposta(String responseBodyJson) {
+        try {
+            JsonNode root = objectMapper.readTree(responseBodyJson);
+
+            // Navega pela estrutura esperada: candidates -> [0] -> content -> parts -> [0] -> text
+            JsonNode textNode = root.path("candidates").path(0)
+                    .path("content").path("parts").path(0)
+                    .path("text");
+
+            if (!textNode.isMissingNode() && textNode.isTextual()) {
+                String text = textNode.asText();
+                // Limita o tamanho para caber no banco (VARCHAR2(4000))
+                return text.substring(0, Math.min(text.length(), 4000));
+            } else {
+                log.warn("Estrutura de resposta inesperada ou campo 'text' não encontrado no JSON da IA: {}", responseBodyJson);
+                return "Formato de resposta da IA inesperado.";
+            }
+        } catch (Exception e) { // Captura JsonProcessingException e outros erros
+            log.error("Falha ao fazer parse do JSON da resposta da IA: {}", e.getMessage());
+            return "Falha ao processar resposta da IA.";
+        }
+    }
+
+    /**
+     * Tenta extrair uma mensagem de erro de uma resposta JSON da API Gemini.
+     * Adapte esta lógica à estrutura de erro EXATA da sua API/modelo.
+     * @param errorBodyJson A string JSON de erro retornada pela API.
+     * @return A mensagem de erro extraída ou uma mensagem genérica.
+     */
+    private String extrairMensagemDeErroDaResposta(String errorBodyJson) {
+        try {
+            JsonNode root = objectMapper.readTree(errorBodyJson);
+            // Exemplo: Procura por um campo 'error' -> 'message'
+            JsonNode messageNode = root.path("error").path("message");
+            if (!messageNode.isMissingNode() && messageNode.isTextual()) {
+                return "Erro da API IA: " + messageNode.asText();
+            }
+        } catch (Exception e) {
+            log.error("Falha ao fazer parse do JSON de erro da IA: {}", e.getMessage());
+        }
+        // Retorna o corpo cru se não conseguir parsear ou encontrar a mensagem
+        return "Erro não especificado da IA: " + (errorBodyJson.length() > 200 ? errorBodyJson.substring(0, 200) + "..." : errorBodyJson);
+    }
+}
+================================================================================
+
 /* --- src\main\java\br\com\fiap\service\oficina\OficinaService.java --- */
 package br.com.fiap.service.oficina;
 
@@ -4170,34 +4385,62 @@ public interface OficinaService {
 ================================================================================
 
 /* --- src\main\java\br\com\fiap\service\oficina\OficinaServiceImpl.java --- */
-// --- src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java ---
+// ===========================================================================
+// 3. OficinaServiceImpl (Injeção Atualizada)
+// Arquivo: src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java
+// ===========================================================================
 package br.com.fiap.service.oficina;
 
-import br.com.fiap.dto.oficina.OficinaRequestDto;
-import br.com.fiap.dto.oficina.OficinaResponseDto;
-import br.com.fiap.exception.OficinaNotFoundException;
-import br.com.fiap.mapper.OficinaMapper; // Importar Mapper
-import br.com.fiap.model.Oficina;
-import br.com.fiap.repository.OficinaRepository;
+// ... (Importações) ...
+import br.com.fiap.service.ia.GoogleGeminiService; // <<< Importa a NOVA interface
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import br.com.fiap.dto.oficina.OficinaRequestDto;
+import br.com.fiap.dto.oficina.OficinaResponseDto;
+import br.com.fiap.exception.OficinaNotFoundException;
+import br.com.fiap.mapper.OficinaMapper;
+import br.com.fiap.model.Oficina;
+import br.com.fiap.repository.OficinaRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 public class OficinaServiceImpl implements OficinaService {
 
     private static final Logger log = LoggerFactory.getLogger(OficinaServiceImpl.class);
     private final OficinaRepository oficinaRepository;
-    private final OficinaMapper oficinaMapper; // <-- Injetar Mapper
+    private final OficinaMapper oficinaMapper;
+    // Injeção usa o novo nome da interface (pode ser removida se não usada aqui)
+    // private final GoogleGeminiService iaService;
 
     @Autowired
-    public OficinaServiceImpl(OficinaRepository oficinaRepository, OficinaMapper oficinaMapper) { // <-- Injetar
+    public OficinaServiceImpl(OficinaRepository oficinaRepository,
+                              OficinaMapper oficinaMapper
+            /* , GoogleGeminiService iaService */ ) { // <<< Tipo atualizado (removido do construtor se não for usado aqui)
         this.oficinaRepository = oficinaRepository;
-        this.oficinaMapper = oficinaMapper; // <-- Inicializar
+        this.oficinaMapper = oficinaMapper;
+        // this.iaService = iaService;
+    }
+
+    // ... (Restante da classe OficinaServiceImpl, método create SEM a chamada iaService) ...
+    @Override
+    @Transactional
+    public OficinaResponseDto create(OficinaRequestDto oficinaDto) {
+        log.info("Criando nova oficina (diagnóstico vindo do DTO)");
+        try {
+            Oficina oficina = oficinaMapper.toEntity(oficinaDto);
+            // Chamada IA foi removida daqui
+            Oficina savedOficina = oficinaRepository.save(oficina);
+            log.info("Oficina criada com ID: {}", savedOficina.getId());
+            return oficinaMapper.toResponseDto(savedOficina);
+        } catch (Exception e) {
+            log.error("Erro ao criar oficina: {}", e.getMessage(), e);
+            throw new RuntimeException("Falha ao criar oficina", e);
+        }
     }
 
     @Override
@@ -4205,7 +4448,7 @@ public class OficinaServiceImpl implements OficinaService {
     public List<OficinaResponseDto> findAll() {
         log.info("Buscando todas as oficinas");
         return oficinaRepository.findAll().stream()
-                .map(oficinaMapper::toResponseDto) // <-- Usar Mapper
+                .map(oficinaMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -4214,22 +4457,7 @@ public class OficinaServiceImpl implements OficinaService {
     public OficinaResponseDto findById(Long id) {
         log.info("Buscando oficina por ID: {}", id);
         Oficina oficina = findOficinaById(id);
-        return oficinaMapper.toResponseDto(oficina); // <-- Usar Mapper
-    }
-
-    @Override
-    @Transactional
-    public OficinaResponseDto create(OficinaRequestDto oficinaDto) {
-        log.info("Criando nova oficina");
-        try {
-            Oficina oficina = oficinaMapper.toEntity(oficinaDto); // <-- Usar Mapper
-            Oficina savedOficina = oficinaRepository.save(oficina);
-            log.info("Oficina criada com ID: {}", savedOficina.getId());
-            return oficinaMapper.toResponseDto(savedOficina); // <-- Usar Mapper
-        } catch (Exception e) {
-            log.error("Erro ao criar oficina: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha ao criar oficina", e);
-        }
+        return oficinaMapper.toResponseDto(oficina);
     }
 
     @Override
@@ -4237,10 +4465,10 @@ public class OficinaServiceImpl implements OficinaService {
     public OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto) {
         log.info("Atualizando oficina com ID: {}", id);
         Oficina existingOficina = findOficinaById(id);
-        oficinaMapper.updateEntityFromDto(oficinaDto, existingOficina); // <-- Usar Mapper
+        oficinaMapper.updateEntityFromDto(oficinaDto, existingOficina);
         Oficina updatedOficina = oficinaRepository.save(existingOficina);
         log.info("Oficina atualizada com ID: {}", updatedOficina.getId());
-        return oficinaMapper.toResponseDto(updatedOficina); // <-- Usar Mapper
+        return oficinaMapper.toResponseDto(updatedOficina);
     }
 
     @Override
@@ -4257,17 +4485,12 @@ public class OficinaServiceImpl implements OficinaService {
         }
     }
 
-    // --- Método auxiliar ---
     private Oficina findOficinaById(Long id) {
         return oficinaRepository.findById(id)
                 .orElseThrow(() -> new OficinaNotFoundException("Oficina não encontrada com ID: " + id));
     }
-
-    // REMOVER os métodos manuais de mapeamento:
-    // mapEntityToResponseDto(Oficina entity)
-    // mapRequestDtoToEntity(OficinaRequestDto dto)
-    // updateEntityFromDto(Oficina entity, OficinaRequestDto dto)
 }
+
 ================================================================================
 
 /* --- src\main\java\br\com\fiap\service\orcamento\OrcamentoService.java --- */
@@ -4774,7 +4997,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -4835,7 +5058,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -4936,7 +5159,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -4998,7 +5221,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -5076,7 +5299,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -5144,7 +5367,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -5212,7 +5435,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -5283,7 +5506,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -5357,7 +5580,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-13T18:16:12-0300",
+    date = "2025-04-14T13:57:10-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
