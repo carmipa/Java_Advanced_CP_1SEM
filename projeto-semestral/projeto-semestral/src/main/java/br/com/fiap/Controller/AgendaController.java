@@ -1,12 +1,10 @@
-// --- src/main/java/br/com/fiap/Controller/AgendaController.java ---
+
 package br.com.fiap.Controller;
 
 import br.com.fiap.dto.agenda.AgendaRequestDto;
 import br.com.fiap.dto.agenda.AgendaResponseDto;
 import br.com.fiap.dto.veiculo.VeiculoResponseDto;
 import br.com.fiap.exception.AgendaNotFoundException;
-// Importar VeiculoNotFoundException se for usá-la
-// import br.com.fiap.exception.VeiculoNotFoundException;
 import br.com.fiap.service.agenda.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

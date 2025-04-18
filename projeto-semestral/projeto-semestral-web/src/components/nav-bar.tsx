@@ -1,25 +1,23 @@
-"use client"; // Necessário para useState
+// src/components/nav-bar.tsx (ou o caminho correto no seu projeto)
+"use client";
 
 import Link from 'next/link';
-import { useState } from 'react'; // Importa useState
+import { useState } from 'react';
 
-// Interface atualizada
 interface NabvBarProps {
     active: "inicio" | "clientes" | "cadastrar" | "oficinaOnline" | "agendamento" | "relatorio" | "pagamento"
 }
 
 export default function NavBar(props: NabvBarProps) {
     const { active } = props;
-    const baseItemClass = "border-b-4 pb-1"; // Classe base da borda e padding
-    const activeClass = `${baseItemClass} border-white`; // Borda branca para ativo/hover
-    const inactiveClass = `${baseItemClass} border-transparent`; // Borda transparente para inativo
+    const baseItemClass = "border-b-4 pb-1";
+    const activeClass = `${baseItemClass} border-white`;
+    const inactiveClass = `${baseItemClass} border-transparent`;
 
-    // Estados para controlar dropdowns
     const [isClientesMenuOpen, setIsClientesMenuOpen] = useState(false);
     const [isOficinaMenuOpen, setIsOficinaMenuOpen] = useState(false);
     const [isAgendamentoMenuOpen, setIsAgendamentoMenuOpen] = useState(false);
 
-    // Verifica se a seção ativa
     const isClientesActive = active === "clientes";
     const isOficinaActive = active === "oficinaOnline";
     const isAgendamentoActive = active === "agendamento";
@@ -32,24 +30,21 @@ export default function NavBar(props: NabvBarProps) {
             <ul className="flex flex-wrap gap-3 md:gap-4 text-sm md:text-base">
 
                 {/* --- Item Início --- */}
-                {/* Adiciona classe ativa ou inativa */}
                 <li className={active === "inicio" ? activeClass : inactiveClass}>
                     <Link href="/inicio" className="hover:text-sky-200 transition-colors cursor-pointer">Início</Link>
                 </li>
 
                 {/* --- Item Clientes (Dropdown) --- */}
                 <li
-                    className={`relative`} // Classe ativa/inativa agora vai no span/link interno
+                    className={`relative`}
                     onMouseEnter={() => setIsClientesMenuOpen(true)}
                     onMouseLeave={() => setIsClientesMenuOpen(false)}
                 >
-                    {/* Aplica classe ativa/inativa E muda para ativa no hover (isClientesMenuOpen) */}
                     <span className={`hover:text-sky-200 transition-colors cursor-default px-1 ${ (isClientesActive || isClientesMenuOpen) ? activeClass : inactiveClass }`}>
                         Clientes
                     </span>
                     {isClientesMenuOpen && (
                         <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 z-50">
-                            {/* Links internos não precisam do sublinhado */}
                             <li><Link href="/clientes/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsClientesMenuOpen(false)}>Listar Clientes</Link></li>
                             <li><Link href="/clientes/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsClientesMenuOpen(false)}>Cadastrar Cliente</Link></li>
                             <li><Link href="/clientes/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsClientesMenuOpen(false)}>Buscar Cliente</Link></li>
@@ -63,14 +58,13 @@ export default function NavBar(props: NabvBarProps) {
                     onMouseEnter={() => setIsOficinaMenuOpen(true)}
                     onMouseLeave={() => setIsOficinaMenuOpen(false)}
                 >
-                    {/* Aplica classe ativa/inativa E muda para ativa no hover (isOficinaMenuOpen) */}
                     <span className={`hover:text-sky-200 transition-colors cursor-default px-1 ${ (isOficinaActive || isOficinaMenuOpen) ? activeClass : inactiveClass }`}>
                         Oficina On-line
                     </span>
                     {isOficinaMenuOpen && (
                         <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 z-50">
-                            {/* Links internos não precisam do sublinhado */}
-                            <li><Link href="/oficinaOnline" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Listar Registros</Link></li>
+                            {/* ***** CORREÇÃO APLICADA AQUI ***** */}
+                            <li><Link href="/oficinaOnline/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Listar Registros</Link></li>
                             <li><Link href="/oficinaOnline/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Novo Diagnóstico</Link></li>
                             <li><Link href="/oficinaOnline/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Buscar Registro</Link></li>
                         </ul>
@@ -83,13 +77,11 @@ export default function NavBar(props: NabvBarProps) {
                     onMouseEnter={() => setIsAgendamentoMenuOpen(true)}
                     onMouseLeave={() => setIsAgendamentoMenuOpen(false)}
                 >
-                    {/* Aplica classe ativa/inativa E muda para ativa no hover (isAgendamentoMenuOpen) */}
                     <span className={`hover:text-sky-200 transition-colors cursor-default px-1 ${ (isAgendamentoActive || isAgendamentoMenuOpen) ? activeClass : inactiveClass }`}>
                         Agendamento
                     </span>
                     {isAgendamentoMenuOpen && (
                         <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 z-50">
-                            {/* Links internos não precisam do sublinhado */}
                             <li><Link href="/agendamento/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsAgendamentoMenuOpen(false)}>Listar Agendamentos</Link></li>
                             <li><Link href="/agendamento/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsAgendamentoMenuOpen(false)}>Novo Agendamento</Link></li>
                             <li><Link href="/agendamento/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsAgendamentoMenuOpen(false)}>Buscar Agendamento</Link></li>
@@ -98,11 +90,9 @@ export default function NavBar(props: NabvBarProps) {
                 </li>
 
                 {/* --- Outros Itens --- */}
-                {/* Adiciona classe ativa ou inativa */}
                 <li className={active === "relatorio" ? activeClass : inactiveClass}>
                     <Link href="/relatorio" className="hover:text-sky-200 transition-colors cursor-pointer">Relatório</Link>
                 </li>
-                {/* Adiciona classe ativa ou inativa */}
                 <li className={active === "pagamento" ? activeClass : inactiveClass}>
                     <Link href="/pagamento" className="hover:text-sky-200 transition-colors cursor-pointer">Pagamento</Link>
                 </li>
