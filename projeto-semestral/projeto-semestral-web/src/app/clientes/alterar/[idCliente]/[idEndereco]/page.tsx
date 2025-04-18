@@ -1,4 +1,4 @@
-// app/clientes/alterar/[idCliente]/[idEndereco]/page.tsx
+
 "use client";
 
 import { useState, useEffect, FormEvent } from 'react';

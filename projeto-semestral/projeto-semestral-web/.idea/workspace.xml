@@ -5,7 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddce8be9-886a-4acb-9483-40a7f67e752e" name="Changes" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+=======
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/alterar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/buscar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/cadastrar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/deletar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/listar/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/IaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/ia/GoogleGeminiService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/ia/GoogleGeminiServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/nav-bar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nav-bar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/projeto-semestral.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/projeto-semestral.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/resultado.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/resultadoSpring.txt" beforeDir="false" />
+>>>>>>> 79cc33aaa2684cef8c52ad591f908f10f0823515
+>>>>>>> 05573e09f5b2b7d920b82c141398337d0bdad300
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +54,11 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+<<<<<<< HEAD
+    &quot;last_opened_file_path&quot;: &quot;D:/FIAP-2025/CP-2025/mobile_aplication_development_CP_1SEM/cp2-api/Cp2_api&quot;,
+=======
     &quot;last_opened_file_path&quot;: &quot;D:/FIAP-2025/1_semestre_fiap-2025/CP2025_primeiro_semestre/Java_Advanced_CP_1SEM/projeto-semestral/projeto-semestral-web/src/app/clientes/deletar&quot;,
+>>>>>>> 79cc33aaa2684cef8c52ad591f908f10f0823515
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -53,6 +79,8 @@
       </map>
     </option>
   </component>
+<<<<<<< HEAD
+=======
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\FIAP-2025\1_semestre_fiap-2025\CP2025_primeiro_semestre\Java_Advanced_CP_1SEM\projeto-semestral\projeto-semestral-web\src\app\clientes\deletar" />
@@ -62,6 +90,7 @@
       <recent name="D:\FIAP-2025\1_semestre_fiap-2025\CP2025_primeiro_semestre\Java_Advanced_CP_1SEM\projeto-semestral\projeto-semestral-web\src\app\clientes" />
     </key>
   </component>
+>>>>>>> 79cc33aaa2684cef8c52ad591f908f10f0823515
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -81,12 +110,22 @@
       <workItem from="1743445872847" duration="27000" />
       <workItem from="1743446659015" duration="9000" />
       <workItem from="1743446669306" duration="4393000" />
+<<<<<<< HEAD
+      <workItem from="1744155336144" duration="385000" />
+      <workItem from="1744158327205" duration="538000" />
+      <workItem from="1744158913380" duration="16000" />
+=======
       <workItem from="1743466837199" duration="3000" />
       <workItem from="1744577611015" duration="1926000" />
       <workItem from="1744588244084" duration="8735000" />
       <workItem from="1744630987086" duration="7021000" />
+<<<<<<< HEAD
       <workItem from="1744646464384" duration="5001000" />
       <workItem from="1744985051386" duration="8000" />
+=======
+      <workItem from="1744646464384" duration="4377000" />
+>>>>>>> 79cc33aaa2684cef8c52ad591f908f10f0823515
+>>>>>>> 05573e09f5b2b7d920b82c141398337d0bdad300
     </task>
     <servers />
   </component>

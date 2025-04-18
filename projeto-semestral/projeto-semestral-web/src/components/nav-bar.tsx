@@ -1,24 +1,26 @@
-"use client"; // Necessário para useState
+// src/components/nav-bar.tsx (ou o caminho correto no seu projeto)
+"use client";
 
 import Link from 'next/link';
-import { useState } from 'react'; // Importa useState
+import { useState } from 'react';
 
-// Interface atualizada (sem mudanças necessárias aqui por enquanto)
 interface NabvBarProps {
     active: "inicio" | "clientes" | "cadastrar" | "oficinaOnline" | "agendamento" | "relatorio" | "pagamento"
 }
 
 export default function NavBar(props: NabvBarProps) {
     const { active } = props;
-    const classActive = "border-b-4 border-white pb-1";
+    const baseItemClass = "border-b-4 pb-1";
+    const activeClass = `${baseItemClass} border-white`;
+    const inactiveClass = `${baseItemClass} border-transparent`;
 
-    // --- Estados para controlar dropdowns ---
     const [isClientesMenuOpen, setIsClientesMenuOpen] = useState(false);
-    const [isOficinaMenuOpen, setIsOficinaMenuOpen] = useState(false); // <<< Novo estado para Oficina
+    const [isOficinaMenuOpen, setIsOficinaMenuOpen] = useState(false);
+    const [isAgendamentoMenuOpen, setIsAgendamentoMenuOpen] = useState(false);
 
-    // Verifica se a seção ativa é 'clientes' ou 'oficinaOnline'
-    const isClientesActive = active === "clientes" || active === "cadastrar"; // Mantém 'cadastrar' por compatibilidade se ainda usar
+    const isClientesActive = active === "clientes";
     const isOficinaActive = active === "oficinaOnline";
+    const isAgendamentoActive = active === "agendamento";
 
     return (
         <nav className="flex justify-between items-center p-4 md:p-6 bg-[#075985] text-white">
@@ -26,18 +28,21 @@ export default function NavBar(props: NabvBarProps) {
                 <h1 className="text-xl md:text-2xl font-bold cursor-pointer">Oficina On-line</h1>
             </Link>
             <ul className="flex flex-wrap gap-3 md:gap-4 text-sm md:text-base">
-                {/* Item Início */}
-                <li className={active === "inicio" ? classActive : ""}>
+
+                {/* --- Item Início --- */}
+                <li className={active === "inicio" ? activeClass : inactiveClass}>
                     <Link href="/inicio" className="hover:text-sky-200 transition-colors cursor-pointer">Início</Link>
                 </li>
 
-                {/* --- Item Clientes (com Dropdown) --- */}
+                {/* --- Item Clientes (Dropdown) --- */}
                 <li
-                    className={`relative ${isClientesActive ? classActive : ""}`}
+                    className={`relative`}
                     onMouseEnter={() => setIsClientesMenuOpen(true)}
                     onMouseLeave={() => setIsClientesMenuOpen(false)}
                 >
-                    <span className="hover:text-sky-200 transition-colors cursor-default px-1">Clientes</span>
+                    <span className={`hover:text-sky-200 transition-colors cursor-default px-1 ${ (isClientesActive || isClientesMenuOpen) ? activeClass : inactiveClass }`}>
+                        Clientes
+                    </span>
                     {isClientesMenuOpen && (
                         <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 z-50">
                             <li><Link href="/clientes/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsClientesMenuOpen(false)}>Listar Clientes</Link></li>
@@ -47,52 +52,48 @@ export default function NavBar(props: NabvBarProps) {
                     )}
                 </li>
 
-                {/* --- Item Oficina Online (com Dropdown) --- */}
+                {/* --- Item Oficina Online (Dropdown) --- */}
                 <li
-                    className={`relative ${isOficinaActive ? classActive : ""}`} // <<< Aplica classe ativa
-                    onMouseEnter={() => setIsOficinaMenuOpen(true)} // <<< Abre menu Oficina
-                    onMouseLeave={() => setIsOficinaMenuOpen(false)} // <<< Fecha menu Oficina
+                    className={`relative`}
+                    onMouseEnter={() => setIsOficinaMenuOpen(true)}
+                    onMouseLeave={() => setIsOficinaMenuOpen(false)}
                 >
-                    {/* <<< Trigger não clicável para Oficina >>> */}
-                    <span className="hover:text-sky-200 transition-colors cursor-default px-1">
+                    <span className={`hover:text-sky-200 transition-colors cursor-default px-1 ${ (isOficinaActive || isOficinaMenuOpen) ? activeClass : inactiveClass }`}>
                         Oficina On-line
                     </span>
-
-                    {/* <<< Dropdown Menu para Oficina >>> */}
                     {isOficinaMenuOpen && (
                         <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 z-50">
+                            {/* ***** CORREÇÃO APLICADA AQUI ***** */}
+                            <li><Link href="/oficinaOnline/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Listar Registros</Link></li>
+                            <li><Link href="/oficinaOnline/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Novo Diagnóstico</Link></li>
+                            <li><Link href="/oficinaOnline/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsOficinaMenuOpen(false)}>Buscar Registro</Link></li>
+                        </ul>
+                    )}
+                </li>
 
-                            <li>
-                                <Link
-                                    href="/oficinaOnline/cadastrar" // Link para Cadastrar novo diagnóstico
-                                    className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer"
-                                    onClick={() => setIsOficinaMenuOpen(false)}
-                                >
-                                    Novo Diagnóstico
-                                </Link>
-                            </li>
-                            {/* Adicione links para buscar/alterar oficina aqui quando existirem */}
-                            <li>
-                                <Link
-                                    href="/oficinaOnline/listar" // Link para Cadastrar novo diagnóstico
-                                    className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer"
-                                    onClick={() => setIsOficinaMenuOpen(false)}
-                                >
-                                    Listar Registros de Diagnósticos
-                                </Link>
-                            </li>
+                {/* --- Item Agendamento (Dropdown) --- */}
+                <li
+                    className={`relative`}
+                    onMouseEnter={() => setIsAgendamentoMenuOpen(true)}
+                    onMouseLeave={() => setIsAgendamentoMenuOpen(false)}
+                >
+                    <span className={`hover:text-sky-200 transition-colors cursor-default px-1 ${ (isAgendamentoActive || isAgendamentoMenuOpen) ? activeClass : inactiveClass }`}>
+                        Agendamento
+                    </span>
+                    {isAgendamentoMenuOpen && (
+                        <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 z-50">
+                            <li><Link href="/agendamento/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsAgendamentoMenuOpen(false)}>Listar Agendamentos</Link></li>
+                            <li><Link href="/agendamento/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsAgendamentoMenuOpen(false)}>Novo Agendamento</Link></li>
+                            <li><Link href="/agendamento/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors cursor-pointer" onClick={() => setIsAgendamentoMenuOpen(false)}>Buscar Agendamento</Link></li>
                         </ul>
                     )}
                 </li>
 
                 {/* --- Outros Itens --- */}
-                <li className={active === "agendamento" ? classActive : ""}>
-                    <Link href="/agendamento" className="hover:text-sky-200 transition-colors cursor-pointer">Agendamento</Link>
-                </li>
-                <li className={active === "relatorio" ? classActive : ""}>
+                <li className={active === "relatorio" ? activeClass : inactiveClass}>
                     <Link href="/relatorio" className="hover:text-sky-200 transition-colors cursor-pointer">Relatório</Link>
                 </li>
-                <li className={active === "pagamento" ? classActive : ""}>
+                <li className={active === "pagamento" ? activeClass : inactiveClass}>
                     <Link href="/pagamento" className="hover:text-sky-200 transition-colors cursor-pointer">Pagamento</Link>
                 </li>
             </ul>
