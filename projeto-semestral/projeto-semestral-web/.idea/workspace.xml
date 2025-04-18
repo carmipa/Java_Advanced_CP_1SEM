@@ -5,21 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddce8be9-886a-4acb-9483-40a7f67e752e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/alterar/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/buscar/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/cadastrar/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/deletar/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/oficinaOnline/listar/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/Controller/IaController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/ia/GoogleGeminiService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/ia/GoogleGeminiServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/nav-bar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/nav-bar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../projeto-semestral/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../projeto-semestral/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/projeto-semestral.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/projeto-semestral.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/resultado.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python_convert_java/arquivoCompleto/resultadoSpring.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +85,8 @@
       <workItem from="1744577611015" duration="1926000" />
       <workItem from="1744588244084" duration="8735000" />
       <workItem from="1744630987086" duration="7021000" />
-      <workItem from="1744646464384" duration="4377000" />
+      <workItem from="1744646464384" duration="5001000" />
+      <workItem from="1744985051386" duration="8000" />
     </task>
     <servers />
   </component>
