@@ -4,16 +4,12 @@ repositório recriado com trabalhos do 1º smestre de java advanced
 ---
 
 ## 📚 Disciplina do Semestre
-
-**Mobile Application Development**  
    - spring
    - spring security
      
 ---
 
-## 🎯 CP1 2025
-
-# 🚀 CP1 2025 - FIAP - java advanced - bank
+## 🚀 CP1 2025 - FIAP - java advanced - bank
 
 **Paulo André carminati RM557881**  
 **Gabielly Campos Macedo RM558962**
@@ -26,9 +22,7 @@ repositório recriado com trabalhos do 1º smestre de java advanced
 
 --- 
 
-## 🎯 CP2 2025
-
-# 🚀 Projeto Mercado CP2
+## 🚀 Projeto Mercado CP2
 
 # PAULO ANDRÉ CARMINATI - RM557881
 
