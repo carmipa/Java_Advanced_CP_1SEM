@@ -33,4 +33,6 @@ public interface AgendaVeiculoRepository extends JpaRepository<AgendaVeiculo, Lo
      */
     List<AgendaVeiculo> findByAgendaId(Long agendaId); // <<< MÉTODO QUE ESTAVA FALTANDO
 
+    List<AgendaVeiculo> findByVeiculoIdIn(List<Long> veiculoIds);
+
 }

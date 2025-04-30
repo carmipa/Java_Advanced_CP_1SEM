@@ -34,7 +34,9 @@ interface NavBarProps {
         | "relatorio-agendamentos-futuros"
         | "relatorio-contagem-mensal"
         | "relatorio-historico-cliente"
+        | "relatorio-cliente-completo"
         | "relatorio-servicos-agendados";
+
 }
 
 type OpenMenuType = null | 'clientes' | 'veiculo' | 'oficina' | 'agendamento' | 'relatorio';
@@ -167,6 +169,7 @@ export default function NavBar({ active }: NavBarProps) {
                             <li><Link href="/relatorio/contagem-mensal" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Contagem Mensal</Link></li>
                             <li><Link href="/relatorio/historico-cliente" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Histórico por Cliente</Link></li>
                             <li><Link href="/relatorio/servicos-agendados" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Serviços Agendados</Link></li>
+                            <li><Link href="/relatorio/cliente-completo" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Relatorio de Cliente</Link></li>
                         </ul>
                     )}
                 </li>
