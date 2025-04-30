@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate; // <-- Importar RestTemplate
 
 @EnableJpaRepositories
 @SpringBootApplication
-@ComponentScan(basePackages = "br.com.fiap")
+// @ComponentScan(basePackages = "br.com.fiap")
 @EnableCaching
 @OpenAPIDefinition(info = @Info(title = "PROJETO-SEMESTRAL-1.0", description = "REFATORAÇÃO DO CHALLENGE 2024", version = "v1"))
 public class App {

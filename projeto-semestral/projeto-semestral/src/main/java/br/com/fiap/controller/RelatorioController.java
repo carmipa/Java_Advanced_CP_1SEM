@@ -1,5 +1,5 @@
 // src/main/java/br/com/fiap/Controller/RelatorioController.java
-package br.com.fiap.Controller;
+package br.com.fiap.controller;
 
 // --- Imports NECESSÁRIOS ---
 // DTOs
