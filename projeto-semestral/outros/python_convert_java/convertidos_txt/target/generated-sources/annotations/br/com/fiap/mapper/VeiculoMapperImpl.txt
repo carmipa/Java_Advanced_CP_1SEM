@@ -1,0 +1,76 @@
+package br.com.fiap.mapper;
+
+import br.com.fiap.dto.veiculo.VeiculoRequestDto;
+import br.com.fiap.dto.veiculo.VeiculoResponseDto;
+import br.com.fiap.model.Veiculo;
+import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = "org.mapstruct.ap.MappingProcessor",
+    date = "2025-04-14T13:57:10-0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+)
+@Component
+public class VeiculoMapperImpl implements VeiculoMapper {
+
+    @Override
+    public Veiculo toEntity(VeiculoRequestDto dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        Veiculo veiculo = new Veiculo();
+
+        veiculo.setTipoVeiculo( dto.getTipoVeiculo() );
+        veiculo.setRenavam( dto.getRenavam() );
+        veiculo.setPlaca( dto.getPlaca() );
+        veiculo.setModelo( dto.getModelo() );
+        veiculo.setProprietario( dto.getProprietario() );
+        veiculo.setMontadora( dto.getMontadora() );
+        veiculo.setCor( dto.getCor() );
+        veiculo.setMotor( dto.getMotor() );
+        veiculo.setAnoFabricacao( dto.getAnoFabricacao() );
+
+        return veiculo;
+    }
+
+    @Override
+    public VeiculoResponseDto toResponseDto(Veiculo entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        VeiculoResponseDto veiculoResponseDto = new VeiculoResponseDto();
+
+        veiculoResponseDto.setId( entity.getId() );
+        veiculoResponseDto.setTipoVeiculo( entity.getTipoVeiculo() );
+        veiculoResponseDto.setRenavam( entity.getRenavam() );
+        veiculoResponseDto.setPlaca( entity.getPlaca() );
+        veiculoResponseDto.setModelo( entity.getModelo() );
+        veiculoResponseDto.setProprietario( entity.getProprietario() );
+        veiculoResponseDto.setMontadora( entity.getMontadora() );
+        veiculoResponseDto.setCor( entity.getCor() );
+        veiculoResponseDto.setMotor( entity.getMotor() );
+        veiculoResponseDto.setAnoFabricacao( entity.getAnoFabricacao() );
+
+        return veiculoResponseDto;
+    }
+
+    @Override
+    public void updateEntityFromDto(VeiculoRequestDto dto, Veiculo entity) {
+        if ( dto == null ) {
+            return;
+        }
+
+        entity.setTipoVeiculo( dto.getTipoVeiculo() );
+        entity.setRenavam( dto.getRenavam() );
+        entity.setPlaca( dto.getPlaca() );
+        entity.setModelo( dto.getModelo() );
+        entity.setProprietario( dto.getProprietario() );
+        entity.setMontadora( dto.getMontadora() );
+        entity.setCor( dto.getCor() );
+        entity.setMotor( dto.getMotor() );
+        entity.setAnoFabricacao( dto.getAnoFabricacao() );
+    }
+}

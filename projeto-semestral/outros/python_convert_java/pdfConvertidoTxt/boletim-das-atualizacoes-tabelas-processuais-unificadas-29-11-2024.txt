@@ -1,0 +1,1349 @@
+BOLETIM DAS
+ATUALIZAÇÕES
+
+TABELAS PROCESSUAIS UNIFICADAS
+
+ALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024
+
+Informamos que em 29 de novembro de 2024 houve 
+publicação de novas versões das Tabelas Processuais 
+Unificadas. As alterações foram as seguintes:
+
+I – CLASSES
+
+a)  Criação
+
+1)  Criação da classe “15423 – Revisão Judicial – Conselho de Justificação” na árvore “11028 
+– Processo Militar”, habilitada para o primeiro e segundo graus e competência militar de 
+primeiro e segundo graus da Justiça Estadual, para toda a Justiça Militar da União e toda 
+Justiça Militar Estadual;
+
+2)  Criação da classe “15430 – Cumprimento de Sentença – Reclamação Pré-processual” na 
+árvore “155 – Procedimento de Cumprimento de Sentença/Decisão”, habilitada para o 
+primeiro e segundo graus da Justiça Estadual e para o primeiro e segundo graus da Justiça 
+Federal;
+
+b) 
+
+Inativação
+
+1) 
+
+2) 
+
+Inativação da classe “12251 – Execução de Título Judicial – Cejusc”;
+
+Inativação da classe “1111 – Execução de Título Judicial”;
+
+c)  Alteração
+
+1)  Alteração do glossário da classe “159 – Execução de Título Extrajudicial” que passa a vigorar 
+como: “Este ramo identifica as classes específicas que devem ser utilizadas para todas 
+as execuções de títulos extrajudiciais à exceção das execuções fiscais e das execuções 
+hipotecárias.”;
+
+2)  Alteração do campo norma da classe “11793 – Produção Antecipada de Provas”, que passa 
+a vigorar como “CPC e CPP”, bem como do campo artigo, que passa a vigorar como “381, 
+§ 5º (CPC); 156, I (CPP)”, e do campo glossário, que passa a vigorar como “Classe utilizada 
+com o objetivo de produzir prova destinada a processos criminais relativa à existência fato 
+ou relação jurídica que não tenha caráter contencioso, tal como fundamentada no CPP, art. 
+156, inciso I, e no CPC, art, 381, § 5°.”.
+
+2
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024II – MOVIMENTOS
+
+a)  Criação
+
+1)  Criação do movimento “15424 – Não Homologação de ANPP” na árvore “12477 – Não-
+homologação”, habilitado para o primeiro e segundo graus e competência militar de 
+primeiro e segundo graus da Justiça Estadual, para o primeiro e segundo graus da Justiça 
+Federal, para toda a Justiça Militar da União, toda a Justiça Militar Estadual, STJ e STF;
+
+2)  Criação do movimento “15425 – Aguardando Captura ou Apresentação de Desertor” na 
+árvore “25 – Suspensão ou Sobrestamento”, habilitado para o primeiro e segundo graus e 
+competência militar de primeiro e segundo graus da Justiça Estadual, para toda a Justiça 
+Militar da União e toda a Justiça Militar Estadual;
+
+3)  Criação do movimento “15426 – Captura ou Apresentação de Desertor” na árvore “108 – 
+Decretação de Prisão Criminal”, habilitado para o primeiro e segundo graus e competência 
+militar de primeiro e segundo graus da Justiça Estadual, para toda a Justiça Militar da União 
+e toda a Justiça Militar Estadual;
+
+4)  Criação do movimento “15427- Audiência de Admoestação” na árvore “970 – Audiência”, 
+habilitado para a competência militar de primeiro grau da Justiça Estadual, para o primeiro 
+grau da Justiça Militar da União e para o primeiro grau da Justiça Militar Estadual;
+
+5)  Criação do movimento “15486 – Medida Protetiva da Lei Maria Penha” na hierarquia “817 – 
+Concessão”, habilitado para o primeiro e segundo graus e competência militar de primeiro 
+e segundo graus da Justiça Estadual, para toda a Justiça Militar da União, para toda a Justiça 
+Militar Estadual, para o STJ e para o STF;
+
+6)  Criação do movimento “15487 – Medida Protetiva da Lei Maria Penha” na hierarquia “888 
+– Concessão em Parte”, habilitado para o primeiro e segundo graus e competência militar 
+de primeiro e segundo graus da Justiça Estadual, para toda a Justiça Militar da União, para 
+toda a Justiça Militar Estadual, para o STJ e para o STF;
+
+7)  Criação do movimento “15488 – Medida Protetiva da Lei Maria Penha” na hierarquia “968 
+– Não Concessão”, habilitado para o primeiro e segundo graus e competência militar de 
+primeiro e segundo graus da Justiça Estadual, para toda a Justiça Militar da União, para 
+toda a Justiça Militar Estadual, para o STJ e para o STF;
+
+8)  Criação do movimento “15489 – Medida Protetiva da Lei Maria Penha” na hierarquia “157 - 
+Revogação”, habilitado para o primeiro e segundo graus e competência militar de primeiro 
+e segundo graus da Justiça Estadual, para toda a Justiça Militar da União, para toda a Justiça 
+Militar Estadual, para o STJ e para o STF;
+
+9)  Criação do movimento “15490 – Prorrogação de Medida Protetiva da Lei Maria Penha” na 
+hierarquia “3 - Decisão”, habilitado para o primeiro e segundo graus e competência militar 
+de primeiro e segundo graus da Justiça Estadual, para toda a Justiça Militar da União, para 
+toda a Justiça Militar Estadual, para o STJ e para o STF;
+
+3
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202410)  Criação do movimento “15491 – Medida Protetiva da Lei Henry Borel” na hierarquia “817 
+- Concessão”, habilitado para o primeiro e segundo graus da Justiça Estadual, para o STJ e 
+para o STF;
+
+11)  Criação do movimento “15492 – Medida Protetiva da Lei Henry Borel” na hierarquia “888 – 
+Concessão em Parte”, habilitado para o primeiro e segundo graus da Justiça Estadual, para 
+o STJ e para o STF;
+
+12)  Criação do movimento “15493 – Medida Protetiva da Lei Henry Borel” na hierarquia “968 
+– Não-Concessão”, habilitado para o primeiro e segundo graus da Justiça Estadual, para o 
+STJ e para o STF;
+
+13)  Criação do movimento “15494 – Medida Protetiva da Lei Henry Borel” na hierarquia “157 
+– Revogação”, habilitado para o primeiro e segundo graus da Justiça Estadual, para o STJ 
+e para o STF;
+
+14)  Criação do movimento “15495 – Prorrogação de Medida Protetiva da Lei Henry Borel” na 
+hierarquia “3 - Decisão”, habilitado para o primeiro e segundo graus da Justiça Estadual, 
+para o STJ e para o STF;
+
+15)  Criação do movimento “15496 – Medida de Proteção do Estatuto do Idoso” na hierarquia 
+“817 - Concessão”, habilitado para o primeiro e segundo graus da Justiça Estadual, para o 
+STJ e para o STF;
+
+16)  Criação do movimento “15497 – Medida de Proteção do Estatuto do Idoso” na hierarquia 
+“888 – Concessão em Parte”, habilitado para o primeiro e segundo graus da Justiça Estadual, 
+para o STJ e para o STF;
+
+17)  Criação do movimento “15498 – Medida de Proteção do Estatuto do Idoso” na hierarquia 
+“968 – Não-Concessão”, habilitada para o primeiro e segundo graus da Justiça Estadual, 
+para o STJ e para o STF;
+
+18)  Criação do movimento “15499 – Medida de Proteção do Estatuto do Idoso” na hierarquia 
+“157 - Revogação”, habilitada para o primeiro e segundo graus da Justiça Estadual, para o 
+STJ e para o STF;
+
+19)  Criação do movimento “15500 – Prorrogação de Medida de Proteção do Estatuto do Idoso” 
+na hierarquia “3 - Decisão”, habilitada para o primeiro e segundo graus da Justiça Estadual, 
+para o STJ e para o STF;
+
+20)  Criação  do  movimento “15501  –  Medida  de  Proteção  do  Estatuto  da  Criança  e  do 
+Adolescente” na hierarquia “817 - Concessão”, habilitado para o primeiro e segundo graus 
+da Justiça Estadual, para o STJ e para o STF;
+
+21)  Criação  do  movimento “15502  –  Medida  de  Proteção  do  Estatuto  da  Criança  e  do 
+Adolescente” na hierarquia “888 – Concessão em Parte”, habilitado para o primeiro e 
+segundo graus da Justiça Estadual, para o STJ e para o STF;
+
+4
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202422)  Criação  do  movimento “15503  –  Medida  de  Proteção  do  Estatuto  da  Criança  e  do 
+Adolescente” na hierarquia “968 – Não-Concessão”, habilitado para o primeiro e segundo 
+graus da Justiça Estadual, para o STJ e para o STF;
+
+23)  Criação  do  movimento “15504  –  Medida  de  Proteção  do  Estatuto  da  Criança  e  do 
+Adolescente” na hierarquia “157 - Revogação”, habilitado para o primeiro e segundo graus 
+da Justiça Estadual, para o STJ e para o STF;
+
+24)  Criação do movimento “15505 – Prorrogação de Medida de Proteção do Estatuto da Criança 
+e do Adolescente” na hierarquia “3 - Decisão”, habilitado para o primeiro e segundo graus 
+da Justiça Estadual, para o STJ e para o STF;
+
+25)  Criação do movimento “15506 – Medida de Proteção da Lei 13.431/2017” na hierarquia 
+“817 - Concessão”, habilitado para o primeiro e segundo graus e competência militar de 
+primeiro e segundo graus da Justiça Estadual, para o primeiro e segundo graus da Justiça 
+Federal, para toda a Justiça Militar da União, para toda a Justiça Militar Estadual, para toda 
+Justiça Eleitoral, para o STJ e para o STF;
+
+26)  Criação do movimento “15507 – Medida de Proteção da Lei 13.431/2017” na hierarquia 
+“888 – Concessão em Parte”, habilitado para o primeiro e segundo graus e competência 
+militar de primeiro e segundo graus da Justiça Estadual, para o primeiro e segundo graus 
+da Justiça Federal, para toda a Justiça Militar da União, para toda a Justiça Militar Estadual, 
+para toda Justiça Eleitoral, para o STJ e para o STF;
+
+27)  Criação do movimento “15508 – Medida de Proteção da Lei 13.431/2017” na hierarquia “968 
+– Não-Concessão”, habilitado para o primeiro e segundo graus e competência militar de 
+primeiro e segundo graus da Justiça Estadual, para o primeiro e segundo graus da Justiça 
+Federal, para toda a Justiça Militar da União, para toda a Justiça Militar Estadual, para toda 
+Justiça Eleitoral, para o STJ e para o STF;
+
+28)  Criação do movimento “15509 – Medida de Proteção da Lei 13.431/2017” na hierarquia 
+“157 - Revogação”, habilitado para o primeiro e segundo graus e competência militar de 
+primeiro e segundo graus da Justiça Estadual, para o primeiro e segundo graus da Justiça 
+Federal, para toda a Justiça Militar da União, para toda a Justiça Militar Estadual, para toda 
+Justiça Eleitoral, para o STJ e para o STF;
+
+29)  Criação do movimento “15510 – Prorrogação de Medida de Proteção da Lei 13.431/2017” 
+na hierarquia “3 - Decisão”, habilitado para o primeiro e segundo graus e competência 
+militar de primeiro e segundo graus da Justiça Estadual, para o primeiro e segundo graus 
+da Justiça Federal, para toda a Justiça Militar da União, para toda a Justiça Militar Estadual, 
+para toda Justiça Eleitoral, para o STJ e para o STF.
+
+b) 
+
+Inativação
+
+1) 
+
+2) 
+
+Inativação do movimento “11423 – Medida Protetiva”;
+
+Inativação do movimento “11424 – Medida Protetiva”;
+
+5
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/20243) 
+
+4) 
+
+5) 
+
+Inativação do movimento “11425 – Medida Protetiva”;
+
+Inativação do movimento “11426 – Medida Protetiva”;
+
+Inativação do movimento “14733 – Prorrogação de Medida Protetiva”.
+
+c)  Habilitação
+
+1)  Habilitação do movimento “12474 – Distribuição” para toda a competência militar da Justiça 
+
+Estadual e para toda a Justiça Militar da União;
+
+2)  Habilitação do movimento “347 – Tutela Provisória” para toda a Justiça Militar da União;
+
+3)  Habilitação do movimento “889 – Tutela Provisória” para toda a Justiça Militar da União.
+
+d) 
+
+Inclusão de Complemento
+
+1) 
+
+Inclusão do complemento do tipo identificador “1 – nome_da_parte” no movimento “230 
+– Recurso Prejudicado”, bem como a alteração de sua descrição para “Prejudicado o recurso 
+#{nome_da_parte}”.
+
+e)  Alteração
+
+1)  Alteração do campo norma do movimento “12141 – Relaxamento Flagrante”, que passa a 
+vigorar como “Código de Processo Penal e ECA”, bem como do campo artigo, que passa a 
+vigorar como “310, I (CPP); 175 (ECA)”, e do glossário, que passa a vigorar como “Movimento 
+a ser usado tanto no relaxamento da prisão em flagrante quanto no relaxamento da 
+apreensão do adolescente em flagrante. CPP Art. 310. Ao receber o auto de prisão em 
+flagrante, o juiz deverá fundamentadamente: I - relaxar a prisão ilegal; ECA Art. 175. Em 
+caso de não liberação, a autoridade policial encaminhará, desde logo, o adolescente ao 
+representante do Ministério Público, juntamente com cópia do auto de apreensão ou 
+boletim de ocorrência. § 1º Sendo impossível a apresentação imediata, a autoridade 
+policial encaminhará o adolescente à entidade de atendimento, que fará a apresentação 
+ao representante do Ministério Público no prazo de vinte e quatro horas.§ 2º Nas localidades 
+onde não houver entidade de atendimento, a apresentação far-se-á pela autoridade policial. 
+À falta de repartição policial especializada, o adolescente aguardará a apresentação em 
+dependência separada da destinada a maiores, não podendo, em qualquer hipótese, 
+exceder o prazo referido no parágrafo anterior.”;
+
+2)  Alteração da descrição do movimento “12430 – Arquivamento”, que passa a vigorar como 
+“Movimento a ser lançado quando o magistrado determina o arquivamento definitivo 
+do processo após o encerramento da prestação jurisdicional, à exceção arquivamento de 
+procedimentos investigatórios, quando deve ser utilizado o movimento 1063 (Determinação 
+de Arquivamento de Procedimentos Investigtórios)”, além da retirada das informações dos 
+campos norma e artigo;
+
+6
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/20243)  Alteração da descrição do movimento “1063 – Determinação de Arquivamento de 
+Procedimento Investigatórios”, que passa a vigorar como “Determinado o arquivamento 
+do procedimento investigatório”;
+
+4)  Alteração do nome do movimento “349 – Assistência Judiciário Gratuita” para “Gratuidade 
+de Justiça”, bem como de sua descrição, que passa a vigora como “Revogada a gratuidade 
+de justiça”, do campo norma, que passa a vigorar como “CPC”, do campo artigo, que passa 
+a vigorar como “98, § 1º e 100” e de seu glossário, que passa a vigorar como “Art. 98 ... § 1º 
+A gratuidade da justiça compreende: I - as taxas ou as custas judiciais; II - os selos postais; 
+III - as despesas com publicação na imprensa oficial, dispensando-se a publicação em 
+outros meios; IV - a indenização devida à testemunha que, quando empregada, receberá do 
+empregador salário integral, como se em serviço estivesse; V - as despesas com a realização 
+de exame de código genético - DNA e de outros exames considerados essenciais; VI - os 
+honorários do advogado e do perito e a remuneração do intérprete ou do tradutor nomeado 
+para apresentação de versão em português de documento redigido em língua estrangeira; 
+VII - o custo com a elaboração de memória de cálculo, quando exigida para instauração da 
+execução; VIII - os depósitos previstos em lei para interposição de recurso, para propositura 
+de ação e para a prática de outros atos processuais inerentes ao exercício da ampla defesa 
+e do contraditório;IX os emolumentos devidos a notários ou registradores em decorrência 
+da prática de registro, averbação ou qualquer outro ato notarial necessário à efetivação 
+de decisão judicial ou à continuidade de processo judicial no qual o benefício tenha sido 
+concedido. ... Art. 100. Deferido o pedido, a parte contrária poderá oferecer impugnação na 
+contestação, na réplica, nas contrarrazões de recurso ou, nos casos de pedido superveniente 
+ou formulado por terceiro, por meio de petição simples, a ser apresentada no prazo de 15 
+(quinze) dias, nos autos do próprio processo, sem suspensão de seu curso. Parágrafo único. 
+Revogado o benefício, a parte arcará com as despesas processuais que tiver deixado de 
+adiantar e pagará, em caso de má-fé, até o décuplo de seu valor a título de multa, que será 
+revertida em benefício da Fazenda Pública estadual ou federal e poderá ser inscrita em 
+dívida ativa.”
+
+5)  Alteração do glossário do movimento “787 – Gratuidade de Justiça”, que passa a vigorar 
+como “Art. 98. A pessoa natural ou jurídica, brasileira ou estrangeira, com insuficiência de 
+recursos para pagar as custas, as despesas processuais e os honorários advocatícios tem 
+direito à gratuidade da justiça, na forma da lei. § 1º A gratuidade da justiça compreende: 
+I - as taxas ou as custas judiciais; II - os selos postais; III - as despesas com publicação na 
+imprensa oficial, dispensando-se a publicação em outros meios; IV - a indenização devida 
+à testemunha que, quando empregada, receberá do empregador salário integral, como se 
+em serviço estivesse; V - as despesas com a realização de exame de código genético - DNA 
+e de outros exames considerados essenciais; VI - os honorários do advogado e do perito 
+e a remuneração do intérprete ou do tradutor nomeado para apresentação de versão em 
+português de documento redigido em língua estrangeira; VII - o custo com a elaboração 
+de memória de cálculo, quando exigida para instauração da execução; VIII - os depósitos 
+previstos em lei para interposição de recurso, para propositura de ação e para a prática 
+
+7
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024de outros atos processuais inerentes ao exercício da ampla defesa e do contraditório; 
+IX - os emolumentos devidos a notários ou registradores em decorrência da prática de 
+registro, averbação ou qualquer outro ato notarial necessário à efetivação de decisão 
+judicial ou à continuidade de processo judicial no qual o benefício tenha sido concedido. 
+§ 2º A concessão de gratuidade não afasta a responsabilidade do beneficiário pelas 
+despesas processuais e pelos honorários advocatícios decorrentes de sua sucumbência. 
+§ 3º Vencido o beneficiário, as obrigações decorrentes de sua sucumbência ficarão sob 
+condição suspensiva de exigibilidade e somente poderão ser executadas se, nos 5 (cinco) 
+anos subsequentes ao trânsito em julgado da decisão que as certificou, o credor demonstrar 
+que deixou de existir a situação de insuficiência de recursos que justificou a concessão 
+de gratuidade, extinguindo-se, passado esse prazo, tais obrigações do beneficiário. § 4º 
+A concessão de gratuidade não afasta o dever de o beneficiário pagar, ao final, as multas 
+processuais que lhe sejam impostas. § 5º A gratuidade poderá ser concedida em relação 
+a algum ou a todos os atos processuais, ou consistir na redução percentual de despesas 
+processuais que o beneficiário tiver de adiantar no curso do procedimento. § 6º Conforme 
+o caso, o juiz poderá conceder direito ao parcelamento de despesas processuais que o 
+beneficiário tiver de adiantar no curso do procedimento. § 7º Aplica-se o disposto no art. 
+95, §§ 3º a 5º , ao custeio dos emolumentos previstos no § 1º, inciso IX, do presente artigo, 
+observada a tabela e as condições da lei estadual ou distrital respectiva. § 8º Na hipótese do 
+§ 1º, inciso IX, havendo dúvida fundada quanto ao preenchimento atual dos pressupostos 
+para a concessão de gratuidade, o notário ou registrador, após praticar o ato, pode requerer, 
+ao juízo competente para decidir questões notariais ou registrais, a revogação total ou 
+parcial do benefício ou a sua substituição pelo parcelamento de que trata o § 6º deste 
+artigo, caso em que o beneficiário será citado para, em 15 (quinze) dias, manifestar-se sobre 
+esse requerimento.”;
+
+6)  Alteração da descrição do movimento “12458 – Não Conhecimento do Habeas Corpus” para 
+
+“Não conhecido o Habeas Corpus de #{nome_da_parte};
+
+7)  Alteração da descrição do movimento “14982 – Suspensão/Sobrestamento Determinada 
+por Ação de Controle Concentrado de Constitucionalidade – STF” para “Levantada a causa 
+suspensiva ou de sobrestamento por ação de controle concentrado de Constitucionalidade 
+- STF #{classe_acao_controle_constitucionalidade_STF} de número #{numero_classe_
+controle_constitucionalidade_STF}”;
+
+8)  Alteração da descrição do movimento “14971 – Por Ação de Controle Concentrado 
+de Constitucionalidade” para “Processo suspenso ou sobrestado por ação de controle 
+concentrado de constitucionalidade do tipo #{classe_acao_controle_constitucionalidade_
+STF} de número #{numero_classe_controle_constitucionalidade_STF}”;
+
+9)  Alteração do campo artigo do movimento “458 – Abandono de causa” para “485, III”, bem 
+como de seu glossário para “por não promover os atos e as diligências que lhe incumbir, o 
+autor abandonar a causa por mais de 30 (trinta) dias”;
+
+8
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202410)  Revisão geral no campo “visibilidade externa” da tabela de movimento, tornando como 
+regra a habilitação deste campo, ou seja, a visibilidade externa de todos os movimentos, 
+com a exceção dos seguintes: “108 - Decretação de Prisão Criminal”, “113 - Decretação de 
+Prisão Civil”, “117 - Decretação de Internação”, “157 – Revogação”, “352 – Temporária”, “353 
+– Preventiva”, “354 – Alimentos”, “355 - Depositário Infiel”, “357 –Temporária”, “358 - Prisão 
+Preventiva”, “823 – Provisória”, “824 – Definitiva”, “905 – De Estrangeiro para Deportação, 
+- Bloqueio/Penhora on 
+Expulsão ou Extradição”, “1004 - Livramento Condicional”, “11382 
+-  Quebra  de  Sigilo 
+Line”, “11393 – Sanção”, “12037 - Quebra de Sigilo Fiscal”, “12038 
+Bancário”, “12039 - Quebra de Sigilo Telemático”, “12040 - Indisponibilidade de Bens”, “15424 - 
+Não Homologação de ANPP” e “15425 - Aguardando Apresentação ou Captura de Desertor”;
+
+11)  Alteração do nome do movimento “14681 – Descumprimento de Medida Protetiva” 
+para “Descumprimento de Medida Protetiva da Lei Maria da Penha”, com exclusão do 
+complemento “31 – destinatário_de_medida_protetiva” e alteração da descrição do 
+movimento para “Descumprida a medida protetiva de #{tipo_de_medida_protetiva_Lei_
+Maria_da_Penha}”;
+
+12)  Alteração do nome do movimento “12476 – Medida Protetiva Determinada por Autoridade 
+Policial” para “Medida Protetiva da Lei Maria da Penha Determinada por Autoridade Policial”, 
+com exclusão do complemento “31 – destinatário_de_medida_protetiva” e alteração da 
+descrição do movimento para “Homologada medida protetiva de #{tipo_de_medida_
+protetiva_Lei_Maria_da_Penha} determinada por autoridade policial”;
+
+13)  Alteração do nome do movimento “12479 – Medida Protetiva Determinada por Autoridade 
+Policial” para “Medida Protetiva da Lei Maria da Penha Determinada por Autoridade Policial”, 
+com exclusão do complemento “31 – destinatário_de_medida_protetiva” e alteração 
+da descrição do movimento para “Revogada medida protetiva de #{tipo_de_medida_
+protetiva_Lei_Maria_da_Penha} determinada por autoridade policial”;
+
+14)  Alteração da descrição do movimento “12616 – Composição Civil dos Danos” para “Extinta a 
+punibilidade de #{nome_da_parte} por composição civil dos danos}, bem como a marcação 
+de “monocrático” e “colegiado” no campo “sujeito ativo no 2º grau.
+
+III – ASSUNTOS
+
+a)  Criação
+
+1)  Criação do assunto “15428 – Lesão Corporal Culposa” na árvore “11228 – Lesão Corporal e 
+Rixa”, habilitado para o primeiro grau e a competência militar de primeiro e segundo graus 
+da Justiça Estadual, para toda a Justiça Militar da União, toda a Justiça Militar Estadual, STJ 
+e STF;
+
+2)  Criação do assunto “15429 – Propaganda Política – Propaganda Eleitoral – Uso de Inteligência 
+Artificial” na árvore “11652 – Propaganda Política – Propaganda Eleitoral”, habilitado para 
+toda a Justiça Eleitoral;
+
+9
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/20243)  Criação do assunto “15434 – Ausência de Registro de Atividades ou de Fornecimento de 
+Declaração de Nascimento” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para toda a Justiça Estadual (exceto Juizado Especial da Fazenda 
+Pública), toda a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda a Justiça 
+Militar Estadual, STJ e STF;
+
+4)  Criação do assunto “15435 – Ausência Identificação Correta de Neonato e de Parturiente e 
+de Realização de Exames” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para toda a Justiça Estadual (exceto Juizado Especial da Fazenda 
+Pública), toda a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda a Justiça 
+Militar Estadual, STJ e STF;
+
+5)  Criação do assunto “15436 – Privação de Liberdade de Criança ou Adolescente” na árvore 
+“3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, habilitado para toda a 
+Justiça Estadual (exceto Juizado Especial da Fazenda Pública), toda a Justiça Federal (exceto 
+CJF), toda a Justiça Militar da União, toda a Justiça Militar Estadual, STJ e STF;
+
+6)  Criação do assunto “15437 – Ausência de Comunicação Imediata de Apreensão à Autoridade 
+Competente e/ou à Família” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para toda a Justiça Estadual (exceto Juizado Especial da Fazenda 
+Pública), toda a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda a Justiça 
+Militar Estadual, STJ e STF;
+
+7)  Criação do assunto “15438 – Vexame ou Constrangimento de Criança ou Adolescente” na 
+árvore “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, habilitado para 
+toda a Justiça Estadual (exceto Juizado Especial da Fazenda Pública), toda a Justiça Federal 
+(exceto CJF), toda a Justiça Militar da União, toda a Justiça Militar Estadual, STJ e STF;
+
+8)  Criação do assunto “15439 – Ausência de Liberação Imediata de Adolescente Ilegalmente 
+Apreendido” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, 
+habilitado para toda a Justiça Estadual (exceto Juizado Especial da Fazenda Pública), toda 
+a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda a Justiça Militar Estadual, 
+STJ e STF;
+
+9)  Criação do assunto “15440 – Descumprimento de Prazo em Benefício de Adolescente 
+Privado de Liberdade” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para toda a Justiça Estadual (exceto Juizado Especial da Fazenda 
+Pública), toda a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda a Justiça 
+Militar Estadual, STJ e STF;
+
+10)  Criação do assunto “15441 – Impedimento ou Embaraçamento de Ação de Autoridade 
+Judiciária, Conselho Tutelar ou MP (ECA)” na árvore “3637 – Crimes Previstos no Estatuto da 
+Criança e do Adolescente”, habilitado para toda a Justiça Estadual (exceto Juizado Especial 
+da Fazenda Pública), toda a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda 
+a Justiça Militar Estadual, STJ e STF;
+
+10
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202411)  Criação do assunto “15442 – Subtração de Criança ou Adolescente com o Fim de Colocação 
+em Lar Substituto” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para o primeiro e segundo graus e toda competência militar da 
+Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da 
+União, toda a Justiça Militar Estadual, STJ e STF;
+
+12)  Criação do assunto “15443 – Promessa ou Efetiva Entrega de Filho ou Pupilo Mediante 
+Paga ou Recompensa” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+13)  Criação do assunto “15444 – Promoção ou Auxílio em Ato Destinado ao Envio de Criança 
+ou Adolescente ao Exterior” na árvore “3637 – Crimes Previstos no Estatuto da Criança e 
+do Adolescente”, habilitado para o primeiro e segundo graus e toda competência militar 
+da Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da 
+União, toda a Justiça Militar Estadual, STJ e STF;
+
+14)  Criação do assunto “15445 – Produção, Reprodução ou Registro de Pornografia de Criança 
+ou Adolescente” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, 
+habilitado para o primeiro e segundo graus e toda competência militar da Justiça Estadual, 
+o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da União, toda a Justiça 
+Militar Estadual, STJ e STF;
+
+15)  Criação do assunto “15446 – Venda ou Exposição à Venda de Material Contendo Pornografia 
+com Criança ou Adolescente” na árvore “3637 – Crimes Previstos no Estatuto da Criança e 
+do Adolescente”, habilitado para o primeiro e segundo graus e toda competência militar 
+da Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da 
+União, toda a Justiça Militar Estadual, STJ e STF;
+
+16)  Criação do assunto “15447 – Divulgação de Material Pornográfico de Criança ou Adolescente” 
+na árvore “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, habilitado para 
+o primeiro e segundo graus e toda competência militar da Justiça Estadual, o primeiro e 
+segundo graus da Justiça Federal, toda a Justiça Militar da União, toda a Justiça Militar 
+Estadual, STJ e STF;
+
+17)  Criação do assunto “15448 – Aquisição, Posse ou Armazenamento de Pornografia de 
+Criança ou Adolescente” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para o primeiro e segundo graus e toda competência militar da 
+Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da 
+União, toda a Justiça Militar Estadual, STJ e STF;
+
+18)  Criação do assunto “15449 – Simulação da Participação de Criança ou Adolescente em 
+Material Pornográfico” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para o primeiro e segundo graus e toda competência militar da 
+Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da 
+União, toda a Justiça Militar Estadual, STJ e STF;
+
+11
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202419)  Criação do assunto “15450 – Aliciamento, Assédio, Instigação ou Constrangimento de 
+Criança para a Prática de Ato Libidinoso” na árvore “3637 – Crimes Previstos no Estatuto da 
+Criança e do Adolescente”, habilitado para o primeiro e segundo graus e toda competência 
+militar da Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça 
+Militar da União, toda a Justiça Militar Estadual, STJ e STF;
+
+20)  Criação do assunto “15451 – Venda, Fornecimento ou Entrega de Arma, Munição ou 
+Explosivo a Criança ou Adolescente” na árvore “3637 – Crimes Previstos no Estatuto da 
+Criança e do Adolescente”, habilitado para o primeiro e segundo graus e toda competência 
+militar da Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça 
+Militar da União, toda a Justiça Militar Estadual, STJ e STF;
+
+21)  Criação do assunto “15452 – Venda ou Entrega de Bebida Alcóolica ou Outra Droga a 
+Criança ou Adolescente” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do 
+Adolescente”, habilitado para o primeiro e segundo graus e toda competência militar da 
+Justiça Estadual, o primeiro e segundo graus da Justiça Federal, toda a Justiça Militar da 
+União, toda a Justiça Militar Estadual, STJ e STF;
+
+22)  Criação do assunto “15453 – Venda, Fornecimento ou Entrega de Fogos de Artifício ou de 
+Estampido a Criança ou Adolescente” na árvore “3637 – Crimes Previstos no Estatuto da 
+Criança e do Adolescente”, habilitado para toda a Justiça Estadual (exceto Juizado Especial 
+da Fazenda Pública), toda a Justiça Federal (exceto CJF), toda a Justiça Militar da União, toda 
+a Justiça Militar Estadual, STJ e STF;
+
+23)  Criação do assunto “15454 – Prostituição ou Exploração Sexual de Criança ou Adolescente” 
+na árvore “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, habilitado 
+para o primeiro e segundo graus e toda competência militar da Justiça Estadual, o primeiro 
+e segundo graus da Justiça Federal, toda a Justiça Militar da União, toda a Justiça Militar 
+Estadual, STJ e STF;
+
+24)  Criação do assunto “15455 – Corrupção ou Facilitação de Corrupção de Menor de Dezoito 
+Anos” na árvore “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente”, habilitado 
+para o primeiro e segundo graus e toda competência militar da Justiça Estadual, o primeiro 
+e segundo graus da Justiça Federal, toda a Justiça Militar da União, toda a Justiça Militar 
+Estadual, STJ e STF;
+
+25)  Criação  do  assunto “15456  –  Omissão  de  Comunicação  à  Autoridade  Pública  de 
+Desaparecimento de Criança ou Adolescente” na árvore “3637 – Crimes Previstos no 
+Estatuto da Criança e do Adolescente”, habilitado para o primeiro e segundo graus da Justiça 
+Estadual, STJ e STF;
+
+26)  Criação do assunto “15457 – Ausência de Registro de Atividades ou Fornecimento de 
+Declaração de Nascimento (art. 228 do ECA)” na hierarquia “9895 – Estatuto da Criança e 
+do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ 
+e STF;
+
+12
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202427)  Criação do assunto “15458 – Ausência de Identificação Correta de Neonato e Parturiente 
+e de Realização de Exames (art. 229 do ECA)” na hierarquia “9895 – Estatuto da Criança e 
+do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ 
+e STF;
+
+28)  Criação do assunto “15459 – Privação de Liberdade de Criança ou Adolescente (art. 230 do 
+ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, com habilitação para o 
+primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+29)  Criação do assunto “15460 – Ausência de Comunicação Imediata de Apreensão à Autoridade 
+Competente e/ou à Família (art. 231 do ECA)” na hierarquia “9895 – Estatuto da Criança e 
+do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ 
+e STF;
+
+30)  Criação do assunto “15461 – Vexame ou Constrangimento de Criança ou Adolescente (art. 
+232 do ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, com habilitação 
+para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+31)  Criação do assunto “15462 – Ausência de Liberação Imediata de Adolescente Ilegalmente 
+Apreendido (art. 234 do ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, 
+com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+32)  Criação do assunto “15463 – Descumprimento de Prazo em Benefício de Adolescente 
+Privado de Liberdade (art. 235 do ECA)” na hierarquia “9895 – Estatuto da Criança e do 
+Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e 
+STF;
+
+33)  Criação do assunto “15464 – Impedimento ou Embaraçamento de Ação de Autoridade 
+Judiciária, Conselho Tutelar ou MP (art. 236 do ECA)” na hierarquia “9895 – Estatuto da 
+Criança e do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça 
+Estadual, STJ e STF;
+
+34)  Criação do assunto “15465 – Subtração de Criança ou Adolescente com o Fim de Colocação 
+em Lar Substituto (art. 237 do ECA)” na hierarquia “9895 – Estatuto da Criança e do 
+Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e 
+STF;
+
+35)  Criação do assunto “15466 – Promessa ou Efetiva Entrega de Filho ou Pupilo Mediante 
+Paga ou Recompensa (art. 238 do ECA)” na hierarquia “9895 – Estatuto da Criança e do 
+Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e 
+STF;
+
+36)  Criação do assunto “15467 – Promoção ou Auxílio em Ato Destinado ao Envio de Criança 
+ou Adolescente ao Exterior (art. 239 do ECA)” na hierarquia “9895 – Estatuto da Criança e 
+do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ 
+e STF;
+
+13
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202437)  Criação do assunto “15468 – Produção, Reprodução ou Registro de Pornografia de Criança ou 
+Adolescente (art. 240 do ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, 
+com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+38)  Criação do assunto “15469 – Venda ou Exposição à Venda de Material Contendo Pornografia 
+com Criança ou Adolescente (art. 241 do ECA)” na hierarquia “9895 – Estatuto da Criança 
+e do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, 
+STJ e STF;
+
+39)  Criação do assunto “15470 – Divulgação de Material Pornográfico de Criança ou Adolescente 
+(art. 241-A do ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, com 
+habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+40)  Criação do assunto “15471 – Aquisição, Posse ou Armazenamento de Pornografia de 
+Criança ou Adolescente (art. 241-B do ECA)” na hierarquia “9895 – Estatuto da Criança e do 
+Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e 
+STF;
+
+41)  Criação do assunto “15472 – Simulação da Participação de Criança ou Adolescente em 
+Material Pornográfico (art. 241-C do ECA)” na hierarquia “9895 – Estatuto da Criança e do 
+Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e 
+STF;
+
+42)  Criação do assunto “15473 – Aliciamento, Assédio, Instigação ou Constrangimento de 
+Criança para Prática de Ato Libidinoso (art. 241-D do ECA)” na hierarquia “9895 – Estatuto 
+da Criança e do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça 
+Estadual, STJ e STF;
+
+43)  Criação do assunto “15474 – Venda, Fornecimento ou Entrega de Arma, Munição ou 
+Explosivo a Criança ou Adolescente (art. 242 do ECA)” na hierarquia “9895 – Estatuto da 
+Criança e do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça 
+Estadual, STJ e STF;
+
+44)  Criação do assunto “15475 – Venda ou Entrega de Bebida Alcóolica ou Outra Droga a 
+Criança ou Adolescente (art. 243 do ECA)” na hierarquia “9895 – Estatuto da Criança e do 
+Adolescente”, com habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e 
+STF;
+
+45)  Criação do assunto “15476 – Venda, Fornecimento ou Entrega de Fogos de Artifício ou 
+Estampido a Criança ou Adolescente (art. 244 do ECA)” na hierarquia “9895 – Estatuto da 
+Criança e do Adolescente”, com habilitação para o primeiro e segundo graus da Justiça 
+Estadual, STJ e STF;
+
+46)  Criação do assunto “15477 – Prostituição ou Exploração Sexual de Criança ou Adolescente 
+(art. 244-A do ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, com 
+habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+14
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202447)  Criação do assunto “15478 – Corrupção ou Facilitação de Corrupção de Menor de Dezoito 
+Anos (art. 244-B do ECA)” na hierarquia “9895 – Estatuto da Criança e do Adolescente”, com 
+habilitação para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+48)  Criação  do  assunto “15479  –  Omissão  de  Comunicação  à  Autoridade  Pública  de 
+Desaparecimento de Criança ou Adolescente (art. 244-C do ECA)” na hierarquia “9895 – 
+Estatuto da Criança e do Adolescente”, com habilitação para o primeiro e segundo graus 
+da Justiça Estadual, STJ e STF;
+
+49)  Criação do assunto “15480 – Isenção por Doença ou Acidente em Serviço” na hierarquia 
+“5917 – IRPF/Imposto de Renda de Pessoa Física”, habilitado para toda a competência 
+comum da Justiça Estadual, para toda Justiça Federal (exceto CJF), para o STJ e STF;
+
+50)  Criação do assunto “15481 – Estudo Social” na hierarquia “11781 – Objetos de Cartas 
+Precatórias Cíveis/de Ordem”, habilitado para toda a competência comum da Justiça 
+Estadual, para toda Justiça Federal (exceto CJF), para o STJ e STF;
+
+51)  Criação do assunto “15482 – Intimidação Sistemática (Bullying)” na hierarquia “3400 – 
+Crimes contra a Liberdade Pessoal”, habilitado para toda a Justiça Estadual (exceto Juizados 
+Especiais da Fazenda Pública), para toda Justiça Federal (exceto CJF), para toda a Justiça 
+Militar da União, para toda a Justiça Militar Estadual, para o STJ e STF;
+
+52)  Criação do assunto “15483 – Intimidação Sistemática Virtual (Cyberbullying)” na hierarquia 
+“3400 – Crimes contra a Liberdade Pessoal”, habilitado para toda a Justiça Estadual (exceto 
+Juizados Especiais da Fazenda Pública), para toda Justiça Federal (exceto CJF), para toda a 
+Justiça Militar da União, para toda a Justiça Militar Estadual, para o STJ e STF;
+
+53)  Criação do assunto “15484 – Intimidação Sistemática (Bullying - art. 146-A, caput)” na 
+hierarquia “9659 – Contra a Liberdade Pessoal”, habilitado para o primeiro e segundo graus 
+da Justiça Estadual, para o STJ e STF;
+
+54)  Criação do assunto “15485 – Intimidação Sistemática Virtual (Cyberbullying - art. 146-A, 
+parágrafo único)” na hierarquia “9659 – Contra a Liberdade Pessoal”, habilitado para o 
+primeiro e segundo graus da Justiça Estadual, para o STJ e STF;
+
+55)  Criação do assunto “15511 – Medidas Protetivas de Urgência (Lei Maria da Penha) – Cível” 
+na árvore “9192 – Tutela Provisória”, habilitado para primeiro e segundo graus da Justiça 
+Estadual, STJ e STF;
+
+56)  Criação do assunto complementar “15514 – Doença Rara” na hierarquia “12480 – Direito 
+da Saúde”, habilitado para toda a competência comum da Justiça Estadual, toda a Justiça 
+Federal (exceto CJF), STJ e STF;
+
+57)  Criação do assunto “15515 – Pensão Especial (Lei 14.717/2023)” na hierarquia “12734 – 
+
+Direito Assistencial”, habilitado para toda a Justiça Federal (exceto CJF), STJ e STF;
+
+15
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202458)  Criação do assunto “15516 – Bolsa Família (Lei 14.601/2023)” na hierarquia “12734 – Direito 
+Assistencial”, habilitado para toda a competência comum da Justiça Estadual (exceto Juizado 
+Especial), toda a Justiça Federal (exceto CJF), STJ e STF;
+
+59)  Criação do assunto “15524 – Propaganda Política – Propaganda Eleitoral – Deep Fake” na 
+hierarquia “11652 – Propaganda Política – Propaganda Eleitoral”, habilitado para toda a 
+Justiça Eleitoral e STF;
+
+60)  Criação do assunto “15525 – Terrorismo (Lei 13.260/2016)” na hierarquia “9634 – Ato 
+Infracional”, habilitado para o primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+61)  Criação do assunto “15526 – Atos de Terrorismo (art. 2º da Lei 13.260/2016)” na hierarquia 
+“15525 – Terrorismo (Lei 13.260/2016)”, habilitado para o primeiro e segundo graus da 
+Justiça Estadual, STJ e STF;
+
+62)  Criação do assunto “15527 – Manutenção e Financiamento do Terrorismo (art. 6º da Lei 
+13.260/2016)” na hierarquia “15525 – Terrorismo (Lei 13.260/2016)”, habilitado para o 
+primeiro e segundo graus da Justiça Estadual, STJ e STF;
+
+63)  Criação do assunto “15528 – Organização Terrorista (art. 3º da Lei 13.260/2016)” na hierarquia 
+“15525 – Terrorismo (Lei 13.260/2016)”, habilitado para o primeiro e segundo graus da 
+Justiça Estadual, STJ e STF;
+
+64)  Criação do assunto “15529 – Preparação de Ato Terrorista (art. 5º da Lei 13.260/2016)” na 
+hierarquia “15525 – Terrorismo (Lei 13.260/2016)”, habilitado para o primeiro e segundo 
+graus da Justiça Estadual, STJ e STF.
+
+b)  Habilitação
+
+1)  Habilitação do assunto “3637 – Crimes Previstos no Estatuto da Criança e do Adolescente” 
+para a Turma Estadual de Uniformização, bem como sua desabilitação para toda a Justiça 
+Eleitoral, a alteração do campo norma para “ECA”, do campo artigo para “228 a 224-C” e do 
+glossário para “Assunto pai para organizar os assuntos referentes aos tipos penais previstos 
+no Estatuto da Criança e do Adolescente.”;
+
+2)  Habilitação do assunto “15221 – Auxílio Brasil (Lei 14.284/2021)” para o primeiro e segundo 
+graus da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF, 
+bem como a sua desabilitação para o Juizado Especial da Justiça Estadual;
+
+3)  Habilitação do assunto “15125 – Caso da Unidade de Internação Socioeducativa, Espírito 
+
+Santo” para toda a Justiça Eleitoral;
+
+4)  Habilitação do assunto “15122 – Caso do Complexo Penitenciário de Pedrinhas, Maranhão” 
+
+para toda a Justiça Eleitoral;
+
+5)  Habilitação do assunto “15123 – Caso do Complexo Penitenciário do Curado, Pernambuco” 
+
+para toda a Justiça Eleitoral;
+
+16
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/20246)  Habilitação do assunto “15124 – Caso do Instituto Penal Plácido de Sá Carvalho, Rio de 
+
+Janeiro” para toda a Justiça Eleitoral;
+
+7)  Habilitação do assunto “15119 – Caso Airton Honorato vs. Brasil” para toda a Justiça Eleitoral;
+
+8)  Habilitação do assunto “15116 – Caso dos(as) Empregados(as) da Fábrica de Fogos de Santo 
+
+Antônio de Jesus vs. Brasil” para toda a Justiça Eleitoral;
+
+9)  Habilitação do assunto “15109 – Caso Escher e Outros vs. Brasil” para toda a Justiça Eleitoral;
+
+10)  Habilitação do assunto “15113 – Caso Favela Nova Brasília vs. Brasil” para toda a Justiça 
+
+Eleitoral;
+
+11)  Habilitação do assunto “15110 – Caso Garibaldi vs. Brasil” para toda a Justiça Eleitoral;
+
+12)  Habilitação do assunto “15111 – Caso Gomes Lund e Outros (Guerrilha do Araguaia) vs. 
+
+Brasil” para toda a Justiça Eleitoral;
+
+13)  Habilitação do assunto “15115 – Caso Herzog e Outros vs. Brasil” para toda a Justiça Eleitoral;
+
+14)  Habilitação do assunto “15117 – Caso Márcia Barbosa de Souza e Outros vs. Brasil” para 
+
+toda a Justiça Eleitoral;
+
+15)  Habilitação do assunto “15118 – Caso Neusa dos Santos Nascimento e Outra vs. Brasil” para 
+
+toda a Justiça Eleitoral;
+
+16)  Habilitação do assunto “15108 – Caso Nogueira de Carvalho e Outro vs. Brasil” para toda a 
+
+Justiça Eleitoral;
+
+17)  Habilitação do assunto “15114 – Caso Povo Indígena Xucuru e seus Membros vs. Brasil” 
+
+para toda a Justiça Eleitoral;
+
+18)  Habilitação do assunto “15121 – Caso Sales Pimenta vs. Brasil” para toda a Justiça Eleitoral;
+
+19)  Habilitação do assunto “15120 – Caso Tavares Pereira e Outros vs. Brasil” para toda a Justiça 
+
+Eleitoral;
+
+20)  Habilitação do assunto “15112 – Caso Trabalhadores da Fazenda Brasil Verde vs. Brasil” para 
+
+toda a Justiça Eleitoral;
+
+21)  Habilitação do assunto “15107 – Caso Ximenes Lopes vs. Brasil” para toda a Justiça Eleitoral;
+
+22)  Habilitação do assunto “9990 – Intervenção em Estado/Município” para as Turmas Recursais 
+
+da Justiça Estadual;
+
+23)  Habilitação do assunto “10016 – Inspeção Fitossanitária” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+24)  Habilitação do assunto “10018 – Inspeção Sanitária de Origem Animal” para as Turmas 
+
+Recursais da Justiça Estadual;
+
+25)  Habilitação do assunto “10074 – Fornecimento de Gás” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+17
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202426)  Habilitação do assunto “10083 – Tabelionatos, Registros, Cartórios” para as Turmas Recursais 
+
+da Justiça Estadual;
+
+27)  Habilitação do assunto “10109 – Ordenação da Cidade/Plano Diretor” para as Turmas 
+
+Recursais da Justiça Estadual;
+
+28)  Habilitação do assunto “10108 – Patrimônio Histórico/Tombamento” para as Turmas 
+
+Recursais da Justiça Estadual;
+
+29)  Habilitação do assunto “10131 – Privatização” para as Turmas Recursais da Justiça Estadual;
+
+30)  Habilitação do assunto “10106 – Recursos Minerais” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+31)  Habilitação do assunto “10133 – Direito de Preempção” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+32)  Habilitação do assunto “10130 – Limitação Administrativa” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+33)  Habilitação do assunto “10183 – Apólices da Dívida Pública” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+34)  Habilitação do assunto “10184 – Títulos da Dívida Pública” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+35)  Habilitação do assunto “10231 – Anistia Administrativa” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+36)  Habilitação do assunto “10256 – Compulsória” para as Turmas Recursais da Justiça Estadual;
+
+37)  Habilitação do assunto “10309 – Adicional de Produtividade” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+38)  Habilitação do assunto “10246 – Auxílio-Natalidade” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+39)  Habilitação do assunto “10290 – Gratificação de Incentivo” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+40)  Habilitação do assunto “10295 – Gratificação Incorporada/ Quintos e Décimos/ VPNI” para 
+
+as Turmas Recursais da Justiça Estadual;
+
+41)  Habilitação do assunto “10307 – Revisão Geral Anual (Mora do Executivo – inciso X, art. 37, 
+
+CF 1988)” para as Turmas Recursais da Justiça Estadual;
+
+42)  Habilitação do assunto “10338 – Gratificações e Adicionais” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+43)  Habilitação do assunto “10349 – Reforma” para as Turmas Recursais da Justiça Estadual;
+
+18
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202444)  Habilitação do assunto “10336 – Corpo Feminino” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+45)  Habilitação do assunto “10371 – Reserva de Vagas para Pessoas com Deficiência” para as 
+
+Turmas Recursais da Justiça Estadual;
+
+46)  Habilitação do assunto “10402 – Cessão de Créditos Não Tributários” para as Turmas 
+
+Recursais da Justiça Estadual;
+
+47)  Habilitação do assunto “10401 – Taxa de Ocupação/Laudêmio/Foro” para as Turmas 
+
+Recursais da Justiça Estadual;
+
+48)  Habilitação do assunto “10427 – Termo Aditivo” para as Turmas Recursais da Justiça Estadual;
+
+49)  Habilitação do assunto “10505 – Variação Cambial” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+50)  Habilitação do assunto “15008 – Mudanças Climáticas” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+51)  Habilitação do assunto “5980 – Responsabilidade Tributária do Sócio-gerente/Diretor/
+
+Representante” para as Turmas Recursais da Justiça Estadual;
+
+52)  Habilitação do assunto “6004 – Anulação de Débito Fiscal” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+53)  Habilitação do assunto “6016 - Creditamento” para as Turmas Recursais da Justiça Estadual;
+
+54)  Habilitação do assunto “6009 – Crédito Prêmio” para as Turmas Recursais da Justiça Estadual;
+
+55)  Habilitação do assunto “6010 – Crédito Presumido” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+56)  Habilitação do assunto “5997 – Denúncia Espontânea” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+57)  Habilitação do assunto “6011 – Fato Gerador/Incidência” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+58)  Habilitação do assunto “6003 – Incentivos Fiscais” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+59)  Habilitação do assunto “6005 – Juros/Correção Monetária” para as Turmas Recursais da 
+
+Justiça Estadual;
+
+60)  Habilitação do assunto “5998 - Lançamento” para as Turmas Recursais da Justiça Estadual;
+
+61)  Habilitação do assunto “6006 – Prazo de Recolhimento” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+62)  Habilitação do assunto “6007 – Repetição de Indébito” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+19
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202463)  Habilitação do assunto “5988 – Carta de Fiança” para as Turmas Recursais da Justiça Estadual;
+
+64)  Habilitação do assunto “10543 – Depósito Judicial” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+65)  Habilitação do assunto “5989 - Parcelamento” para as Turmas Recursais da Justiça Estadual;
+
+66)  Habilitação do assunto “5991 – Compensação com Apólices da Dívida Pública” para as 
+
+Turmas Recursais da Justiça Estadual;
+
+67)  Habilitação do assunto “10545 – Constitucionalidade do Artigo 46 da Lei 8212/91” para as 
+
+Turmas Recursais da Justiça Estadual;
+
+68)  Habilitação do assunto “10544 – Constitucionalidade do Artigo 4º da LC 118/05” para as 
+
+Turmas Recursais da Justiça Estadual;
+
+69)  Habilitação do assunto “10548 – Decretação de Ofício” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+70)  Habilitação do assunto “10551 – Constitucionalidade do Artigo 45 da Lei 8212/91” para as 
+
+Turmas Recursais da Justiça Estadual;
+
+71)  Habilitação do assunto “6001 – Expedição de Certidão Positiva de Débito com Efeito de 
+
+Negativa” para as Turmas Recursais da Justiça Estadual;
+
+72)  Habilitação do assunto “6000 – Expedição de CND” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+73)  Habilitação do assunto “10556 – Exclusão - ICMS” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+74)  Habilitação do assunto “10559 – Cálculo de ICMS “por Dentro”” para as Turmas Recursais 
+
+da Justiça Estadual;
+
+75)  Habilitação do assunto “6014 – Alíquota Progressiva” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+76)  Habilitação do assunto “6013 – Alíquota Zero” para as Turmas Recursais da Justiça Estadual;
+
+77)  Habilitação do assunto “6015 – Índice de Alíquota” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+78)  Habilitação do assunto “10550 – Despacho de Citação” para as Turmas Recursais da Justiça 
+
+Estadual;
+
+79)  Habilitação do assunto “10549 – Arquivamento Administrativo – Crédito de Pequeno Valor” 
+
+para as Turmas Recursais da Justiça Estadual;
+
+80)  Habilitação do assunto “11959 – Receptação Culposa” para as Turmas Recursais e Turmas 
+
+Estaduais de Uniformização da Justiça Estadual;
+
+20
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202481)  Habilitação do assunto “11895 – Crimes Previstos no Estatuto do Torcedor” para as Turmas 
+
+Recursais e Turmas Estaduais de Uniformização da Justiça Estadual;
+
+82)  Habilitação do assunto “11797 – Entrada de Aparelho Telefônico de Comunicação Móvel 
+em Estabelecimento Prisional” para o primeiro e segundo graus, as Turmas Recursais e 
+Turmas Estaduais de Uniformização da Justiça Estadual, para o primeiro e segundo graus, as 
+Turmas Recursais, Turmas Regionais de Uniformização e Turma Nacional de Uniformização 
+da Justiça Federal, para o STJ e STF;
+
+83)  Habilitação do assunto “15037 – Alvará de Soltura” para o segundo grau, as Turmas Recursais, 
+Turmas Estaduais de Uniformização e competência militar de segundo grau da Justiça 
+Estadual, para o segundo grau, as Turmas Recursais, Turmas Regionais de Uniformização e 
+Turma Nacional de Uniformização da Justiça Federal, para o segundo grau da Justiça Militar 
+Estadual, para o segundo grau da Justiça Eleitoral, para o TSE, STM, STJ e STF;
+
+84)  Habilitação do assunto “15044 – Comunicação de Prisão - BNMP” para o segundo grau, as 
+Turmas Recursais, Turmas Estaduais de Uniformização e competência militar de segundo 
+grau da Justiça Estadual, para o segundo grau, as Turmas Recursais, Turmas Regionais de 
+Uniformização e Turma Nacional de Uniformização da Justiça Federal, para o segundo grau 
+da Justiça Militar Estadual, para o segundo grau da Justiça Eleitoral, para o TSE, STM, STJ 
+e STF;
+
+85)  Habilitação do assunto “15043 – Prisão Domiciliar” para o segundo grau, as Turmas Recursais, 
+Turmas Estaduais de Uniformização e competência militar de segundo grau da Justiça 
+Estadual, para o segundo grau, as Turmas Recursais, Turmas Regionais de Uniformização e 
+Turma Nacional de Uniformização da Justiça Federal, para o segundo grau da Justiça Militar 
+Estadual, para o segundo grau da Justiça Eleitoral, para o TSE, STM, STJ e STF;
+
+86)  Habilitação do assunto “15039 – Prisão Temporária” para o segundo grau, as Turmas Recursais, 
+Turmas Estaduais de Uniformização e competência militar de segundo grau da Justiça 
+Estadual, para o segundo grau, as Turmas Recursais, Turmas Regionais de Uniformização e 
+Turma Nacional de Uniformização da Justiça Federal, para o segundo grau da Justiça Militar 
+Estadual, para o segundo grau da Justiça Eleitoral, para o TSE, STM, STJ e STF;
+
+87)  Habilitação do assunto “11928 – Cumulação” para toda a competência comum da Justiça 
+
+Estadual;
+
+88)  Habilitação do assunto “11927 – Desmembramento” para toda a competência comum da 
+
+Justiça Estadual;
+
+89)  Habilitação do assunto “11929 – Emolumentos” para toda a competência comum da Justiça 
+
+Estadual;
+
+90)  Habilitação do assunto “11930 – Fraude” para toda a competência comum da Justiça 
+
+Estadual;
+
+21
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/202491)  Habilitação do assunto “11931 - Gratuidade” para toda a competência comum da Justiça 
+
+Estadual;
+
+92)  Habilitação do assunto “11932 – Princípio da Territorialidade” para toda a competência 
+
+comum da Justiça Estadual;
+
+93)  Habilitação do assunto “11933 – Provimento Irregular” para toda a competência comum 
+
+da Justiça Estadual;
+
+94)  Habilitação do assunto “11934 – Registro Civil de Nascimento” para toda a competência 
+
+comum da Justiça Estadual;
+
+95)  Habilitação do assunto “11935 – Registro de Imóveis” para toda a competência comum da 
+
+Justiça Estadual;
+
+96)  Habilitação do assunto “11926 - Remoção” para toda a competência comum da Justiça 
+
+Estadual;
+
+97)  Habilitação do assunto “11925 - Vacância” para toda a competência comum da Justiça 
+
+Estadual;
+
+98)  Habilitação do assunto “12031 – Desapropriação para Regularização de Comunidade 
+
+Quilombola/Dec. 4887/2003” para o primeiro e segundo graus da Justiça Federal;
+
+99)  Habilitação do assunto “13080 – Avaliação/Reavaliação” para toda a competência comum 
+da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+100) Habilitação do assunto “13140 – Dispensa de Penhora – Entidades Filantrópicas e seus 
+Diretores” para toda a competência comum da Justiça Estadual, para toda a Justiça Federal 
+(exceto CJF), para o STJ e para o STF;
+
+101) Habilitação do assunto “13164 – Excesso de Penhora” para toda a competência comum da 
+
+Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+102) Habilitação do assunto “13189 – Impenhorabilidade” para toda a competência comum da 
+
+Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+103) Habilitação do assunto “13363 – Bem de Família” para toda a competência comum da Justiça 
+
+Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+104) Habilitação do assunto “13364 – Bem Público” para toda a competência comum da Justiça 
+
+Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+105) Habilitação do assunto “13458 – Instrumentos de Trabalho” para toda a competência comum 
+da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+106) Habilitação do assunto “13526 – Remuneração/Proventos/Pensões e Outros Rendimentos” 
+para toda a competência comum da Justiça Estadual, para toda a Justiça Federal (exceto 
+CJF), para o STJ e para o STF;
+
+22
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024107) Habilitação do assunto “13240 – Ordem de Preferência” para toda a competência comum 
+da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+108) Habilitação do assunto “13249 – Penhora no Rosto dos Autos” para toda a competência 
+comum da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+109) Habilitação do assunto “13250 – Penhora Online/Bacen Jud” para toda a competência 
+comum da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+110) Habilitação do assunto “13278 – Reforço de Penhora” para toda a competência comum da 
+
+Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+111) Habilitação do assunto “13297 – Seguro-Garantia Judicial” para toda a competência comum 
+da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+112) Habilitação do assunto “13303 – Substituição de Penhora” para toda a competência comum 
+da Justiça Estadual, para toda a Justiça Federal (exceto CJF), para o STJ e para o STF;
+
+113) Habilitação do assunto “15033 – Objetos de Cartas Precatórias Criminais” para o segundo 
+
+grau da Justiça Estadual;
+
+114) Habilitação do assunto “15037 – Alvará de Soltura” para o segundo grau da Justiça Estadual;
+
+115) Habilitação do assunto “15040 – Busca e Apreensão” para o segundo grau da Justiça 
+
+Estadual;
+
+116) Habilitação do assunto “15034 – Citação” para o segundo grau da Justiça Estadual;
+
+117) Habilitação do assunto “15036 – Diligências” para o segundo grau da Justiça Estadual;
+
+118) Habilitação do assunto “15042 – Interrogatório” para o segundo grau da Justiça Estadual;
+
+119) Habilitação do assunto “15035 – Intimação” para o segundo grau da Justiça Estadual;
+
+120) Habilitação do assunto “15041 – Oitiva” para o segundo grau da Justiça Estadual;
+
+121) Habilitação do assunto “15038 – Prisão Preventiva” para o segundo grau da Justiça Estadual.
+
+c)  Desabilitação
+
+1)  Desabilitação do assunto “12217 – Terrorismo” para o Juizado Especial da Justiça Estadual;
+
+2)  Desabilitação do assunto “12218 – Atos de Terrorismo” para o Juizado Especial da Justiça 
+
+Estadual;
+
+3)  Desabilitação do assunto “12221 – Manutenção ou Financiamento do Terrorismo” para o 
+
+Juizado Especial da Justiça Estadual;
+
+4)  Desabilitação do assunto “12219 – Organização Terrorista” para o Juizado Especial da Justiça 
+
+Estadual;
+
+5)  Desabilitação do assunto “12220 – Preparação do Ato Terrorista” para o Juizado Especial 
+
+da Justiça Estadual.
+
+23
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024d)  Alteração
+
+1)  Alteração do campo norma do assunto “9895 – Estatuto da Criança e do Adolescente” 
+para “ECA”, bem como do campo artigo para “103 e 228 a 244-C” e do glossário, que passa 
+a vigorar como: “Assunto pai para organizar os assuntos referentes aos atos infracionais 
+análogos aos tipos penais previstos no Estatuto da Criança e do Adolescente.”
+
+IV – DOCUMENTOS
+
+a)  Criação
+
+1)  Criação do documento “15431 – Recibo” na hierarquia “2 – Internos”;
+
+2)  Criação do documento “15432 - Recibo de Protocolo do Portal de Serviços do CNJ” na 
+
+hierarquia “15431 – Recibo”;
+
+3)  Criação do documento “15433 – Recibo (outros)” na hierarquia “15431 – Recibo”;
+
+4)  Criação do documento “15512 – Representação pela Prisão” na hierarquia “5 – Manifestações”;
+
+5)  Criação do documento “15513 – Representação por Medida Diversa da Prisão” na hierarquia 
+
+“5 – Manifestações”;
+
+6)  Criação do documento “15517 – Plano Individual de Atendimento – Proteção” na hierarquia 
+
+“118 – Relatório”;
+
+7)  Criação do documento “15518 – Plano Individual de Atendimento – Infracional” na 
+
+hierarquia “118 – Relatório”;
+
+8)  Criação do documento “15519 – Relatório de Acompanhamento Técnico - RAT” na hierarquia 
+
+“118 – Relatório”;
+
+9)  Criação do documento “15520 – Guia de Execução de Medida Socioeducativa Diversa da 
+
+Internação” na hierarquia “411 - Guia”;
+
+10)  Criação do documento “15521 – Guia de Execução Definitiva de Medida Socioeducativa 
+Diversa da Internação” na hierarquia “15520 – Guia de Execução de Medida Socioeducativa 
+Diversa da Internação”;
+
+11)  Criação do documento “15522 – Guia de Execução Provisória de Medida Socioeducativa 
+Diversa da Internação” na hierarquia “15520 – Guia de Execução de Medida Socioeducativa 
+Diversa da Internação”;
+
+12)  Criação do documento “15523 – Guia Unificadora” na hierarquia “15361 – Guia de Internação”.
+
+b)  Alteração
+
+1)  Alteração do nome do documento “791 – Deferimento de Assistência Judiciária Gratuita” 
+
+para “Deferimento de Gratuidade de Justiça”;
+
+24
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/20242)  Alteração do nome do documento “792 – Indeferimento de Assistência Judiciária Gratuita” 
+
+para “Indeferimento de Gratuidade de Justiça”;
+
+3)  Alteração do nome do documento “511 – Certidão de Pedido de Assistência Judiciária 
+
+Gratuita” para “Certidão de Pedido de Gratuidade de Justiça”.
+
+V – COMPLEMENTOS
+
+a)  Criação
+
+1)  Criação do complemento do tipo tabelado “59 – tipo_de_medida_protetiva_Lei_Henry_
+
+Borel”;
+
+2)  Criação do complemento do tipo tabelado “60 – tipo_de_medida_de_proteção_Estatuto_
+
+do_Idoso”;
+
+3)  Criação do complemento do tipo tabelado “61 – tipo_de_medida_de_proteção_ECA”;
+
+4)  Criação do complemento do tipo tabelado “62 – tipo_de_medida_de_proteção_Lei_13431”.
+
+b)  Criação de Valores
+
+1)  Criação dos valores “390 – ao Juiz de Garantias” e “391 – ao Juiz da Instrução” para o 
+
+complemento tipo tabelado “17 – motivo_de_redistribuicao”;
+
+2)  Criação dos valores “392 – ao Juiz de Garantias” e “393 – ao Juiz da Instrução” para o 
+
+complemento tipo tabelado “17 – motivo_da_remessa”.
+
+c)  Alteração
+
+1)  Alteração do nome do complemento “32 – tipo_de_medida_protetiva” para “tipo_de_
+medida_protetiva_Lei_Maria_da_Penha”, com a exclusão dos seguintes valores: “146 – 
+Abrigo em entidade”, “147 – Abrigo temporário”, “368 – Acolhimento em família acolhedora”, 
+“160  –  Acolhimento  institucional”, “162  –  Colocação  em  família  substituta”, “139  – 
+Encaminhamento a curador, mediante termo de responsabilidade”, “138 – Encaminhamento 
+à família, mediante termo de responsabilidade”, “149 – Encaminhamento ao responsável, 
+mediante termo de responsabilidade”, “148 – Encaminhamento aos pais, mediante termo 
+de responsabilidade”, “161 – Inclusão em programa de acolhimento familiar”, “388 – 
+Matrícula e frequência obrigatória em estabelecimento oficial de ensino fundamental”, 
+“143 – Requisição para tratamento de sua saúde em regime domiciliar”, “158 – Inclusão 
+em programa oficial ou comunitário de auxílio, orientação e tratamento a alcóolatras”, 
+“159 – Inclusão em programa oficial ou comunitário de auxílio, orientação e tratamento a 
+toxicômanos”, “145 – Inclusão em programa oficial ou comunitário de auxílio, orientação e 
+tratamento a usuários de drogas lícitas ou ilícitas à pessoa de sua convivência que lhe cause 
+perturbação”, “144 – Inclusão em programa oficial ou comunitário de auxílio, orientação e 
+
+25
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024tratamento aos usuários de drogas lícitas ou ilícitas ao próprio idoso”, “151 – Inclusão em 
+serviços e programas oficiais ou comunitários de proteção, apoio e promoção da família, 
+da criança e do adolescente”, “140 – Orientação, apoio e acompanhamento temporário”, 
+“152 – Requisição de tratamento médico , em regime ambulatorial”, “153 – Requisição de 
+tratamento médico, em regime hospitalar”, “154 – Requisição de tratamento psicológico, em 
+regime ambulatorial”, “155 – Requisição de tratamento psicológico, em regime hospitalar”, 
+“156 – Requisição de tratamento psiquiátrico, em regime hospitalar”, “157 – Requisição de 
+tratamento psiquiátrico, em regime ambulatorial”, “141 – Requisição de tratamento de sua 
+própria saúde, em regime ambulatorial” e “142 – Requisição de tratamento de sua própria 
+saúde, em regime hospitalar”.
+
+Além das alterações o Comitê Gestor Nacional das Tabelas Processuais Unificadas e Numeração 
+Única deliberou as seguintes orientações:
+
+1)  Processos cujos objetos sejam exclusivamente a expedição de alvará devem ser autuados 
+na classe “1294 – Outros Procedimentos de Jurisdição” com assunto referente ao objeto do 
+alvará, ou seja, com o que é pretendido com o alvará cuja expedição é solicitada;
+
+2)  Para registro das audiências decorrentes da avaliação trimestral da situação de criança ou 
+
+adolescente deve ser utilizado o movimento “15049 – Audiência Concentrada Protetiva”.
+
+26
+
+BOLETIM DAS ATUALIZAÇÕESTABELAS PROCESSUAIS UNIFICADASALTERAÇÕES NA VERSÃO DAS TPUS DE 29/11/2024

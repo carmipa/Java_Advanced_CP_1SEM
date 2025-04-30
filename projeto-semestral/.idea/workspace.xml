@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="97a927a4-71c6-49a6-b5a7-8f952fc37b25" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/google-java-format.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/material_theme_project_new.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/projeto-semestral-web.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/next.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/postcss.config.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/file.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/globe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/next.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/vercel.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/public/window.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/categories/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/dashboard/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/globals.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/app/transaction/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/src/compenents/nav-bar.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/projeto-semestral-web/tsconfig.json" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2twTo5E8YdOw4C7pFPxkbac68YI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/FIAP-2025/1_semestre_fiap-2025/Java_Advanced/projeto-semestral",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="97a927a4-71c6-49a6-b5a7-8f952fc37b25" name="Changes" comment="" />
+      <created>1741262309784</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1741262309784</updated>
+      <workItem from="1741262310975" duration="5000" />
+      <workItem from="1743418931713" duration="10000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

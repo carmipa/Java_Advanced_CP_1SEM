@@ -1,0 +1,619 @@
+// ====== ARQUIVO: components\TipCard.js ======
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function TipCard({ titulo, descricao }) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.titulo}>{titulo}</Text>
+      <Text style={styles.descricao}>{descricao}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#d1fae5',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  titulo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#166534',
+    marginBottom: 5,
+  },
+  descricao: {
+    fontSize: 16,
+    color: '#1f2937',
+  },
+});
+
+// ====== ARQUIVO: components\WeatherCard.js ======
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function WeatherCard({ weather }) {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title}>{weather.name}</Text>
+      <Text>Temperatura: {weather.main.temp}°C</Text>
+      <Text>Clima: {weather.weather[0].description}</Text>
+      <Text>Vento: {weather.wind.speed} m/s</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    padding: 20,
+    margin: 10,
+    backgroundColor: '#d0f0c0',
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+});
+
+// ====== ARQUIVO: navigation\StackNavigator.js ======
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import TabNavigator from './TabNavigator';
+import WeatherScreen from '../screens/WeatherScreen';
+import CityFormScreen from '../screens/CityFormScreen';
+
+const Stack = createNativeStackNavigator();
+
+const StackNavigator = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="HomeTabs" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="HomeTabs" component={TabNavigator} />
+        <Stack.Screen name="Weather" component={WeatherScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default StackNavigator;
+
+// ====== ARQUIVO: navigation\TabNavigator.js ======
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from '../screens/HomeScreen';
+import WeatherScreen from '../screens/WeatherScreen';
+import TipsScreen from '../screens/TipsScreen';
+import CityFormScreen from '../screens/CityFormScreen';
+import AboutScreen from '../screens/AboutScreen';
+// Certifique-se de que Ionicons está importado corretamente
+import { Ionicons } from '@expo/vector-icons';
+
+const Tab = createBottomTabNavigator();
+
+export default function TabNavigator() {
+  return (
+      <Tab.Navigator
+          screenOptions={({ route }) => ({
+            headerShown: false, // Mantém os cabeçalhos ocultos
+            tabBarActiveTintColor: '#166534', // Cor verde para aba ativa
+            tabBarInactiveTintColor: '#94a3b8', // Cor cinza para abas inativas
+            tabBarStyle: {
+              backgroundColor: '#f0fdf4', // Fundo verde claro para a barra
+              borderTopWidth: 1,
+              borderTopColor: '#ccc', // Borda superior cinza
+            },
+            // A função tabBarIcon recebe focused, color, size
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+
+              // Define o nome base do ícone para cada rota
+              switch (route.name) {
+                case 'Home':
+                  iconName = 'home';
+                  break;
+                case 'Clima':
+                  iconName = 'cloudy'; // 'partly-sunny' ou 'rainy' podem ser alternativas
+                  break;
+                case 'Dicas':
+                  iconName = 'leaf'; // 'book' ou 'bulb' também poderiam ser opções
+                  break;
+                case 'Cadastro':
+                  // 'add-circle' ou 'map' podem ser alternativas se 'location' não encaixar bem
+                  iconName = 'location';
+                  break;
+                case 'Sobre':
+                  iconName = 'information-circle';
+                  break;
+                default:
+                  iconName = 'ellipse'; // Ícone padrão para segurança
+              }
+
+              // Adiciona '-outline' ao nome do ícone se a aba NÃO estiver focada (ativa)
+              // Se estiver focada, usa o nome base (ícone preenchido)
+              iconName = focused ? iconName : `${iconName}-outline`;
+
+              // Retorna o componente do ícone com o nome (preenchido ou outline) e as props
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            // Opcional: Define explicitamente o título da aba (por padrão usa route.name)
+            // tabBarLabel: route.name,
+          })}
+      >
+        {/* Define cada tela/aba da navegação */}
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Clima" component={WeatherScreen} />
+        <Tab.Screen name="Dicas" component={TipsScreen} />
+        <Tab.Screen name="Cadastro" component={CityFormScreen} />
+        <Tab.Screen name="Sobre" component={AboutScreen} />
+      </Tab.Navigator>
+  );
+}
+// ====== ARQUIVO: screens\AboutScreen.js ======
+import React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+
+export default function AboutScreen() {
+  const abrirSite = () => {
+    Linking.openURL('https://www.greenpeace.org/brasil/');
+  };
+
+  const abrirGithubBeatriz = () => {
+    Linking.openURL('https://github.com/BeatrizFerreira01');
+  };
+
+  const abrirGithubGabrielly = () => {
+    Linking.openURL('https://github.com/gabimaced0');
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Desenvolvedores</Text>
+
+      {/* Beatriz */}
+      <View style={styles.card}>
+        <Image
+          source={{ uri: 'https://github.com/BeatrizFerreira01.png' }}
+          style={styles.imagemPerfil}
+        />
+        <Text style={styles.nome}>Beatriz Ferreira Cruz</Text>
+        <TouchableOpacity onPress={abrirGithubBeatriz}>
+          <FontAwesome name="github" size={30} color="#1f2937" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Gabrielly */}
+      <View style={styles.card}>
+        <Image
+          source={{ uri: 'https://github.com/gabimaced0.png' }}
+          style={styles.imagemPerfil}
+        />
+        <Text style={styles.nome}>Gabrielly Campos Macedo</Text>
+        <TouchableOpacity onPress={abrirGithubGabrielly}>
+          <FontAwesome name="github" size={30} color="#1f2937" />
+        </TouchableOpacity>
+      </View>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#eafaf1',
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#14532d',
+    marginBottom: 30,
+  },
+  card: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  imagemPerfil: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 10,
+  },
+  nome: {
+    fontSize: 18,
+    color: '#1f2937',
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  botao: {
+    backgroundColor: '#166534',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  textoBotao: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+});
+
+// ====== ARQUIVO: screens\AjudaScreens.js ======
+import React from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+
+export default function AjudaScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Tela de Ajuda</Text>
+      
+      <Text style={styles.text}>
+        Aqui você pode encontrar respostas para dúvidas frequentes sobre o uso do app.
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20,
+  },
+  title: {
+    fontSize: 24, fontWeight: 'bold', marginBottom: 10,
+  },
+  text: {
+    fontSize: 16, textAlign: 'center',
+  },
+});
+
+// ====== ARQUIVO: screens\HomeScreen.js ======
+import React from 'react';
+import { View, Text, StyleSheet,  TouchableOpacity, ScrollView } from 'react-native';
+import { Image } from 'expo-image';
+
+export default function HomeScreen({ navigation }) {
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+
+    <Image
+      source={{ uri: 'https://static.vecteezy.com/ti/vetor-gratis/p1/17260371-mao-apontando-o-dedo-para-voce-vetor.jpg' }}
+      style={{ width: 380, height: 300 }}
+      contentFit="cover"
+    />
+      
+      <Text style={styles.titulo}>O planeta precisa de você 🌍</Text>
+
+    
+      <Text style={styles.texto}>
+        Mudanças climáticas são uma realidade. Temperaturas extremas, secas, enchentes e desastres
+        naturais estão cada vez mais frequentes.
+      </Text>
+
+      <Text style={styles.texto}>
+        Faça parte da solução. Nosso aplicativo ajuda você a acompanhar o clima da sua cidade,
+        adotar atitudes sustentáveis e ficar por dentro das ações ambientais.
+      </Text>
+
+      <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('Clima')}>
+        <Text style={styles.textoBotao}>Ver clima agora </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('Dicas')}>
+        <Text style={styles.textoBotao}>Ver dicas ambientais </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.botao} onPress={() => navigation.navigate('Ajuda')}>
+        <Text style={styles.textoBotao}>Precisa de ajuda? </Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: '#ffffff',
+  },
+  titulo: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#14532d',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  imagem: {
+    width: '100%',
+    height: 180,
+    borderRadius: 12,
+    marginVertical: 15,
+  },
+  texto: {
+    fontSize: 16,
+    color: '#1f2937',
+    marginBottom: 10,
+    textAlign: 'justify',
+  },
+  botao: {
+    backgroundColor: '#166534',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  textoBotao: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+});
+
+// ====== ARQUIVO: screens\NewsScreen.js ======
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Button, Linking } from 'react-native';
+
+export default function NewsScreen() {
+  const news = [
+    {
+      title: "Mudanças Climáticas Aceleram",
+      url: "https://www.bbc.com/portuguese/internacional-58478903"
+    },
+    {
+      title: "Como Reduzir sua Pegada de Carbono",
+      url: "https://www.wwf.org.br/?78642/pegada-de-carbono"
+    },
+    {
+      title: "Aquecimento Global: O Que Você Precisa Saber",
+      url: "https://www.nationalgeographicbrasil.com/meio-ambiente/2021/11/aquecimento-global-o-que-e"
+    }
+  ];
+
+  return (
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Notícias Ambientais 📰</Text>
+
+      {news.map((item, index) => (
+        <View key={index} style={styles.card}>
+          <Text style={styles.newsTitle}>{item.title}</Text>
+          <Button
+            title="Ler mais"
+            onPress={() => Linking.openURL(item.url)}
+          />
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#e0f7fa',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  newsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+});
+
+// ====== ARQUIVO: screens\TipsScreen.js ======
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import TipCard from '../components/TipCard';
+
+export default function TipsScreen() {
+  const dicas = [
+    {
+      titulo: 'Use transporte sustentável',
+      descricao: 'Prefira caminhar, pedalar ou usar transporte público. Ajuda o meio ambiente e sua saúde!',
+    },
+    {
+      titulo: 'Reduza o uso de plástico',
+      descricao: 'Evite sacolas plásticas e embalagens descartáveis. Leve sua ecobag!',
+    },
+    {
+      titulo: 'Economize água',
+      descricao: 'Feche a torneira ao escovar os dentes e tome banhos mais curtos.',
+    },
+    {
+      titulo: 'Plante árvores',
+      descricao: 'Elas ajudam a capturar CO₂, proporcionam sombra e contribuem com a biodiversidade.',
+    },
+  ];
+
+  const abrirSite = () => {
+    Linking.openURL('https://www.greenpeace.org/brasil/');
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.titulo}>Dicas Ambientais 🌱</Text>
+
+      {dicas.map((dica, index) => (
+        <TipCard key={index} titulo={dica.titulo} descricao={dica.descricao} />
+      ))}
+
+      <View style={styles.botaoContainer}>
+        <TouchableOpacity style={styles.botao} onPress={abrirSite}>
+          <Text style={styles.textoBotao}>Visite o Greenpeace 🌱</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f0fdf4',
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#14532d',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  botaoContainer: {
+    alignItems: 'center',
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  botao: {
+    backgroundColor: '#166534',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  textoBotao: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});
+
+// ====== ARQUIVO: screens\WeatherScreen.js ======
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import axios from 'axios';
+
+export default function WeatherScreen() {
+  const [cidade, setCidade] = useState('');
+  const [clima, setClima] = useState(null);
+
+  const buscarClima = async () => {
+    if (!cidade) {
+      Alert.alert('Atenção', 'Informe o nome da cidade!');
+      return;
+    }
+
+    try {
+      const apiKey = 'a39bf42f530592e8ea221692d4f03f5f';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${apiKey}&lang=pt_br&units=metric`;
+
+      const response = await axios.get(url);
+      setClima(response.data);
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível encontrar o clima dessa cidade.');
+      setClima(null);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Consultar Clima</Text>
+
+
+      <TextInput
+        style={styles.input}
+        placeholder="Digite o nome da cidade"
+        value={cidade}
+        onChangeText={setCidade}
+      />
+
+      <TouchableOpacity style={styles.botao} onPress={buscarClima}>
+        <Text style={styles.textoBotao}>Buscar </Text>
+      </TouchableOpacity>
+
+
+
+      {clima && (
+        <View style={styles.resultado}>
+          <Text style={styles.resultadoTexto}>Cidade: {clima.name}</Text>
+          <Text style={styles.resultadoTexto}>Temperatura: {clima.main.temp}°C</Text>
+          <Text style={styles.resultadoTexto}>Clima: {clima.weather[0].description}</Text>
+          <Text style={styles.resultadoTexto}>Umidade: {clima.main.humidity}%</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#f0fdf4',
+    flex: 1,
+    padding: 20,
+    justifyContent: 'flex-start',
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#14532d',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 15,
+  },
+  botao: {
+    backgroundColor: '#166534',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  textoBotao: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  imagem: {
+    width: '100%',
+    height: 160,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  resultado: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#d1fae5',
+    borderRadius: 10,
+  },
+  resultadoTexto: {
+    fontSize: 16,
+    color: '#1f2937',
+    marginBottom: 5,
+  },
+});
+
+// ====== ARQUIVO: services\weatherApi.js ======
+import axios from 'axios';
+
+const API_KEY = 'a39bf42f530592e8ea221692d4f03f5f';
+
+export const fetchWeather = async (city) => {
+  const response = await axios.get(
+    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=pt_br`
+  );
+  return response.data;
+};
+

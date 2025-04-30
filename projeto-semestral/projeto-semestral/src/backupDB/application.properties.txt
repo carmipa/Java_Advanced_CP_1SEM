@@ -1,0 +1,35 @@
+# Nome da aplicação (você já tem este)
+spring.application.name=projeto-semestral
+
+# ===============================
+# = DATASOURCE CONFIGURATION    =
+# ===============================
+# URL de conexão JDBC do Oracle - Parece correta para o ambiente FIAP/ORCL
+spring.datasource.url=jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL
+
+# Usuário do banco de dados - Correto (seu RM)
+spring.datasource.username=rm557881
+
+# Senha do banco de dados - !!! PRECISA PREENCHER AQUI !!!
+spring.datasource.password=fiap25
+
+# Classe do Driver JDBC - Correto
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+
+# ===============================
+# = JPA/HIBERNATE CONFIGURATION =
+# ===============================
+# Dialeto do Hibernate - Correto (bom padrão para Oracle recente)
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+
+# Mostrar SQL - Correto (ótimo para aprender)
+spring.jpa.show-sql=true
+
+# Formatar SQL - Correto (facilita a leitura do SQL)
+spring.jpa.properties.hibernate.format_sql=true
+
+# Estratégia de Geração do Schema (DDL) - Correto (bom para ambiente educacional)
+spring.jpa.hibernate.ddl-auto=update
+
+# Debug: Sempre inclui o stack trace completo na resposta de erro da API.
+server.error.include-stacktrace=always

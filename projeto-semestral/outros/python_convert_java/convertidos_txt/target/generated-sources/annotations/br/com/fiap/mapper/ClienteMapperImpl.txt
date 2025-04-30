@@ -1,0 +1,99 @@
+package br.com.fiap.mapper;
+
+import br.com.fiap.dto.cliente.ClienteRequestDto;
+import br.com.fiap.dto.cliente.ClienteResponseDto;
+import br.com.fiap.model.Clientes;
+import br.com.fiap.model.relacionamentos.ClienteId;
+import javax.annotation.processing.Generated;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = "org.mapstruct.ap.MappingProcessor",
+    date = "2025-04-14T13:57:10-0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+)
+@Component
+public class ClienteMapperImpl implements ClienteMapper {
+
+    @Autowired
+    private EnderecoMapper enderecoMapper;
+    @Autowired
+    private ContatoMapper contatoMapper;
+
+    @Override
+    public Clientes toEntity(ClienteRequestDto dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        Clientes clientes = new Clientes();
+
+        clientes.setEndereco( enderecoMapper.toEntity( dto.getEndereco() ) );
+        clientes.setContato( contatoMapper.toEntity( dto.getContato() ) );
+        clientes.setTipoCliente( dto.getTipoCliente() );
+        clientes.setNome( dto.getNome() );
+        clientes.setSobrenome( dto.getSobrenome() );
+        clientes.setSexo( dto.getSexo() );
+        clientes.setTipoDocumento( dto.getTipoDocumento() );
+        clientes.setNumeroDocumento( dto.getNumeroDocumento() );
+        clientes.setDataNascimento( dto.getDataNascimento() );
+        clientes.setAtividadeProfissional( dto.getAtividadeProfissional() );
+
+        return clientes;
+    }
+
+    @Override
+    public ClienteResponseDto toResponseDto(Clientes entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        ClienteResponseDto clienteResponseDto = new ClienteResponseDto();
+
+        clienteResponseDto.setIdCli( entityIdIdCli( entity ) );
+        clienteResponseDto.setEndereco( enderecoMapper.toResponseDto( entity.getEndereco() ) );
+        clienteResponseDto.setContato( contatoMapper.toResponseDto( entity.getContato() ) );
+        clienteResponseDto.setTipoCliente( entity.getTipoCliente() );
+        clienteResponseDto.setNome( entity.getNome() );
+        clienteResponseDto.setSobrenome( entity.getSobrenome() );
+        clienteResponseDto.setSexo( entity.getSexo() );
+        clienteResponseDto.setTipoDocumento( entity.getTipoDocumento() );
+        clienteResponseDto.setNumeroDocumento( entity.getNumeroDocumento() );
+        clienteResponseDto.setDataNascimento( entity.getDataNascimento() );
+        clienteResponseDto.setAtividadeProfissional( entity.getAtividadeProfissional() );
+
+        return clienteResponseDto;
+    }
+
+    @Override
+    public void updateEntityFromDto(ClienteRequestDto dto, Clientes entity) {
+        if ( dto == null ) {
+            return;
+        }
+
+        entity.setTipoCliente( dto.getTipoCliente() );
+        entity.setNome( dto.getNome() );
+        entity.setSobrenome( dto.getSobrenome() );
+        entity.setSexo( dto.getSexo() );
+        entity.setTipoDocumento( dto.getTipoDocumento() );
+        entity.setNumeroDocumento( dto.getNumeroDocumento() );
+        entity.setDataNascimento( dto.getDataNascimento() );
+        entity.setAtividadeProfissional( dto.getAtividadeProfissional() );
+    }
+
+    private Long entityIdIdCli(Clientes clientes) {
+        if ( clientes == null ) {
+            return null;
+        }
+        ClienteId id = clientes.getId();
+        if ( id == null ) {
+            return null;
+        }
+        Long idCli = id.getIdCli();
+        if ( idCli == null ) {
+            return null;
+        }
+        return idCli;
+    }
+}

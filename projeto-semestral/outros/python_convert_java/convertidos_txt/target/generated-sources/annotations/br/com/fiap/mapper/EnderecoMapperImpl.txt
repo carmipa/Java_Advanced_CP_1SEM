@@ -1,0 +1,74 @@
+package br.com.fiap.mapper;
+
+import br.com.fiap.dto.endereco.EnderecoRequestDto;
+import br.com.fiap.dto.endereco.EnderecoResponseDto;
+import br.com.fiap.model.Endereco;
+import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = "org.mapstruct.ap.MappingProcessor",
+    date = "2025-04-14T13:57:10-0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+)
+@Component
+public class EnderecoMapperImpl implements EnderecoMapper {
+
+    @Override
+    public Endereco toEntity(EnderecoRequestDto dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        Endereco endereco = new Endereco();
+
+        if ( dto.getNumero() != null ) {
+            endereco.setNumero( dto.getNumero() );
+        }
+        endereco.setCep( dto.getCep() );
+        endereco.setLogradouro( dto.getLogradouro() );
+        endereco.setCidade( dto.getCidade() );
+        endereco.setBairro( dto.getBairro() );
+        endereco.setEstado( dto.getEstado() );
+        endereco.setComplemento( dto.getComplemento() );
+
+        return endereco;
+    }
+
+    @Override
+    public EnderecoResponseDto toResponseDto(Endereco entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        EnderecoResponseDto enderecoResponseDto = new EnderecoResponseDto();
+
+        enderecoResponseDto.setCodigo( entity.getCodigo() );
+        enderecoResponseDto.setNumero( entity.getNumero() );
+        enderecoResponseDto.setCep( entity.getCep() );
+        enderecoResponseDto.setLogradouro( entity.getLogradouro() );
+        enderecoResponseDto.setCidade( entity.getCidade() );
+        enderecoResponseDto.setBairro( entity.getBairro() );
+        enderecoResponseDto.setEstado( entity.getEstado() );
+        enderecoResponseDto.setComplemento( entity.getComplemento() );
+
+        return enderecoResponseDto;
+    }
+
+    @Override
+    public void updateEntityFromDto(EnderecoRequestDto dto, Endereco entity) {
+        if ( dto == null ) {
+            return;
+        }
+
+        if ( dto.getNumero() != null ) {
+            entity.setNumero( dto.getNumero() );
+        }
+        entity.setCep( dto.getCep() );
+        entity.setLogradouro( dto.getLogradouro() );
+        entity.setCidade( dto.getCidade() );
+        entity.setBairro( dto.getBairro() );
+        entity.setEstado( dto.getEstado() );
+        entity.setComplemento( dto.getComplemento() );
+    }
+}

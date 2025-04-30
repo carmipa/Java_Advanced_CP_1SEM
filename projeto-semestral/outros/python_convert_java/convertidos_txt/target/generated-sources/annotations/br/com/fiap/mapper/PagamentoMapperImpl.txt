@@ -1,0 +1,67 @@
+package br.com.fiap.mapper;
+
+import br.com.fiap.dto.pagamento.PagamentoRequestDto;
+import br.com.fiap.dto.pagamento.PagamentoResponseDto;
+import br.com.fiap.model.Pagamento;
+import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = "org.mapstruct.ap.MappingProcessor",
+    date = "2025-04-14T13:57:10-0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+)
+@Component
+public class PagamentoMapperImpl implements PagamentoMapper {
+
+    @Override
+    public Pagamento toEntity(PagamentoRequestDto dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        Pagamento pagamento = new Pagamento();
+
+        pagamento.setTotalParcelas( dto.getTotalParcelas() );
+        pagamento.setDataPagamento( dto.getDataPagamento() );
+        pagamento.setTipoPagamento( dto.getTipoPagamento() );
+        pagamento.setDesconto( dto.getDesconto() );
+        pagamento.setValorParcelas( dto.getValorParcelas() );
+        pagamento.setTotalComDesconto( dto.getTotalComDesconto() );
+
+        return pagamento;
+    }
+
+    @Override
+    public PagamentoResponseDto toResponseDto(Pagamento entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        PagamentoResponseDto pagamentoResponseDto = new PagamentoResponseDto();
+
+        pagamentoResponseDto.setTotalParcelas( entity.getTotalParcelas() );
+        pagamentoResponseDto.setId( entity.getId() );
+        pagamentoResponseDto.setDataPagamento( entity.getDataPagamento() );
+        pagamentoResponseDto.setTipoPagamento( entity.getTipoPagamento() );
+        pagamentoResponseDto.setDesconto( entity.getDesconto() );
+        pagamentoResponseDto.setValorParcelas( entity.getValorParcelas() );
+        pagamentoResponseDto.setTotalComDesconto( entity.getTotalComDesconto() );
+
+        return pagamentoResponseDto;
+    }
+
+    @Override
+    public void updateEntityFromDto(PagamentoRequestDto dto, Pagamento entity) {
+        if ( dto == null ) {
+            return;
+        }
+
+        entity.setTotalParcelas( dto.getTotalParcelas() );
+        entity.setDataPagamento( dto.getDataPagamento() );
+        entity.setTipoPagamento( dto.getTipoPagamento() );
+        entity.setDesconto( dto.getDesconto() );
+        entity.setValorParcelas( dto.getValorParcelas() );
+        entity.setTotalComDesconto( dto.getTotalComDesconto() );
+    }
+}

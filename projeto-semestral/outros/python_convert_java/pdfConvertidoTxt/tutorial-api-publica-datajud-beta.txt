@@ -1,0 +1,876 @@
+9/5/2023 
+
+API Pública do Datajud 
+Tutorial 
+
+Departamento  de Pesquisas Judiciária - DPJ 
+CONSELHO NACIONAL DE JUSTIÇA - CNJ 
+
+ 
+ 
+ 
+Sumário 
+
+1.  API Pública do Datajud - Acesso ............................................................................... 2 
+
+2. 
+
+3. 
+
+Endpoints ............................................................................................................. 2 
+
+Exemplos de consumo da API Pública do Datajud ....................................................... 4 
+
+           Exemplo 1: Pesquisar pelo número de processo:  ................................................... 4 
+
+           Exemplo 2: Pesquisar por Classe Processual e Órgão Julgador: ................................ 5 
+
+           Exemplo 3: Pesquisa com paginação (search_after): .............................................. 6 
+
+4.  Considerações Finais .............................................................................................. 8 
+
+5.  Anexos ................................................................................................................. 9 
+
+           Anexo I: Glossário de Dados ............................................................................... 9 
+
+           Anexo II: Relação de endpoints de todos os tribunais ........................................... 10 
+
+ 
+ 
+ 
+ 
+1. API Pública do Datajud - Acesso 
+
+A API Pública do Datajud é uma ferramenta que disponibiliza ao público o acesso 
+aos metadados dos processos públicos dos tribunais do judiciário  brasileiro. Os dados 
+disponibilizados  pela API são de origem da Base Nacional de Dados do Poder Judiciário 
+– Datajud e atendem aos critérios estabelecidos  Portaria Nº 160 de 09/09/2020. 
+
+Antes de começar a utilizar a versão beta da API, é necessário criar uma conta no 
+site do Datajud e obter sua credencial de acesso. Para isso, acesse o site do Datajud em 
+https://www.cnj.jus.br/sistemas/datajud/api-publica/  e siga as instruções para criar uma 
+conta e obter o seu acesso. 
+
+2. Endpoints 
+
+A  API  Pública  do  Datajud  oferece  várias  rotas  para  pesquisa  de  informações 
+processuais devido à natureza e organização do Judiciário brasileiro. A rota principal de 
+acesso é  a url https://api-publica.datajud.cnj.jus.br/  e deverá ser seguida de  um aliase 
+correspondente  ao  Tribunal  que  deseja  obter  os  dados  processuais.  Por  exemplo,  o 
+endpoint  do 
+é  https://api-
+publica.datajud.cnj.jus.br/api_publica_trf1/. 
+
+Tribunal  Regional 
+
+Federal  da 
+
+1ª  Região 
+
+Abaixo segue a relação de tribunais/aliases para pesquisa processual: 
+
+  Tribunais  Superiores: api_publica_tst, api_publica_tse, api_publica_stj e 
+
+api_publica_stm; 
+
+  Justiça  Federal:  api_publica_trf1,  api_publica_trf2,  api_publica_trf3, 
+
+api_publica_trf4, api_publica_trf5 e api_publica_trf6; 
+
+  Justiça  Estadual:  api_publica_tjac,  api_publica_tjal,  api_publica_tjam, 
+api_publica_tjap,  api_publica_tjba,  api_publica_tjce,  api_publica_tjdft, 
+api_publica_tjes,  api_publica_tjgo,  api_publica_tjma,  api_publica_tjmg, 
+api_publica_tjms,  api_publica_tjmt,  api_publica_tjpa,  api_publica_tjpb, 
+api_publica_tjpe,  api_publica_tjpi,  api_publica_tjpr,  api_publica_tjrj, 
+api_publica_tjrn,  api_publica_tjro,  api_publica_tjrr,  api_publica_tjrs, 
+api_publica_tjsc, api_publica_tjse, api_publica_tjsp, api_publica_tjto ; 
+
+  Justiça  do Trabalho: api_publica_trt1, api_publica_trt2, api_publica_trt3, 
+api_publica_trt4,  api_publica_trt5,  api_publica_trt6,  api_publica_trt7, 
+api_publica_trt8,  api_publica_trt9,  api_publica_trt10,  api_publica_trt11, 
+api_publica_trt12, api_publica_trt13, api_publica_trt14, api_publica_trt15, 
+api_publica_trt15, api_publica_trt17, api_publica_trt18, api_publica_trt19, 
+api_publica_trt20, api_publica_trt21, api_publica_trt22, api_publica_trt23, 
+api_publica_trt24; 
+
+  Justiça  Eleitoral:  api_publica_ac,  api_publica_al,  api_publica_am, 
+api_publica_df, 
+
+api_publica_ap, 
+
+api_publica_ba, 
+
+api_publica_ce, 
+
+ 
+ 
+ 
+api_publica_es, 
+api_publica_ms, 
+api_publica_pe, 
+api_publica_rn, 
+api_publica_sc, api_publica_se, api_publica_sp, api_publica_to ; 
+
+api_publica_ma, 
+api_publica_pa, 
+api_publica_pr, 
+api_publica_rr, 
+
+api_publica_go, 
+api_publica_mt, 
+api_publica_pi, 
+api_publica_ro, 
+
+api_publica_mg, 
+api_publica_pb, 
+api_publica_rj, 
+api_publica_rs, 
+
+  Justiça Militar: api_publica_tjmmg, api_publica_ tjmrs, api_publica_ tjmsp; 
+
+* O Anexo II contém a relação de endpoints por extenso dos 91 tribunais acessíveis 
+via API-Pública. 
+
+ 
+ 
+ 
+3. Exemplos de consumo da API Pública do Datajud 
+
+As possibilidades  de pesquisas na API Pública não estão restritas apenas 
+aos exemplos abaixo. Para a obtenção de resultados mais satisfatórios em suas 
+pesquisas,  recomenda-se  a  utilização  dos  diversos  atributos  dos  metadados 
+processuais listados no Glossário de Dados (Anexo I) deste tutorial.  
+
+Exemplo 1: Pesquisar pelo número de processo: 
+
+No  exemplo  abaixo  é  realizada  a  consulta  de  um  processo  judicial 
+utilizando  a  numeração  única  do  processo  como  parâmetro  de  pesquisa  no 
+tribunal do TRF1. 
+
+Postman: 
+
+1.  Abra o Postman e clique em "New Request". 
+2.  Defina o método HTTP como GET. 
+3.  Digite a URL: https://api-publica.datajud.cnj.jus.br/api_publica_trf1/_search 
+4.  Selecione a aba "Authorization" e escolha o tipo "Basic Auth"; 
+5. 
+Insira suas credenciais de acesso à API (usuário e senha); 
+6.  Selecione a aba "Headers" e adicione um novo header com a chave 
+
+"Content-Type" e o valor "application/json"; 
+
+7.  Selecione a aba "Body" e escolha a opção "raw". Insira o corpo da 
+
+solicitação JSON conforme o exemplo abaixo: 
+
+Curl:
+
+{   "query": {     "match": {       "numeroProcesso": "00008323520184013202"     }   } }  curl -u seu_usuario:sua_senha \ -XGET "https://api-publica.datajud.cnj.jus.br/api_publica_trf1/_search" \ -H 'Content-Type: application/json' -d' {   "query": {     "match": {       "numeroProcesso": "00008323520184013202"     }   } }'   
+ 
+ 
+ 
+ 
+ 
+ 
+Exemplo 2: Pesquisar por Classe Processual e Órgão Julgador: 
+
+No exemplo  abaixo  é realizada  a consulta de  processos que possuam a 
+Classe  Processual  1116  –  “Execução  Fiscal”  da  vara  13597  -  VARA  DE 
+EXECUÇÃO FISCAL DO DF no tribunal do TJDFT. 
+
+Postman:  
+
+1.  Abra o Postman e clique em "New Request". 
+2.  Defina o método HTTP como GET. 
+3.  Digite a URL: https://api-publica.datajud.cnj.jus.br/api_publica_tjdft/_search 
+4.  Selecione a aba "Authorization" e escolha o tipo "Basic Auth"; 
+5. 
+Insira suas credenciais de acesso à API (usuário e senha); 
+6.  Selecione a aba "Headers" e adicione um novo header com a chave 
+
+"Content-Type" e o valor "application/json"; 
+
+7.  Selecione a aba "Body" e escolha a opção "raw". Insira o corpo da 
+
+solicitação JSON conforme o exemplo abaixo: 
+
+Curl: 
+
+{   "query": {     "bool": {        "must": [         {"match": {"classe.codigo": 1116}},         {"match": {"orgaoJulgador.codigo": 13597}}       ]     }   } }  curl -u seu_usuario:sua_senha \ -XGET "https://api-publica.datajud.cnj.jus.br/api_publica_tjdft/_search" \ -H 'Content-Type: application/json' -d' {   "query": {     "bool": {       "must": [         {"match": {"classe.codigo": 1116}},         {"match": {"orgaoJulgador.codigo": 13597}}       ]     }   } }'   
+ 
+ 
+ 
+Exemplo 3: Pesquisa com paginação (search_after): 
+
+Por padrão, as pesquisas na API do  Elasticsearch retornam até 10 registros por 
+solicitação. No entanto, é possível aumentar o número de registros retornados utilizando 
+o  parâmetro  "size"  de  paginação  dos  registros.  Esse  parâmetro  permite  especificar 
+quantos resultados devem ser retornados por página, variando de 10 até 10.000 registros 
+por página. 
+
+Quando  se  tem  uma  necessidade  de  percorrer  uma  maior  quantidade  de 
+resultados, é possível fazer uso do recurso "search_after". Esse recurso é prioritariamente 
+recomendado para paginação de dados, pois permite  que a API do Datajud continue a 
+partir do ponto onde a última página parou, sem a necessidade de recarregar todos os 
+resultados a cada nova página. O "search_after" é um ponteiro que aponta para o último 
+registro  retornado na página  anterior  e  pode  ser  informado  como  parâmetro para a 
+próxima solicitação, permitindo que a API retorne os resultados seguintes. 
+
+É  importante  ressaltar  que  a  utilização  do  "search_after"  não  prejudica  a 
+performance da API na busca de grandes volumes de dados, pois permite que a API do 
+Datajud execute  consultas de  forma  mais  eficiente,  sem  a  necessidade  de  recarregar 
+todos os  resultados em  cada  página.  Combinando o  uso do  parâmetro "size"  com o 
+"search_after", é possível percorrer grandes volumes de dados de forma eficiente e com 
+baixo impacto no desempenho da API. 
+
+Para paginar os resultados utilizando o search_after, é necessário a utilização da 
+ordenação  (sort) dos  dados  utilizando  o  atributo “@timestamp”  conforme  exemplo 
+abaixo: 
+
+{   "size": 100,    "query": {     "bool": {       "must": [         {"match": {"classe.codigo": 1116}},         {"match": {"orgaoJulgador.codigo": 13597}}       ]     }   },   "sort": [     {       "@timestamp": {         "order": "asc"       }     }   ] }   
+ 
+ 
+ 
+ 
+ 
+ 
+Após a primeira consulta, a resposta da API incluirá um array chamado "sort" que 
+contém os valores do campo de ordenação para cada documento retornado. Esse array 
+pode  ser  utilizado  como  o  valor  do  parâmetro  "search_after" na  próxima  consulta, 
+juntamente com o  parâmetro "size" que define  a quantidade de documentos a serem 
+retornados na próxima página. 
+
+Resposta  da consulta anterior:
+
+Para  buscar  os  próximos  100  processos,  basta  adicionar  o  parâmetro 
+"search_after" na  próxima  consulta,  utilizando  o  valor  do  campo  “sort”  do  último 
+documento retornado na página anterior conforme exemplo abaixo: 
+
+Observe que  o  valor  do  campo  "search_after" é  um  array  com  os  valores  do 
+campo  de  ordenação  para  o  último  documento  retornado  na  página  anterior.  É 
+importante lembrar que o "search_after" deve ser utilizado em conjunto com o "sort" e o 
+"size" para garantir uma paginação eficiente dos resultados. 
+
+{     "_index" : "api_publica_tjdft",     "_type" : "_doc",     "_id" : "TJDFT_1116_G1_13597_00356079220168070018",     "_score" : null,     "_source" : {...},     "sort" : [       1681366085550     ] }  {   "size": 100,    "query": {     "bool": {       "must": [         {"match": {"classe.codigo": 1116}},         {"match": {"orgaoJulgador.codigo": 13597}}       ]     }   },   "sort": [     {       "@timestamp": {         "order": "asc"       }     }   ],   "search_after": [ 1681366085550 ] }   
+ 
+ 
+4. Considerações Finais 
+
+A API suporta parâmetros de buscas e  agregações no padrão  do  Elasticsearch, 
+tornando a  busca  de  dados mais  eficiente  e  precisa.  Para mais  detalhes sobre  como 
+utilizar esses recursos, é possível consultar o guia Search your data | Elasticsearch Guide 
+[8.7] | Elastic. 
+
+A versão atual da API Pública do Datajud está em fase Beta de testes, e permite 
+o  acesso  público  aos  metadados  de  processos  judiciais  em  todo  o  Brasil.  Os dados 
+fornecidos  pela  API são provenientes da  Base Nacional  de  Dados do Poder  Judiciário 
+(Datajud), mas com a devida proteção aos processos sigilosos e dados de partes. 
+
+Desenvolvedores e pesquisadores podem utilizar a API para acessar informações 
+de capas processuais e movimentações relacionadas  a processos judiciais  em todas as 
+instâncias do Judiciário brasileiro. Os dados disponibilizados  podem ser utilizados para 
+diversas finalidades,  tais  como  pesquisas acadêmicas,  desenvolvimento de  aplicativos 
+que facilitem  o acesso  à informação jurídica,  observando os critérios  estabelecidos  no 
+Termo de Uso. 
+
+ 
+ 
+5. Anexos 
+
+Anexo I: Glossário de Dados 
+
+Atributos 
+
+id 
+
+tribunal 
+
+numeroProcesso 
+
+dataAjuizamento 
+
+grau 
+
+nivelSigilo 
+
+formato 
+
+formato.codigo 
+
+formato.nome 
+
+sistema 
+
+sistema.codigo 
+
+sistema.nome 
+
+classe 
+
+classe.codigo 
+
+classe.nome 
+
+assuntos 
+
+assuntos.codigo 
+
+assuntos.nome 
+
+orgaoJulgador 
+
+Tipo 
+
+text 
+
+text 
+
+text 
+
+Descrição 
+
+Identificador  da origem do processo  no  Datajud 
+
+Identificação  do Tribunal  pela sigla 
+
+Numeração  Única (CNJ) do processo sem formatação 
+
+datetime 
+
+Data de ajuizamento do processo 
+
+text 
+
+long 
+
+Identificação  do instância/grau  (G1, G2, JE, etc.) 
+
+Nível de sigilo 
+
+object{} 
+
+Identificação  de processo Físico ou Eletrônico 
+
+long 
+
+text 
+
+Código de identificação  do formato do processo 
+
+Identificação  se é Físico ou Eletrônico 
+
+object{} 
+
+Sistema processual  de origem do processo no Tribunal 
+
+long 
+
+text 
+
+Código do sistema processual 
+
+Descrição  do sistema processual 
+
+object{} 
+
+Classe Processual conforme  TPU 
+
+long 
+
+text 
+
+Código da classe processual 
+
+Descrição  da classe processual 
+
+array [] 
+
+Assuntos  do Processo conforme TPU 
+
+long 
+
+text 
+
+Código do assunto 
+
+Descrição  do assunto 
+
+object {} 
+
+Órgão Julgador 
+
+orgaoJulgador.codigo 
+
+orgaoJulgador.nome 
+
+orgaoJulgador.codigoMunicipioIBGE 
+
+movimentos 
+
+movimentos.codigo 
+
+movimentos.nome 
+
+long 
+
+text 
+
+long 
+
+Código da serventia/vara atual do processo 
+
+Nome da serventia/vara 
+
+Identificação  do município  pelo código do IBGE 
+
+array [] 
+
+Movimentos  Processuais 
+
+long 
+
+text 
+
+Código da movimentação processual conforme  TPU 
+
+Descrição  da movimentação 
+
+movimentos.dataHora 
+
+datetime 
+
+Data e hora da ocorrência  de movimentação 
+
+movimentos.complementosTabela dos 
+
+array [] 
+
+Lista de complementos  tabelados daquela movimentação 
+
+movimentos.complementosTabela dos.codigo 
+
+movimentos.complementosTabela dos.descricao 
+
+movimentos.complementosTabela dos.valor 
+
+movimentos.complementosTabela dos.nome 
+
+long 
+
+text 
+
+long 
+
+text 
+
+Código da variável de movimento tabelado 
+
+Descrição  da variável do movimento tabelado 
+
+Código do complemento  tabelado 
+
+Descrição  do complemento  tabelado 
+
+movimentos.orgaoJulgador 
+
+object  {} 
+
+Órgão julgador  do movimento 
+
+movimentos.orgaoJulgador.codigoOrgao 
+
+movimentos.orgaoJulgador.nomeOrgao 
+
+long 
+
+text 
+
+Código da serventia/vara do movimento 
+
+Nome da serventia/vara 
+
+ 
+ 
+ 
+ 
+Anexo II: Relação de endpoints de todos  os tribunais 
+
+Tribunais  Superiores 
+
+Tribunal  Superior  do Trabalho 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tst/_search 
+
+Tribunal  Superior  Eleitoral 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tse/_search 
+
+Tribunal  Superior  de Justiça 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_stj/_search 
+
+Tribunal  Superior  Militar 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_stm/_search 
+
+Justiça  Federal 
+
+Tribunal  Regional Federal da 1ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trf1/_search 
+
+Tribunal  Regional Federal da 2ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trf2/_search 
+
+Tribunal  Regional Federal da 3ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trf3/_search 
+
+Tribunal  Regional Federal da 4ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trf4/_search 
+
+Tribunal  Regional Federal da 5ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trf5/_search 
+
+Tribunal  Regional Federal da 6ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trf6/_search 
+
+Justiça  Estadual 
+
+Tribunal  de Justiça  do Acre 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjac/_search 
+
+Tribunal  de Justiça  de Alagoas 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjal/_search 
+
+Tribunal  de Justiça  de Manaus 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjam/_search 
+
+Tribunal  de Justiça  do Amapá 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjap/_search 
+
+Tribunal  de Justiça  da Bahia 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjba/_search 
+
+Tribunal  de Justiça  do Ceará 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjce/_search 
+
+TJ do Distrito  Federal e Territórios 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjdft/_search 
+
+Tribunal  de Justiça  do Espírito  santo 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjes/_search 
+
+Tribunal  de Justiça  do Goiás 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjgo/_search 
+
+Tribunal  de Justiça  do Maranhão 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjma/_search 
+
+Tribunal  de Justiça  de Minas Gerais 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjmg/_search 
+
+TJ do Mato Grosso  de Sul 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjms/_search 
+
+Tribunal  de Justiça  do Mato Grosso 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjmt/_search 
+
+Tribunal  de Justiça  do Pará 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjpa/_search 
+
+Tribunal  de Justiça  da Paraíba 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjpb/_search 
+
+Tribunal  de Justiça  de Pernambuco 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjpe/_search 
+
+Tribunal  de Justiça  do Piauí 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjpi/_search 
+
+Tribunal  de Justiça  do Paraná 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjpr/_search 
+
+Tribunal  de Justiça  do Rio  de Janeiro 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjrj/_search 
+
+TJ do Rio Grande  do Norte 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjrn/_search 
+
+Tribunal  de Justiça  de Rondônia 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjro/_search 
+
+Tribunal  de Justiça  de Roraima 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjrr/_search 
+
+Tribunal  de Justiça  do Rio  Grande do Sul 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjrs/_search  
+
+Tribunal  de Justiça  de Santa Catarina 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjsc/_search  
+
+Tribunal  de Justiça  de Sergipe 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjse/_search 
+
+Tribunal  de Justiça  de São Paulo 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjsp/_search 
+
+Tribunal  de Justiça  do Tocantins 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjto/_search 
+
+ 
+ 
+ 
+Justiça  do Trabalho 
+
+Tribunal  Regional do Trabalho da 1ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt1/_search 
+
+Tribunal  Regional do Trabalho da 2ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt2/_search 
+
+Tribunal  Regional do Trabalho da 3ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt3/_search 
+
+Tribunal  Regional do Trabalho da 4ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt4/_search 
+
+Tribunal  Regional do Trabalho da 5ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt5/_search 
+
+Tribunal  Regional do Trabalho da 6ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt6/_search 
+
+Tribunal  Regional do Trabalho da 7ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt7/_search 
+
+Tribunal  Regional do Trabalho da 8ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt8/_search 
+
+Tribunal  Regional do Trabalho da 9ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt9/_search 
+
+Tribunal  Regional do Trabalho da 10ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt10/_sea rch 
+
+Tribunal  Regional do Trabalho da 11ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt11/_sea rch 
+
+Tribunal  Regional do Trabalho da 12ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt12/_sea rch 
+
+Tribunal  Regional do Trabalho da 13ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt13/_sea rch 
+
+Tribunal  Regional do Trabalho da 14ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt14/_sea rch 
+
+Tribunal  Regional do Trabalho da 15ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt15/_sea rch 
+
+Tribunal  Regional do Trabalho da 16ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt15/_sea rch 
+
+Tribunal  Regional do Trabalho da 17ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt17/_sea rch 
+
+Tribunal  Regional do Trabalho da 18ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt18/_sea rch 
+
+Tribunal  Regional do Trabalho da 19ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt19/_sea rch 
+
+Tribunal  Regional do Trabalho da 20ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt20/_sea rch 
+
+Tribunal  Regional do Trabalho da 21ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt21/_sea rch 
+
+Tribunal  Regional do Trabalho da 22ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt22/_sea rch 
+
+Tribunal  Regional do Trabalho da 23ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt23/_sea rch 
+
+Tribunal  Regional do Trabalho da 24ª Região 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ trt24/_sea rch 
+
+ Justiça  Eleitoral 
+
+Tribunal  Regional Eleitoral  do Acre 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ac/_search 
+
+Tribunal  Regional Eleitoral  de Alagoas 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-al/_search 
+
+Tribunal  Regional Eleitoral  do Amazonas 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-am/_search 
+
+Tribunal  Regional Eleitoral  do Amapá 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ap/_search 
+
+Tribunal  Regional Eleitoral  da Bahia 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ba/_search 
+
+Tribunal  Regional Eleitoral  do Ceará 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ce/_search 
+
+Tribunal  Regional Eleitoral  do Distrito  Federal 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-df/_search 
+
+Tribunal  Regional Eleitoral  do Espírito  Santo 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-es/_search 
+
+Tribunal  Regional Eleitoral  do Goiás 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-go/_search 
+
+Tribunal  Regional Eleitoral  do Maranhão 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ma/_search 
+
+Tribunal  Regional Eleitoral  de Minas Gerais 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-mg/_search 
+
+Tribunal  Regional Eleitoral  do Mato Grosso do Sul  https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ms/_search 
+
+Tribunal  Regional Eleitoral  do Mato Grosso 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-mt/_search 
+
+Tribunal  Regional Eleitoral  do Pará 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-pa/_search 
+
+Tribunal  Regional Eleitoral  da Paraíba 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-pb/_search 
+
+Tribunal  Regional Eleitoral  de Pernambuco 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-pe/_search 
+
+Tribunal  Regional Eleitoral  do Piauí 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-pi/_search 
+
+Tribunal  Regional Eleitoral  do Paraná 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-pr/_search 
+
+Tribunal  Regional Eleitoral  do Rio de Janeiro 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-rj/_search 
+
+Tribunal  Regional Eleitoral  do Rio Grande do Norte  https://api-publica.datajud.cnj.jus.br/api_publica_ tre-rn/_search 
+
+Tribunal  Regional Eleitoral  do Rondônia 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-ro/_search 
+
+Tribunal  Regional Eleitoral  de Roraima 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-rr/_search 
+
+Tribunal  Regional Eleitoral  do Rio Grande do Sul 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-rs/_search 
+
+Tribunal  Regional Eleitoral  de Santa Catarina 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-sc/_search 
+
+Tribunal  Regional Eleitoral  de Sergipe 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-se/_search 
+
+Tribunal  Regional Eleitoral  de São Paulo 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-sp/_search 
+
+Tribunal  Regional Eleitoral  do Tocantins 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tre-to/_search 
+
+Justiça  Militar 
+
+Tribunal  Justiça Militar de Minas Gerais 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjmmg/_search  
+
+Tribunal  Justiça Militar do Rio Grande  do Sula 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjmrs/_search 
+
+Tribunal  Justiça Militar de São Paulo 
+
+https://api-publica.datajud.cnj.jus.br/api_publica_ tjmsp/_search  
+
+  
+ 
+ 
+
