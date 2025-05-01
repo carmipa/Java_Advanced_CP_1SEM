@@ -1,87 +1,108 @@
-// app/oficinaOnline/buscar/page.tsx
+// --- Arquivo: app/oficinaOnline/buscar/page.tsx (VERSÃO COM CARDS NOS RESULTADOS) ---
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
+import { // Ícones necessários para o formulário e cards
+    MdSearch, MdFilterList, MdEdit, MdDelete, MdErrorOutline, MdFindInPage,
+    MdCalendarToday, MdOutlineEditNote, MdOutlineReportProblem
+} from 'react-icons/md';
+import {
+    Hash, Calendar, FileText, CheckCircle, Edit3, Trash2, ClipboardList, Stethoscope
+} from 'lucide-react'; // Usando Lucide consistentemente
 
-// --- Interfaces para Tipagem (Reutilizadas/Adaptadas da Listagem) ---
+// --- Interfaces (sem alterações) ---
 interface OficinaParaLista {
     id: number;
     dataOficina: string;
     descricaoProblema: string;
     diagnostico: string;
-    horasTrabalhadas: string; // Pode ser útil mostrar
-}
-
-interface OficinaApiResponseDto {
-    id: number;
-    dataOficina: string;
-    descricaoProblema: string;
-    diagnostico: string;
-    partesAfetadas: string;
     horasTrabalhadas: string;
 }
-// --------------------------------------------------------------------
+interface OficinaApiResponseDto {
+    id: number; dataOficina: string; descricaoProblema: string | null; diagnostico: string | null; partesAfetadas: string | null; horasTrabalhadas: string | null;
+}
+// ---------------------------------
 
-// Define os tipos de busca possíveis para Oficina
 type TipoBuscaOficina = 'id' | 'descricao' | 'diagnostico';
 
 export default function BuscarOficinaPage() {
-    const [todasOficinas, setTodasOficinas] = useState<OficinaParaLista[]>([]); // Guarda todos os registros
-    const [resultadosBusca, setResultadosBusca] = useState<OficinaParaLista[]>([]); // Guarda os resultados filtrados
-    const [tipoBusca, setTipoBusca] = useState<TipoBuscaOficina>('descricao'); // <<< Padrão: buscar por descrição
+    const [todasOficinas, setTodasOficinas] = useState<OficinaParaLista[]>([]);
+    const [resultadosBusca, setResultadosBusca] = useState<OficinaParaLista[]>([]);
+    const [tipoBusca, setTipoBusca] = useState<TipoBuscaOficina>('descricao');
     const [termoBusca, setTermoBusca] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Loading para fetch inicial
-    const [isSearching, setIsSearching] = useState(false); // Loading para busca/filtro
+    const [isLoading, setIsLoading] = useState(false); // Loading inicial
+    const [isSearching, setIsSearching] = useState(false); // Loading da busca/filtro
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null); // Para msg de delete
+    const [success, setSuccess] = useState<string | null>(null);
     const [buscaRealizada, setBuscaRealizada] = useState(false);
 
-    // --- Estados para o Modal de Deleção ---
+    // Estados e Funções do Modal (sem alterações)
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [oficinaParaDeletar, setOficinaParaDeletar] = useState<OficinaParaLista | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
-    // -----------------------------------------
 
     const router = useRouter();
 
-    // --- Função para buscar TODOS os registros da API (apenas uma vez) ---
+    // Fetch inicial de todos os dados (sem alterações)
     const fetchTodasOficinas = async () => {
-        if (todasOficinas.length > 0) return;
+        if (todasOficinas.length > 0 && !isLoading) return; // Evita refetch desnecessário
         setIsLoading(true); setError(null); setSuccess(null);
         try {
             const response = await fetch("http://localhost:8080/rest/oficina/all");
             if (!response.ok) { throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`); }
+            if (response.status === 204) {
+                setTodasOficinas([]);
+                return;
+            }
             const data: OficinaApiResponseDto[] = await response.json();
+            if (!Array.isArray(data)) {
+                throw new Error("Formato de resposta inválido.");
+            }
             const oficinasFormatadas: OficinaParaLista[] = data.map(dto => ({
                 id: dto.id,
-                dataOficina: dto.dataOficina ? new Date(dto.dataOficina + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A',
+                dataOficina: dto.dataOficina ? new Date(dto.dataOficina + 'T00:00:00Z').toLocaleDateString('pt-BR', {timeZone: 'UTC'}) : 'N/A',
                 descricaoProblema: dto.descricaoProblema || 'N/A',
                 diagnostico: dto.diagnostico || 'Pendente',
                 horasTrabalhadas: dto.horasTrabalhadas || 'N/A',
             }));
             setTodasOficinas(oficinasFormatadas);
-        } catch (err: any) { setError(err.message || "Falha ao carregar dados base da oficina.");
+        } catch (err: any) {
+            setError(err.message || "Falha ao carregar dados base da oficina.");
+            setTodasOficinas([]); // Garante que a lista base está vazia em caso de erro
         } finally { setIsLoading(false); }
     };
 
-    useEffect(() => { fetchTodasOficinas(); }, []);
+    useEffect(() => { fetchTodasOficinas(); }, []); // Executa apenas na montagem inicial
 
-    // --- Função para realizar a busca/filtro (CLIENT-SIDE) ---
+    // Handle da busca client-side (sem alterações na lógica)
     const handleSearch = (event?: FormEvent<HTMLFormElement>) => {
         if (event) event.preventDefault();
         setIsSearching(true); setBuscaRealizada(true); setSuccess(null); setError(null);
         const query = termoBusca.trim().toLowerCase();
-        if (!query) { setResultadosBusca([]); setIsSearching(false); return; }
+
+        // Garante que temos dados base antes de filtrar
+        if (isLoading || todasOficinas.length === 0) {
+            setResultadosBusca([]);
+            setIsSearching(false);
+            if (!isLoading) setError("Dados base não carregados. Tente recarregar a página."); // Informa se a base falhou
+            return;
+        }
+
+        if (!query && tipoBusca !== 'id') { // Permite busca vazia exceto por ID
+            setResultadosBusca([]);
+            setIsSearching(false);
+            return;
+        }
 
         let resultados: OficinaParaLista[] = [];
-
         switch (tipoBusca) {
             case 'id':
-                resultados = todasOficinas.filter(o => o.id.toString() === query.replace(/\D/g, ''));
+                const idNum = parseInt(query.replace(/\D/g, ''), 10);
+                resultados = isNaN(idNum) ? [] : todasOficinas.filter(o => o.id === idNum);
                 break;
             case 'descricao':
                 resultados = todasOficinas.filter(o => o.descricaoProblema.toLowerCase().includes(query));
@@ -96,10 +117,8 @@ export default function BuscarOficinaPage() {
         setIsSearching(false);
     };
 
-    // --- Funções de Deleção com Modal (adaptadas para Oficina) ---
-    const handleDeleteClick = (oficina: OficinaParaLista) => {
-        setOficinaParaDeletar(oficina); setShowDeleteModal(true); setError(null); setSuccess(null); };
-
+    // Funções de Deleção (sem alterações)
+    const handleDeleteClick = (oficina: OficinaParaLista) => { setOficinaParaDeletar(oficina); setShowDeleteModal(true); setError(null); setSuccess(null); };
     const confirmDelete = async () => {
         if (!oficinaParaDeletar) return;
         setIsDeleting(true); setError(null); setSuccess(null);
@@ -110,133 +129,157 @@ export default function BuscarOficinaPage() {
                 const errorText = await response.text().catch(() => `Erro ${response.status}`);
                 throw new Error(`Falha ao deletar registro: ${errorText || response.statusText}`); }
             setShowDeleteModal(false); setShowDeleteSuccessModal(true);
-            // Remove da lista completa E dos resultados da busca atual
             setTodasOficinas(prev => prev.filter(o => o.id !== id));
             setResultadosBusca(prev => prev.filter(o => o.id !== id));
         } catch (err: any) { setError(err.message || "Falha ao excluir registro."); setShowDeleteModal(false);
         } finally { setIsDeleting(false); }
     };
-
     const cancelDelete = () => { setShowDeleteModal(false); setOficinaParaDeletar(null); };
     const closeSuccessModal = () => { setShowDeleteSuccessModal(false); setOficinaParaDeletar(null); };
-    // -------------------------------------------------------------
+    // ----------------------------------------
 
-    // Define placeholder dinâmico
+    // Placeholder dinâmico (sem alterações)
     const getPlaceholder = (): string => {
         switch (tipoBusca) {
-            case 'id': return 'Digite o ID do Registro...';
-            case 'descricao': return 'Digite parte da descrição do problema...';
+            case 'id': return 'Digite o ID exato...';
+            case 'descricao': return 'Digite parte da descrição...';
             case 'diagnostico': return 'Digite parte do diagnóstico...';
-            default: return 'Digite o termo de busca...';
+            default: return 'Digite o termo...';
         }
     }
 
     return (
         <>
-            <NavBar active="oficinaOnline" /> {/* Define item ativo na NavBar */}
+            <NavBar active="oficinaOnline" />
 
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
-                <h1 className="text-3xl font-bold mb-6 text-center">Buscar Registros da Oficina</h1>
+                {/* Título */}
+                <h1 className="flex items-center justify-center text-3xl font-bold mb-6 gap-2">
+                    <MdFindInPage className="text-4xl text-sky-400"/> Buscar Registros da Oficina
+                </h1>
 
-                {/* Formulário de Busca */}
-                <form onSubmit={handleSearch} className="mb-8 p-6 bg-slate-800 rounded-lg shadow-lg flex flex-col md:flex-row gap-4 items-end">
-                    {/* Select para escolher o tipo de busca */}
-                    <div className="w-full md:w-auto">
-                        <label htmlFor="tipoBusca" className="block text-sm font-medium mb-1 text-slate-300">Buscar por:</label>
-                        <select
-                            id="tipoBusca"
-                            name="tipoBusca"
-                            className="w-full p-2 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            value={tipoBusca}
-                            onChange={(e) => { setTipoBusca(e.target.value as TipoBuscaOficina); setTermoBusca(''); setResultadosBusca([]); setBuscaRealizada(false); }}
-                        >
-                            <option value="descricao">Descrição Problema</option>
-                            <option value="id">ID Registro</option>
-                            <option value="diagnostico">Diagnóstico</option>
-                        </select>
-                    </div>
+                {/* Formulário de Busca (sem alterações na estrutura) */}
+                <div className="bg-slate-800 p-4 md:p-6 rounded-lg shadow-lg max-w-3xl mx-auto mb-8">
+                    <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 items-end">
+                        <div className="w-full md:w-auto">
+                            <label htmlFor="tipoBusca" className="flex items-center gap-1 block text-sm font-medium mb-1 text-slate-300"><MdFilterList/>Buscar por:</label>
+                            <select
+                                id="tipoBusca"
+                                name="tipoBusca"
+                                className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                value={tipoBusca}
+                                onChange={(e) => { setTipoBusca(e.target.value as TipoBuscaOficina); setTermoBusca(''); setResultadosBusca([]); setBuscaRealizada(false); }}
+                            >
+                                <option value="descricao">Descrição Problema</option>
+                                <option value="id">ID Registro</option>
+                                <option value="diagnostico">Diagnóstico</option>
+                            </select>
+                        </div>
+                        <div className="flex-grow w-full">
+                            <label htmlFor="termoBusca" className="block text-sm font-medium mb-1 text-slate-300">Termo:</label>
+                            <input
+                                type={tipoBusca === 'id' ? 'number' : 'text'}
+                                id="termoBusca"
+                                className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                value={termoBusca}
+                                onChange={(e) => setTermoBusca(e.target.value)}
+                                placeholder={getPlaceholder()}
+                                required={tipoBusca === 'id'} // Só ID é obrigatório
+                            />
+                        </div>
+                        <button type="submit" className="flex-shrink-0 w-full md:w-auto h-10 px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-sky-500 flex items-center justify-center whitespace-nowrap" disabled={isLoading || isSearching}>
+                            <MdSearch className="mr-2" />
+                            {isSearching ? 'Buscando...' : 'Buscar'}
+                        </button>
+                    </form>
+                </div>
 
-                    {/* Input único para o termo de busca */}
-                    <div className="flex-1 min-w-0">
-                        <label htmlFor="termoBusca" className="block text-sm font-medium mb-1 text-slate-300">Termo de Busca:</label>
-                        <input
-                            type={tipoBusca === 'id' ? 'number' : 'text'}
-                            id="termoBusca"
-                            className="w-full p-2 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            value={termoBusca}
-                            onChange={(e) => setTermoBusca(e.target.value)}
-                            placeholder={getPlaceholder()}
-                            required
-                        />
-                    </div>
+                {/* Loading Inicial e Erros */}
+                {isLoading && <p className="text-center text-sky-300 py-10">Carregando dados base...</p>}
+                {error && ( <div className="relative max-w-3xl mx-auto mb-6 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500" role="alert"><MdErrorOutline className="inline mr-2"/>{error}<button type="button" className="absolute top-0 bottom-0 right-0 px-4 py-3 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-xl">&times;</span></button></div> )}
 
-                    <button type="submit" className="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-sky-500 whitespace-nowrap" disabled={isLoading || isSearching}>
-                        {isSearching ? 'Buscando...' : 'Buscar'}
-                    </button>
-                </form>
+                {/* <<< ÁREA DE RESULTADOS: AGORA COM CARDS >>> */}
+                {!isLoading && buscaRealizada && !error && (
+                    <div className="mt-8">
+                        <h2 className="text-xl font-semibold mb-4 text-center text-sky-300">Resultados da Busca</h2>
+                        {isSearching ? (
+                            <p className="text-center text-sky-300 py-10">Filtrando registros...</p>
+                        ) : resultadosBusca.length === 0 ? (
+                            <p className="text-center text-slate-400 py-10">Nenhum registro encontrado para os critérios informados.</p>
+                        ) : (
+                            // Grid Layout para os Cards (Multi-coluna como na listagem)
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {resultadosBusca.map((oficina) => (
+                                    // Card Individual (Estrutura idêntica à da ListarOficinaPage)
+                                    <div key={oficina.id} className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 flex flex-col overflow-hidden hover:shadow-sky-700/20 transition-shadow duration-300">
+                                        {/* Header do Card */}
+                                        <div className="bg-slate-700 p-3 flex justify-between items-center text-sm">
+                                            <span className="flex items-center gap-1 font-semibold text-sky-300">
+                                                <Hash size={16} /> ID: {oficina.id}
+                                            </span>
+                                            <span className="flex items-center gap-1 text-slate-400">
+                                                <Calendar size={16} /> {oficina.dataOficina}
+                                            </span>
+                                        </div>
 
-                {/* Exibição de Loading Inicial e Erro/Sucesso (delete) */}
-                {isLoading && <p className="text-center text-sky-300 py-4">Carregando dados base...</p>}
-                {error && ( <div className="relative mb-4 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500" role="alert"><span className="block sm:inline">{error}</span><button type="button" className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-400 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-2xl" aria-hidden="true">&times;</span></button></div> )}
-                {/* Mensagem de sucesso do delete será via modal */}
+                                        {/* Corpo do Card */}
+                                        <div className="p-4 space-y-3 flex-grow">
+                                            {/* Descrição do Problema */}
+                                            <div>
+                                                <h3 className="flex items-center text-base font-semibold mb-1 text-slate-200 gap-1">
+                                                    <ClipboardList size={18} className="text-amber-400"/> Problema Descrito
+                                                </h3>
+                                                <p className="text-sm text-slate-300 break-words max-h-24 overflow-y-auto pr-1">
+                                                    {oficina.descricaoProblema || '-'}
+                                                </p>
+                                            </div>
 
-                {/* Tabela de Resultados da Busca */}
-                {!isLoading && buscaRealizada && (
-                    <div className="overflow-x-auto bg-slate-900 rounded-lg shadow mt-6">
-                        <h2 className="text-xl font-semibold p-4 bg-slate-800 rounded-t-lg">Resultados da Busca</h2>
-                        <table className="min-w-full table-auto">
-                            <thead className="bg-slate-800 border-b border-slate-700">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Data</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Descrição Problema</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Diagnóstico</th>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">Ações</th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-700">
-                            {isSearching ? (
-                                <tr><td colSpan={5} className="px-6 py-4 text-center text-slate-400">Buscando...</td></tr>
-                            ) : resultadosBusca.length === 0 ? (
-                                <tr><td colSpan={5} className="px-6 py-4 text-center text-slate-400">Nenhum registro encontrado.</td></tr>
-                            ) : (
-                                resultadosBusca.map((oficina) => (
-                                    <tr key={oficina.id} className="hover:bg-slate-800/50">
-                                        <td className="px-6 py-4 whitespace-nowrap">{oficina.id}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{oficina.dataOficina}</td>
-                                        <td className="px-6 py-4 whitespace-normal max-w-xs truncate" title={oficina.descricaoProblema}>{oficina.descricaoProblema}</td>
-                                        <td className="px-6 py-4 whitespace-normal max-w-xs truncate" title={oficina.diagnostico}>{oficina.diagnostico}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center space-x-2">
-                                            {/* Link para Edição */}
-                                            {oficina.id ? (
-                                                <Link href={`/oficinaOnline/alterar/${oficina.id}`}>
-                                                    <button className="px-3 py-1 text-sm bg-yellow-500 hover:bg-yellow-600 text-black rounded" disabled={isDeleting}>Alterar</button>
-                                                </Link>
-                                            ) : ( <button className="px-3 py-1 text-sm bg-gray-500 text-black rounded cursor-not-allowed" disabled>Editar</button> )}
-                                            {/* Botão Deletar */}
-                                            <button onClick={() => handleDeleteClick(oficina)} className="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded" disabled={isDeleting || !oficina.id}>
-                                                Deletar
+                                            {/* Diagnóstico */}
+                                            <div>
+                                                <h3 className="flex items-center text-base font-semibold mb-1 text-slate-200 gap-1">
+                                                    <Stethoscope size={18} className="text-teal-400"/> Diagnóstico
+                                                </h3>
+                                                <p className="text-sm text-slate-300 break-words max-h-32 overflow-y-auto pr-1">
+                                                    {oficina.diagnostico}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Footer do Card (Ações) */}
+                                        <div className="bg-slate-900 p-3 mt-auto border-t border-slate-700 flex justify-end gap-2">
+                                            <Link href={`/oficinaOnline/alterar/${oficina.id}`}>
+                                                <button className="inline-flex items-center px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-black rounded-md text-xs font-medium gap-1" disabled={isDeleting}>
+                                                    <Edit3 size={14} /> Editar
+                                                </button>
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDeleteClick(oficina)}
+                                                className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium gap-1"
+                                                disabled={isDeleting || !oficina.id} // Desabilita se ID for inválido
+                                            >
+                                                <Trash2 size={14} /> Deletar
                                             </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
+                {/* <<< FIM DA ÁREA DE RESULTADOS >>> */}
+
             </main>
 
-            {/* Modal de Confirmação de Deleção */}
+            {/* Modais (sem alterações) */}
             {showDeleteModal && oficinaParaDeletar && (
                 <div className="fixed inset-0 bg-black bg-opacity-75 z-40 flex items-center justify-center p-4" onClick={cancelDelete}>
-                    <div className="bg-slate-800 p-6 rounded-lg shadow-xl max-w-md w-full z-50 border border-red-500" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-slate-800 p-6 rounded-lg shadow-xl max-w-md w-full z-50 border border-red-500" onClick={e => e.stopPropagation()}>
                         <h3 className="text-xl font-semibold text-red-400 mb-4">Confirmar Exclusão</h3>
                         <p className="text-white mb-3">Tem certeza que deseja excluir este registro?</p>
                         <div className='text-slate-300 text-sm mb-6 border-l-2 border-red-500 pl-3'>
                             <p><strong>ID:</strong> {oficinaParaDeletar.id}</p>
                             <p><strong>Data:</strong> {oficinaParaDeletar.dataOficina}</p>
-                            <p><strong>Problema:</strong> {oficinaParaDeletar.descricaoProblema}</p>
+                            <p><strong>Problema:</strong> {oficinaParaDeletar.descricaoProblema}</p> {/* Adicionado problema ao modal */}
                         </div>
                         <div className="flex justify-end gap-4">
                             <button type="button" className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md" onClick={cancelDelete} disabled={isDeleting}>
@@ -250,7 +293,6 @@ export default function BuscarOficinaPage() {
                 </div>
             )}
 
-            {/* Modal de Sucesso da Deleção */}
             {showDeleteSuccessModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-60 z-40 flex items-center justify-center p-4" onClick={closeSuccessModal}>
                     <div className="bg-slate-800 p-6 rounded-lg shadow-xl max-w-sm w-full z-50 border border-green-500" onClick={(e) => e.stopPropagation()}>

@@ -60,7 +60,7 @@ export default function RelatorioCompletoClientePage() {
             return;
         }
 
-        // <<< USA O NOVO ENDPOINT NO CONTROLLER DE RELATÓRIO >>>
+        // <<< USA O ENDPOINT CORRETO NO CONTROLLER DE RELATÓRIO >>>
         const params = new URLSearchParams({ tipoBusca, valorBusca: valorBusca.trim() });
         const apiUrl = `http://localhost:8080/rest/relatorios/cliente/completo?${params}`;
         console.info("Buscando relatório:", apiUrl);
@@ -75,11 +75,10 @@ export default function RelatorioCompletoClientePage() {
                 }
                 throw new Error(`Erro ao buscar relatório: ${response.statusText} (Status: ${response.status})`);
             }
-            if (response.status === 204) { // Tratamento para No Content (embora 404 seja mais comum para não encontrado)
+            if (response.status === 204) {
                 throw new Error("Cliente não encontrado (204 No Content).");
             }
             const data: ClienteRelatorioCompletoDTO = await response.json();
-            // Validação simples dos dados recebidos (opcional mas recomendado)
             if (!data || !data.cliente) {
                 throw new Error("Dados recebidos da API estão incompletos ou inválidos.");
             }
@@ -94,33 +93,33 @@ export default function RelatorioCompletoClientePage() {
 
     // --- Configuração do Gráfico ---
     const chartData = {
-        labels: ['Agendamentos'], // Apenas uma barra
+        labels: ['Agendamentos'],
         datasets: [
             {
                 label: 'Nº de Agendamentos',
-                data: [relatorioData?.totalAgendamentos ?? 0], // Usa ?? para garantir 0 se for null/undefined
+                data: [relatorioData?.totalAgendamentos ?? 0],
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1,
-                barThickness: 60, // Ajusta a largura da barra
+                barThickness: 60,
             },
         ],
     };
     const chartOptions = {
-        indexAxis: 'y' as const, // Faz a barra ser horizontal para melhor visualização de uma única barra
+        indexAxis: 'y' as const,
         responsive: true,
-        maintainAspectRatio: false, // Permite controlar altura
+        maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
             title: { display: true, text: 'Total de Agendamentos do Cliente', color: '#e2e8f0', font: {size: 14} },
         },
         scales: {
-            x: { // Agora o eixo X representa a quantidade
+            x: {
                 beginAtZero: true,
-                ticks: { color: '#94a3b8', stepSize: 1 }, // Mostra números inteiros
+                ticks: { color: '#94a3b8', stepSize: 1 },
                 grid: { color: 'rgba(100, 116, 139, 0.2)' }
             },
-            y: { // Eixo Y é a categoria
+            y: {
                 ticks: { color: '#94a3b8' },
                 grid: { display: false }
             }
@@ -128,12 +127,10 @@ export default function RelatorioCompletoClientePage() {
     };
     // ---------------------------------
 
-    // Helper para formatar data (evita repetição)
+    // Helper para formatar data
     const formatarData = (dataString: string | null | undefined): string => {
         if (!dataString) return '-';
         try {
-            // Adiciona 'T00:00:00Z' para garantir que seja interpretado como UTC
-            // e evitar problemas com fuso horário local ao formatar
             return new Date(dataString + 'T00:00:00Z').toLocaleDateString('pt-BR', { timeZone: 'UTC' });
         } catch (e) {
             console.error("Erro ao formatar data:", dataString, e);
@@ -141,11 +138,9 @@ export default function RelatorioCompletoClientePage() {
         }
     };
 
-
     return (
         <>
-            {/* Usar um 'active' genérico ou criar um específico para esta página */}
-            <NavBar active="relatorio" />
+            <NavBar active="relatorio" /> {/* Ajuste 'active' se criar item específico */}
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
                 <h1 className="flex items-center justify-center text-3xl font-bold mb-6 text-center gap-2">
                     <UserCircle size={32} className="text-sky-400"/> Visão 360º do Cliente
@@ -217,7 +212,6 @@ export default function RelatorioCompletoClientePage() {
                                     <UserCircle size={24}/> Dados do Cliente
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3 text-sm">
-                                    {/* Usando spans para melhor controle e ícones inline */}
                                     <span className="flex items-center gap-2"><Info size={16} className="text-slate-500"/><strong>Nome:</strong> {relatorioData.cliente.nome} {relatorioData.cliente.sobrenome}</span>
                                     <span className="flex items-center gap-2"><MdBadge className="text-slate-500"/><strong>Documento:</strong> {relatorioData.cliente.numeroDocumento} ({relatorioData.cliente.tipoDocumento})</span>
                                     <span className="flex items-center gap-2"><Info size={16} className="text-slate-500"/><strong>Tipo:</strong> {relatorioData.cliente.tipoCliente === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}</span>
@@ -226,7 +220,32 @@ export default function RelatorioCompletoClientePage() {
                                     <span className="flex items-center gap-2"><Briefcase size={16} className="text-slate-500"/><strong>Profissão:</strong> {relatorioData.cliente.atividadeProfissional || '-'}</span>
                                     <span className="flex items-center gap-2"><PhoneCall size={16} className="text-slate-500"/><strong>Celular:</strong> {relatorioData.cliente.contato?.celular || '-'}</span>
                                     <span className="flex items-center gap-2 sm:col-span-2 lg:col-span-1"><Mail size={16} className="text-slate-500"/><strong>Email:</strong> {relatorioData.cliente.contato?.email || '-'}</span>
-                                    <span className="flex items-start gap-2 col-span-1 sm:col-span-2 lg:col-span-3"><MapPin size={16} className="text-slate-500 mt-1 flex-shrink-0"/><strong>Endereço:</strong> {`${relatorioData.cliente.endereco?.logradouro || '-'}, ${relatorioData.cliente.endereco?.numero || '-'} ${relatorioData.cliente.endereco?.complemento ? `- ${relatorioData.cliente.endereco.complemento}` : ''} - ${relatorioData.cliente.endereco?.bairro || '-'}, ${relatorioData.cliente.endereco?.cidade || '-'} / ${relatorioData.cliente.endereco?.estado || '-'} - CEP: ${relatorioData.cliente.endereco?.cep || '-'}`}</span>
+
+                                    {/* <<< Endereço Corrigido >>> */}
+                                    <div className="flex items-start gap-2 col-span-1 sm:col-span-2 lg:col-span-3"> {/* Mantém o container flex e o span das colunas */}
+                                        <MapPin size={16} className="text-slate-500 mt-1 flex-shrink-0"/> {/* Ícone alinhado no topo */}
+                                        <div className="text-sm"> {/* Div para agrupar todo o texto do endereço com tamanho de fonte base */}
+                                            {/* Linha 1: Label e Rua/Num/Comp */}
+                                            <p className="text-slate-300">
+                                                <strong className="mr-1">Endereço:</strong> {/* Label */}
+                                                {`${relatorioData.cliente.endereco?.logradouro || '-'}, ${relatorioData.cliente.endereco?.numero || '-'}`} {/* Rua e Num */}
+                                                {/* Complemento (opcional) */}
+                                                {relatorioData.cliente.endereco?.complemento ? (
+                                                    <span className="text-slate-400 ml-1">- {relatorioData.cliente.endereco.complemento}</span>
+                                                ) : ''}
+                                            </p>
+                                            {/* Linha 2: Bairro, Cidade / Estado */}
+                                            <p className="text-slate-400">
+                                                {`${relatorioData.cliente.endereco?.bairro || '-'} - ${relatorioData.cliente.endereco?.cidade || '-'} / ${relatorioData.cliente.endereco?.estado || '-'}`}
+                                            </p>
+                                            {/* Linha 3: CEP */}
+                                            <p className="text-slate-400">
+                                                CEP: {relatorioData.cliente.endereco?.cep || '-'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {/* <<< Fim Endereço Corrigido >>> */}
+
                                 </div>
                             </section>
                         )}
@@ -295,7 +314,7 @@ export default function RelatorioCompletoClientePage() {
                                     <h2 className="flex items-center text-xl font-semibold mb-4 text-sky-400 border-b border-slate-700 pb-2 gap-2">
                                         <BarChart3 size={24}/> Volume de Agendamentos
                                     </h2>
-                                    <div className="relative h-24"> {/* Altura controlada para o gráfico de barra única */}
+                                    <div className="relative h-24">
                                         {(relatorioData.totalAgendamentos ?? 0) > 0 ? (
                                             <Bar options={chartOptions} data={chartData} />
                                         ) : (
