@@ -1,39 +1,44 @@
 # 🚀 FIAP 2025 - Java Advanced
-repositório recriado com trabalhos do 1º smestre de java advanced
+
+Este repositório centraliza os trabalhos desenvolvidos na disciplina **Java Advanced** do primeiro semestre.
 
 ---
 
 ## 📚 Disciplina do Semestre
-   - spring
-   - spring security
+
+**Java Advanced**  
+   - Product Design e Next.js (construindo front-ends modernos)  
+   - API REST, Spring Framework e Spring Data  
+   - Thymeleaf, internacionalização (i18n) e segurança (Spring Security)  
+   - JWT, autenticação e integração com Inteligência Artificial  
+   - Spring Cloud e microsserviços
      
 ---
 
-## 🚀 CP1 2025 - FIAP - java advanced - bank
+## 🎯 CP1 2025 - Bank
 
-**Paulo André carminati RM557881**  
+**Integrantes do Grupo:**  
+**Paulo André Carminati RM557881**  
 **Gabielly Campos Macedo RM558962**
 
-**Integrantes do CP:**  
-   - **Paulo André Carminati RM557881**  
-
-
-**Repositório no GitHub:** [CP1 Mobile](https://github.com/carmipa/Java_Advanced_CP_1SEM/tree/main/cp1)
-
---- 
-
-## 🚀 Projeto Mercado CP2
-
-# PAULO ANDRÉ CARMINATI - RM557881
-
-**Repositório no GitHub:** [CP2 Mobile](https://github.com/carmipa/Java_Advanced_CP_1SEM/tree/main/cp2)
-
+**Repositório no GitHub:** [CP1 - Bank](https://github.com/carmipa/CP2025_primeiro_semestre/tree/main/Java_Advanced/cp1)
 
 ---
 
-## 🎯 PROJETO SEMESTRAL
+## 🔧 Projeto Semestral - 1º Semestre
 
-**Paulo André carminati RM557881**  
+**Integrantes do Grupo:**  
+**Paulo André Carminati RM557881**  
 **Gabielly Campos Macedo RM558962**
 
-**Repositório no GitHub:** [CP2 Mobile](https://github.com/carmipa/Java_Advanced_CP_1SEM/tree/main/projeto-semestral)
+**Repositório no GitHub:** [Projeto Semestral](https://github.com/carmipa/CP2025_primeiro_semestre/tree/main/Java_Advanced/projeto-semestral)
+
+---
+
+## 🎯 CP2 2025 - loja Medieval
+
+**Integrantes do Grupo:**  
+**Paulo André Carminati RM557881**  
+
+
+**Repositório no GitHub:** [CP2 - Loja Medieval](https://github.com/carmipa/Java_Advanced_CP_1SEM/tree/main/cp2)
