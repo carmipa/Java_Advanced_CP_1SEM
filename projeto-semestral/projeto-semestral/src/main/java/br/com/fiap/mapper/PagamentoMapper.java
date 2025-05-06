@@ -1,4 +1,3 @@
-// --- src/main/java/br/com/fiap/mapper/PagamentoMapper.java ---
 package br.com.fiap.mapper;
 
 import br.com.fiap.dto.pagamento.PagamentoRequestDto;
@@ -14,21 +13,25 @@ public interface PagamentoMapper {
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            // Mapeia totalParcelas (String DTO) para totalParcelas (String Entidade)
-            @Mapping(target = "totalParcelas", source="totalParcelas"),
-            @Mapping(target = "clientePagamentos", ignore = true), // Ignora relacionamentos
+            @Mapping(source = "descontoPercentual", target = "desconto"), // Mapeia % do DTO para 'desconto' na entidade
+            @Mapping(source = "totalParcelas", target = "totalParcelas"),   // MapStruct converte Integer (DTO) para String (Entidade)
+            @Mapping(target = "valorParcelas", ignore = true),          // Calculado no Service
+            @Mapping(target = "totalComDesconto", ignore = true),       // Calculado no Service
+            @Mapping(target = "clientePagamentos", ignore = true),
             @Mapping(target = "pagamentoOrcamentos", ignore = true)
     })
     Pagamento toEntity(PagamentoRequestDto dto);
 
-    // Mapeia totalParcelas (String Entidade) para totalParcelas (String DTO)
-    @Mapping(target = "totalParcelas", source="totalParcelas")
+    // O toResponseDto geralmente não precisa de mappings explícitos se os nomes dos campos
+    // na entidade (após os cálculos no service) e no DTO de resposta forem iguais.
     PagamentoResponseDto toResponseDto(Pagamento entity);
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            // Mapeia totalParcelas (String DTO) para totalParcelas (String Entidade)
-            @Mapping(target = "totalParcelas", source="totalParcelas"),
+            @Mapping(source = "descontoPercentual", target = "desconto"),
+            @Mapping(source = "totalParcelas", target = "totalParcelas"),
+            @Mapping(target = "valorParcelas", ignore = true),
+            @Mapping(target = "totalComDesconto", ignore = true),
             @Mapping(target = "clientePagamentos", ignore = true),
             @Mapping(target = "pagamentoOrcamentos", ignore = true)
     })

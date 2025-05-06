@@ -33,4 +33,7 @@ public class OficinaPeca implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PECAS_ID_PEC", nullable = false) // FK para PECAS
     private Pecas peca;
+
+    @Column(name = "QUANTIDADE", nullable = false)
+    private Integer quantidade;
 }

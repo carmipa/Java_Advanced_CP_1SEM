@@ -1,25 +1,23 @@
-package br.com.fiap.dto.pagamento;
+package br.com.fiap.dto.pagamento; // Pacote correto
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class PagamentoResponseDto implements Serializable {
+@AllArgsConstructor
+public class PagamentoResponseDto {
 
-    private static final long serialVersionUID = 1L;
-
-    Long id;
-    LocalDate dataPagamento;
-    String tipoPagamento;
-    BigDecimal desconto;
-    String totalParcelas;
-    BigDecimal valorParcelas;
-    BigDecimal totalComDesconto;
+    private Long id;
+    private LocalDate dataPagamento;
+    private String tipoPagamento;
+    private BigDecimal desconto;       // O percentual armazenado na entidade
+    private String totalParcelas;    // Como String (igual entidade)
+    private BigDecimal valorParcelas;   // Valor calculado
+    private BigDecimal totalComDesconto; // Valor calculado
 }

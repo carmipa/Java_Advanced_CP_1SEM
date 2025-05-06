@@ -3,138 +3,278 @@
 
 import { useState, useEffect } from 'react';
 import NavBar from '@/components/nav-bar'; // Ajuste o caminho se necessário
-import { CalendarDays, ClipboardList, Hash } from 'lucide-react'; // <<< Hash adicionado
+
+// --- Imports para Gráfico ---
+import { Bar } from 'react-chartjs-2';
+import {
+    Chart as ChartJS, CategoryScale, LinearScale, BarElement,
+    Title as ChartTitle, Tooltip, Legend
+} from 'chart.js';
+
+// --- Ícones ---
+import { CalendarDays, ClipboardList, Hash, BarChart3, ListChecks, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MdErrorOutline, MdCalendarToday } from 'react-icons/md'; // Ícones adicionais se necessário
+
+// --- Registrar componentes Chart.js ---
+ChartJS.register(CategoryScale, LinearScale, BarElement, ChartTitle, Tooltip, Legend);
 
 // --- Interfaces ---
-interface AgendamentoParaLista { id: number; dataAgendamento: string; observacao: string; }
-interface PaginatedAgendaResponse { content: AgendamentoApiResponseDto[]; totalPages: number; totalElements: number; number: number; size: number; }
-interface AgendamentoApiResponseDto { id: number; dataAgendamento: string; observacao: string | null; }
+interface AgendamentoParaLista {
+    id: number;
+    dataAgendamento: string; // Formatada: DD/MM/YYYY ou 'N/A'
+    observacao: string;
+}
+interface PaginatedAgendaResponse {
+    content: AgendamentoApiResponseDto[];
+    totalPages: number;
+    totalElements: number;
+    number: number;
+    size: number;
+}
+interface AgendamentoApiResponseDto {
+    id: number;
+    dataAgendamento: string; // Formato YYYY-MM-DD
+    observacao: string | null;
+}
+// --- Interface para Contagem Mensal ---
+interface ContagemMensalDto {
+    mesAno: string; // Formato "YYYY-MM"
+    quantidade: number;
+}
 // ----------------
 
 export default function RelatorioAgendamentosFuturosPage() {
+    // --- Estados para Agendamentos Futuros ---
     const [agendamentos, setAgendamentos] = useState<AgendamentoParaLista[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [isLoadingAgendamentos, setIsLoadingAgendamentos] = useState(true);
+    const [errorAgendamentos, setErrorAgendamentos] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const [pageSize, setPageSize] = useState(15);
+    const [pageSize, setPageSize] = useState(12); // Ajustado para cards
 
+    // --- Estados para Contagem Mensal / Gráfico ---
+    const [dadosContagem, setDadosContagem] = useState<ContagemMensalDto[]>([]);
+    const [isLoadingContagem, setIsLoadingContagem] = useState(true);
+    const [errorContagem, setErrorContagem] = useState<string | null>(null);
+
+    // --- Fetch Agendamentos Futuros (sem alterações na lógica interna) ---
     const fetchAgendamentosFuturos = async (page = 0) => {
-        setIsLoading(true); setError(null);
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const dataInicioFiltro = `${year}-${month}-${day}`;
-
+        setIsLoadingAgendamentos(true);
+        setErrorAgendamentos(null);
+        const today = new Date().toISOString().split('T')[0];
         const params = new URLSearchParams({
             page: page.toString(), size: pageSize.toString(),
-            sort: 'dataAgendamento,asc', dataInicio: dataInicioFiltro
+            sort: 'dataAgendamento,asc', dataInicio: today
         });
         const apiUrl = `http://localhost:8080/rest/agenda?${params.toString()}`;
-        console.info("Buscando agendamentos futuros:", apiUrl);
+        console.info("[Futuros] Buscando:", apiUrl);
 
         try {
             const response = await fetch(apiUrl);
-            if (!response.ok) {
-                if (response.status === 400) { const e = await response.json().catch(() => ({ message: "Requisição inválida (400)." })); throw new Error(e.message || `Erro HTTP ${response.status}`);}
-                if (response.status === 404) { throw new Error("Endpoint não encontrado (404). Verifique a URL da API."); }
-                if (response.status >= 500) { throw new Error(`Erro no servidor (${response.status}). Tente novamente mais tarde.`); }
-                throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
-            }
-            if (response.status === 204) { setAgendamentos([]); setTotalPages(0); setCurrentPage(0); return; }
+            if (!response.ok) { /* ... tratamento de erro ... */ throw new Error(`Erro HTTP ${response.status}`); }
+            if (response.status === 204) { setAgendamentos([]); setTotalPages(0); setCurrentPage(page); return; } // Atualiza page mesmo no 204
 
             const data: PaginatedAgendaResponse = await response.json();
-            const agendamentosFormatados: AgendamentoParaLista[] = data.content.map(dto => ({
+            const formatados: AgendamentoParaLista[] = data.content.map(dto => ({
                 id: dto.id,
-                dataAgendamento: dto.dataAgendamento ? new Date(dto.dataAgendamento + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A',
+                dataAgendamento: formatarData(dto.dataAgendamento),
                 observacao: dto.observacao || '',
             }));
-            setAgendamentos(agendamentosFormatados); setTotalPages(data.totalPages); setCurrentPage(data.number);
+            setAgendamentos(formatados); setTotalPages(data.totalPages); setCurrentPage(data.number);
         } catch (err: any) {
-            if (err instanceof TypeError && err.message === "Failed to fetch") { setError("Não foi possível conectar ao servidor."); }
-            else { setError(err.message || "Falha ao carregar relatório."); }
+            setErrorAgendamentos(tratarErroFetch(err));
             setAgendamentos([]); setTotalPages(0);
-        } finally { setIsLoading(false); }
+        } finally {
+            setIsLoadingAgendamentos(false);
+        }
     };
 
-    useEffect(() => { fetchAgendamentosFuturos(currentPage); }, [currentPage, pageSize]);
+    // --- Fetch Contagem Mensal ---
+    const fetchContagemMensal = async () => {
+        setIsLoadingContagem(true);
+        setErrorContagem(null);
+        const apiUrl = "http://localhost:8080/rest/relatorios/contagem-agendamentos-mensal";
+        console.info("[Contagem] Buscando:", apiUrl);
+        try {
+            const resp = await fetch(apiUrl);
+            if (!resp.ok) { /* ... tratamento de erro ... */ throw new Error(`Erro HTTP ${resp.status}`); }
+            if (resp.status === 204) { setDadosContagem([]); return; }
+            const data: ContagemMensalDto[] = await resp.json();
+            data.sort((a, b) => a.mesAno.localeCompare(b.mesAno)); // Ordena para o gráfico
+            setDadosContagem(data);
+        } catch (err: any) {
+            setErrorContagem(tratarErroFetch(err));
+            setDadosContagem([]);
+        } finally {
+            setIsLoadingContagem(false);
+        }
+    };
 
-    const handlePreviousPage = () => { if (currentPage > 0) { fetchAgendamentosFuturos(currentPage - 1); } };
-    const handleNextPage = () => { if (currentPage < totalPages - 1) { fetchAgendamentosFuturos(currentPage + 1); } };
+    // --- useEffect para buscar ambos os dados ---
+    useEffect(() => {
+        fetchAgendamentosFuturos(currentPage);
+        fetchContagemMensal(); // Busca dados do gráfico na montagem/mudança de página
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage, pageSize]);
+
+    // --- Configuração do Gráfico ---
+    const labels = dadosContagem.map(d => d.mesAno);
+    const valores = dadosContagem.map(d => d.quantidade);
+    const backgroundColors = [
+        'rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)',
+        'rgba(255, 206, 86, 0.7)', 'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 159, 64, 0.7)', 'rgba(255, 99, 132, 0.7)',
+        'rgba(100, 116, 139, 0.7)' // Cor neutra se precisar de mais
+    ];
+    const borderColors = backgroundColors.map(color => color.replace(/0\.7/, '1'));
+    const chartData = {
+        labels,
+        datasets: [{
+            label: 'Nº de Agendamentos',
+            data: valores,
+            backgroundColor: backgroundColors.slice(0, valores.length),
+            borderColor: borderColors.slice(0, valores.length),
+            borderWidth: 1,
+        }]
+    };
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false, // Para controlar altura
+        plugins: {
+            legend: { display: false }, // Sem legenda para uma barra
+            title: { display: true, text: 'Agendamentos por Mês/Ano', color: '#e2e8f0', font: { size: 16 } },
+            tooltip: {
+                callbacks: {
+                    label: function(context: any) {
+                        let label = context.dataset.label || '';
+                        if (label) { label += ': '; }
+                        if (context.parsed.y !== null) { label += context.parsed.y; }
+                        return label;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { color: '#94a3b8', stepSize: Math.max(1, Math.ceil(Math.max(...valores, 1) / 5)) }, grid: { color: 'rgba(100, 116, 139, 0.2)' } } // stepSize dinâmico
+        },
+    };
+    // ----------------------------
+
+    // --- Funções Auxiliares ---
+    const handlePreviousPage = () => { if (currentPage > 0) { setCurrentPage(prev => prev - 1); } };
+    const handleNextPage = () => { if (currentPage < totalPages - 1) { setCurrentPage(prev => prev + 1); } };
+    const formatarData = (dataString: string | null | undefined): string => {
+        if (!dataString) return '-';
+        try { return new Date(dataString + 'T00:00:00Z').toLocaleDateString('pt-BR', { timeZone: 'UTC' }); }
+        catch (e) { console.error("Erro formatar data:", dataString, e); return 'Inválida'; }
+    };
+    const tratarErroFetch = (err: any): string => {
+        if (err instanceof TypeError && err.message === 'Failed to fetch') {
+            return "Não foi possível conectar ao servidor. Verifique a API e a rede.";
+        }
+        return err.message || "Ocorreu um erro desconhecido.";
+    };
+    // -------------------------
 
     return (
         <>
+            {/* Mantido 'relatorio-agendamentos-futuros' para consistência se existir link direto */}
             <NavBar active="relatorio-agendamentos-futuros"/>
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
-                <h1 className="text-3xl font-bold mb-6 text-center">Relatório: Agendamentos Futuros</h1>
+                {/* Título Principal */}
+                <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center flex items-center justify-center gap-2">
+                    <CalendarDays className="h-8 w-8 text-sky-400" />
+                    Relatórios de Agendamento
+                </h1>
 
-                {error && ( <div className="relative mb-4 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500" role="alert"><span className="block sm:inline">{error}</span><button type="button" className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-400 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-2xl" aria-hidden="true">&times;</span></button></div> )}
-
-                {isLoading ? (
-                    <p className="text-center text-sky-300 py-10">Carregando relatório...</p>
-                ) : (
-                    <div className="overflow-x-auto bg-slate-900 rounded-lg shadow">
-                        <table className="min-w-full table-auto">
-                            <thead className="bg-slate-800 border-b border-slate-700">
-                            <tr>
-                                {/* Cabeçalho ID com Ícone */}
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
-                                    <div className="flex items-center gap-2">
-                                        <Hash className="h-4 w-4" /> {/* <<< Ícone ID */}
-                                        ID
-                                    </div>
-                                </th>
-                                {/* Cabeçalho Data Agendada com Ícone */}
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
-                                    <div className="flex items-center gap-2">
-                                        <CalendarDays className="h-4 w-4" /> {/* <<< Ícone Data */}
-                                        Data Agendada
-                                    </div>
-                                </th>
-                                {/* Cabeçalho Observação com Ícone */}
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
-                                    <div className="flex items-center gap-2">
-                                        <ClipboardList className="h-4 w-4" />
-                                        Observação
-                                    </div>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-700">
-                            {agendamentos.length === 0 && !error ? (
-                                <tr><td colSpan={3} className="px-6 py-4 text-center text-slate-400">Nenhum agendamento futuro encontrado.</td></tr>
+                {/* Seção do Gráfico Mensal */}
+                <section className="mb-8 bg-slate-900 p-4 md:p-6 rounded-lg shadow-lg border border-slate-700">
+                    <h2 className="flex items-center text-xl font-semibold mb-4 text-sky-400 border-b border-slate-700 pb-2 gap-2">
+                        <BarChart3 size={24}/> Contagem Mensal de Agendamentos
+                    </h2>
+                    {errorContagem && (
+                        <p className="text-center text-red-400 mb-4 p-3 bg-red-900/50 rounded border border-red-500 flex items-center gap-2">
+                            <MdErrorOutline /> Erro ao carregar dados do gráfico: {errorContagem}
+                        </p>
+                    )}
+                    {isLoadingContagem ? (
+                        <p className="text-center text-sky-300 py-5">Carregando gráfico...</p>
+                    ) : (
+                        <div className="relative h-64 md:h-80"> {/* Altura do gráfico */}
+                            {dadosContagem.length > 0 ? (
+                                <Bar options={chartOptions} data={chartData} />
                             ) : (
-                                agendamentos.map((agendamento, index) => {
-                                    const rowClass = index % 2 === 0 ? 'bg-slate-900' : 'bg-slate-800/50';
-                                    return (
-                                        <tr key={agendamento.id} className={`${rowClass} hover:bg-sky-900/50`}>
-                                            <td className="px-6 py-4 whitespace-nowrap">{agendamento.id}</td>
-                                            {/* Data Agendada com Ícone na célula */}
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-2">
-                                                    <CalendarDays className="h-4 w-4 text-sky-400"/>
-                                                    {agendamento.dataAgendamento}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-normal max-w-lg break-words" title={agendamento.observacao}>{agendamento.observacao || '-'}</td>
-                                        </tr>
-                                    );
-                                })
+                                <p className="text-center text-slate-400 flex items-center justify-center h-full">
+                                    Nenhum dado de contagem mensal disponível.
+                                </p>
                             )}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                        </div>
+                    )}
+                </section>
 
-                {/* Paginação */}
-                {!isLoading && totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-6 gap-4">
-                        <button onClick={handlePreviousPage} disabled={currentPage === 0} className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed"> Anterior </button>
-                        <span className="text-slate-300"> Página {currentPage + 1} de {totalPages} </span>
-                        <button onClick={handleNextPage} disabled={currentPage >= totalPages - 1} className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed"> Próxima </button>
-                    </div>
-                )}
+                {/* Seção Agendamentos Futuros */}
+                <section className="bg-slate-900 p-4 md:p-6 rounded-lg shadow-lg border border-slate-700">
+                    <h2 className="flex items-center text-xl font-semibold mb-4 text-sky-400 border-b border-slate-700 pb-2 gap-2">
+                        <ListChecks size={24}/> Próximos Agendamentos (a partir de hoje)
+                    </h2>
+
+                    {errorAgendamentos && (
+                        <p className="text-center text-red-400 mb-4 p-3 bg-red-900/50 rounded border border-red-500 flex items-center gap-2">
+                            <MdErrorOutline /> {errorAgendamentos}
+                        </p>
+                    )}
+
+                    {isLoadingAgendamentos ? (
+                        <p className="text-center text-sky-300 py-10">Carregando agendamentos futuros...</p>
+                    ) : (
+                        <>
+                            {agendamentos.length === 0 && !errorAgendamentos ? (
+                                <p className="text-center text-slate-400 py-10">Nenhum agendamento futuro encontrado.</p>
+                            ) : (
+                                // <<< Grid de Cards para Agendamentos Futuros >>>
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    {agendamentos.map((ag) => (
+                                        <div key={ag.id} className="bg-slate-800 rounded-lg shadow-md border border-slate-700 flex flex-col overflow-hidden">
+                                            {/* Header */}
+                                            <div className="bg-slate-700 p-3 flex justify-between items-center text-sm">
+                                                <span className="flex items-center gap-1 font-semibold text-sky-300"> <Hash size={16} /> ID: {ag.id} </span>
+                                                <span className="flex items-center gap-1 text-slate-400"> <CalendarDays size={16} /> {ag.dataAgendamento} </span>
+                                            </div>
+                                            {/* Corpo */}
+                                            <div className="p-4 space-y-2 flex-grow">
+                                                <div>
+                                                    <h3 className="flex items-center text-base font-semibold mb-1 text-slate-200 gap-1">
+                                                        <ClipboardList size={18} className="text-amber-400 flex-shrink-0"/> Observação
+                                                    </h3>
+                                                    <p className="text-sm text-slate-300 break-words max-h-28 overflow-y-auto pr-1">
+                                                        {ag.observacao || '-'}
+                                                    </p>
+                                                </div>
+                                                {/* Poderia adicionar info de cliente/veículo se a API retornasse */}
+                                            </div>
+                                            {/* Footer (Opcional - sem ações para este relatório) */}
+                                            {/* <div className="bg-slate-900 p-2 mt-auto border-t border-slate-700"></div> */}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Paginação para Agendamentos Futuros */}
+                            {!isLoadingAgendamentos && totalPages > 1 && (
+                                <div className="flex justify-center items-center mt-6 gap-3">
+                                    <button onClick={handlePreviousPage} disabled={currentPage === 0} className="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                                        <ChevronLeft size={18}/> Anterior
+                                    </button>
+                                    <span className="text-slate-300 text-sm"> Página {currentPage + 1} de {totalPages} </span>
+                                    <button onClick={handleNextPage} disabled={currentPage >= totalPages - 1} className="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                                        Próxima <ChevronRight size={18}/>
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </section>
             </main>
         </>
     );

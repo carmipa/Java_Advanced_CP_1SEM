@@ -1,14 +1,12 @@
 // src/main/java/br/com/fiap/service/relatorio/RelatorioServiceImpl.java
 package br.com.fiap.service.relatorio;
 
-import br.com.fiap.dto.relatorio.ContagemMensalDTO;
-import br.com.fiap.dto.relatorio.ContagemMensalResultadoNativo;
-import br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO;
-import br.com.fiap.dto.relatorio.ServicoAgendadoDTO;
+import br.com.fiap.dto.relatorio.*;
 import br.com.fiap.exception.ClientesNotFoundException;
 import br.com.fiap.model.relacionamentos.ClienteId;
 import br.com.fiap.repository.AgendaRepository;
 import br.com.fiap.repository.ClientesRepository;
+import br.com.fiap.repository.PagamentoRepository; // Importado
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +27,15 @@ public class RelatorioServiceImpl implements RelatorioService {
     private static final Logger log = LoggerFactory.getLogger(RelatorioServiceImpl.class);
     private final AgendaRepository agendaRepository;
     private final ClientesRepository clientesRepository;
+    private final PagamentoRepository pagamentoRepository; // Injetado
 
     @Autowired
-    public RelatorioServiceImpl(AgendaRepository agendaRepository, ClientesRepository clientesRepository) {
+    public RelatorioServiceImpl(AgendaRepository agendaRepository,
+                                ClientesRepository clientesRepository,
+                                PagamentoRepository pagamentoRepository) { // Adicionado ao construtor
         this.agendaRepository = agendaRepository;
         this.clientesRepository = clientesRepository;
+        this.pagamentoRepository = pagamentoRepository; // Atribuído
     }
 
     @Override
@@ -44,7 +48,7 @@ public class RelatorioServiceImpl implements RelatorioService {
                     .map(nativo -> new ContagemMensalDTO(nativo.getMesAno(), nativo.getQuantidade()))
                     .collect(Collectors.toList());
             log.info("Relatório de contagem mensal gerado com {} resultados.", resultadoDTO.size());
-            return resultadoDTO; // <<< CORREÇÃO: ADICIONADO O RETURN AQUI
+            return resultadoDTO;
         } catch (Exception e) {
             log.error("Erro ao gerar relatório de contagem mensal: {}", e.getMessage(), e);
             return Collections.emptyList();
@@ -55,27 +59,22 @@ public class RelatorioServiceImpl implements RelatorioService {
     @Transactional(readOnly = true)
     public List<HistoricoAgendamentoClienteDTO> getHistoricoAgendamentosCliente(ClienteId id) {
         log.info("Buscando histórico de agendamentos para Cliente ID: {}", id);
-        // 1. Valida ID composto
         if (id == null || id.getIdCli() == null || id.getEnderecoId() == null) {
             throw new IllegalArgumentException("ID do Cliente (composto) inválido para buscar histórico.");
         }
-        // 2. Verifica se o cliente existe
         if (!clientesRepository.existsById(id)) {
             log.warn("Tentativa de buscar histórico para cliente inexistente: {}", id);
             throw new ClientesNotFoundException("Cliente não encontrado com ID: " + id);
         }
-        // 3. Busca o histórico
         try {
             List<HistoricoAgendamentoClienteDTO> historico = agendaRepository.findHistoricoAgendamentosByClienteId(id.getIdCli(), id.getEnderecoId());
             log.info("Encontrados {} registros de histórico para o cliente ID {}", historico.size(), id);
-            return historico; // Return no sucesso
+            return historico;
         } catch (Exception e) {
             log.error("Erro ao buscar histórico para cliente ID {}: {}", id, e.getMessage(), e);
-            return Collections.emptyList(); // Return no erro
+            return Collections.emptyList();
         }
-        // Não há return fora do try/catch pois todas as branches retornam
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -87,11 +86,75 @@ public class RelatorioServiceImpl implements RelatorioService {
                     pagina.getNumberOfElements(),
                     pageable.getPageNumber(),
                     pagina.getTotalPages());
-            return pagina; // Return no sucesso
+            return pagina;
         } catch (Exception e) {
             log.error("Erro ao buscar relatório de serviços agendados: {}", e.getMessage(), e);
-            return Page.empty(pageable); // Return no erro
+            return Page.empty(pageable);
         }
-        // Não há return fora do try/catch pois todas as branches retornam
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EstatisticasPagamentosDto getEstatisticasPagamentos(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Gerando estatísticas de pagamentos para o período de {} a {}", dataInicio, dataFim);
+        try {
+            List<Object[]> result = pagamentoRepository.getEstatisticasPagamentos(dataInicio, dataFim);
+            if (result != null && !result.isEmpty() && result.get(0) != null) {
+                Object[] stats = result.get(0);
+                Long totalOperacoes = (stats[0] instanceof Number) ? ((Number) stats[0]).longValue() : 0L;
+                BigDecimal valorTotalArrecadado = (stats[1] instanceof BigDecimal) ? (BigDecimal) stats[1] : BigDecimal.ZERO;
+                BigDecimal ticketMedio = BigDecimal.ZERO;
+                if (stats[2] instanceof Number) {
+                    ticketMedio = BigDecimal.valueOf(((Number) stats[2]).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                } else if (stats[2] instanceof BigDecimal) {
+                    ticketMedio = ((BigDecimal) stats[2]).setScale(2, BigDecimal.ROUND_HALF_UP);
+                }
+                valorTotalArrecadado = valorTotalArrecadado == null ? BigDecimal.ZERO : valorTotalArrecadado;
+                ticketMedio = ticketMedio == null ? BigDecimal.ZERO : ticketMedio;
+                return new EstatisticasPagamentosDto(totalOperacoes, valorTotalArrecadado, ticketMedio);
+            }
+            return new EstatisticasPagamentosDto(0L, BigDecimal.ZERO, BigDecimal.ZERO);
+        } catch (Exception e) {
+            log.error("Erro ao gerar estatísticas de pagamentos: {}", e.getMessage(), e);
+            return new EstatisticasPagamentosDto(0L, BigDecimal.ZERO, BigDecimal.ZERO);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PagamentoPorTipoDto> getPagamentosPorTipo(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Gerando relatório de pagamentos por tipo para o período de {} a {}", dataInicio, dataFim);
+        try {
+            return pagamentoRepository.findPagamentosAgrupadosPorTipo(dataInicio, dataFim);
+        } catch (Exception e) {
+            log.error("Erro ao gerar relatório de pagamentos por tipo: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EvolucaoMensalValorDto> getEvolucaoMensalValorPagamentos(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Gerando relatório de evolução mensal do valor dos pagamentos para o período de {} a {}", dataInicio, dataFim);
+        try {
+            // CORREÇÃO APLICADA AQUI: Processar List<Object[]>
+            List<Object[]> resultadosNativos = pagamentoRepository.findEvolucaoMensalValorPagamentosNativo(dataInicio, dataFim);
+            return resultadosNativos.stream()
+                    .map(record -> {
+                        String mesAno = (String) record[0];
+                        // O SUM no Oracle pode retornar um tipo numérico que precisa ser convertido para BigDecimal
+                        BigDecimal valorTotal = BigDecimal.ZERO;
+                        if (record[1] instanceof BigDecimal) {
+                            valorTotal = (BigDecimal) record[1];
+                        } else if (record[1] instanceof Number) {
+                            valorTotal = BigDecimal.valueOf(((Number)record[1]).doubleValue());
+                        }
+                        return new EvolucaoMensalValorDto(mesAno, valorTotal != null ? valorTotal : BigDecimal.ZERO);
+                    })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Erro ao gerar relatório de evolução mensal do valor dos pagamentos: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
 }

@@ -1,41 +1,40 @@
-package br.com.fiap.dto.pagamento;
+package br.com.fiap.dto.pagamento; // Pacote correto
 
-import jakarta.validation.constraints.*; // Importa todas as validações
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.io.Serializable;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Getter @Setter @NoArgsConstructor
-public class PagamentoRequestDto implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    // ID Omitido
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class PagamentoRequestDto {
 
     @NotNull(message = "Data do pagamento é obrigatória")
-    @PastOrPresent(message = "Data do pagamento não pode ser futura") // DDL: DATE not null
     private LocalDate dataPagamento;
 
-    @NotBlank(message = "Tipo do pagamento é obrigatório")
-    @Size(max = 20) // DDL: VARCHAR2(20) not null
+    @NotBlank(message = "Tipo de pagamento é obrigatório")
+    @Size(max = 20, message = "Tipo de pagamento não pode exceder 20 caracteres")
     private String tipoPagamento;
 
-    @NotNull(message = "Desconto é obrigatório")
-    @PositiveOrZero(message = "Desconto não pode ser negativo") // DDL: NUMBER not null
-    private BigDecimal desconto;
+    @NotNull(message = "Percentual de desconto é obrigatório")
+    @DecimalMin(value = "0.0", message = "Desconto não pode ser negativo")
+    @DecimalMax(value = "100.0", message = "Desconto não pode ser maior que 100")
+    private BigDecimal descontoPercentual; // Recebe o %
 
-    @NotBlank(message = "Total de parcelas é obrigatório")
-    @Size(max = 5) // DDL: VARCHAR2(5) not null
-    @Pattern(regexp = "\\d+", message = "Total de parcelas deve conter apenas números") // Validação básica para string numérica
-    private String totalParcelas; // Mapeado como String devido ao DDL
+    @NotNull(message = "Total de parcelas é obrigatório")
+    @Min(value = 1, message = "Deve haver pelo menos 1 parcela")
+    private Integer totalParcelas; // Recebe como número
 
-    @NotNull(message = "Valor das parcelas é obrigatório")
-    @Positive(message = "Valor das parcelas deve ser positivo") // DDL: NUMBER not null
-    private BigDecimal valorParcelas;
+    @NotNull(message = "Valor do serviço é obrigatório")
+    @DecimalMin(value = "0.01", message = "Valor do serviço deve ser positivo")
+    private BigDecimal valorServico; // Necessário para cálculo
 
-    @NotNull(message = "Total com desconto é obrigatório")
-    @PositiveOrZero(message = "Total com desconto não pode ser negativo") // DDL: NUMBER not null
-    private BigDecimal totalComDesconto;
+    // IDs opcionais para relacionamentos (ajuste se necessário)
+    private Long clienteId;
+    private Long orcamentoId;
 }

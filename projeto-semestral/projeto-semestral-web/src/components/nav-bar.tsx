@@ -3,49 +3,33 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-// Importar ícones do react-icons
 import {
-    MdHome,
-    MdPeople,
-    MdDirectionsCar,
-    MdBuild,
-    MdSchedule,
-    MdBarChart,
-    MdPayment,
-    MdContactMail
+    MdHome, MdPeople, MdDirectionsCar, MdBuild, MdSchedule, MdBarChart,
+    MdPayment, MdContactMail, MdList, MdAddCircleOutline, MdSearch,
+    MdDescription, MdEventNote, MdTrendingUp, MdPersonSearch, MdAssessment // MdAssessment adicionado
 } from 'react-icons/md';
 
 interface NavBarProps {
     active:
         | "inicio"
-        | "clientes"
-        | "cadastrar"
-        | "oficinaOnline"
-        | "agendamento"
-        | "veiculo"
-        | "veiculo-listar"
-        | "veiculo-cadastrar"
-        | "veiculo-buscar"
-        | "veiculo-alterar"
-        | "veiculo-deletar"
-        | "relatorio"
-        | "pagamento"
-        | "contato"
-        | "relatorio-agendamentos-futuros"
-        | "relatorio-contagem-mensal"
-        | "relatorio-historico-cliente"
-        | "relatorio-cliente-completo"
-        | "relatorio-servicos-agendados";
-
+        | "clientes" | "clientes-listar" | "clientes-cadastrar" | "clientes-buscar" | "clientes-alterar" | "clientes-deletar"
+        | "veiculo" | "veiculo-listar" | "veiculo-cadastrar" | "veiculo-buscar" | "veiculo-alterar" | "veiculo-deletar"
+        | "oficinaOnline" | "oficinaOnline-listar" | "oficinaOnline-cadastrar" | "oficinaOnline-buscar" | "oficinaOnline-alterar" | "oficinaOnline-deletar"
+        | "agendamento" | "agendamento-listar" | "agendamento-cadastrar" | "agendamento-buscar" | "agendamento-alterar" | "agendamento-deletar"
+        | "orcamento" | "orcamento-listar" | "orcamento-cadastrar" | "orcamento-buscar" | "orcamento-alterar" | "orcamento-deletar"
+        | "pagamento" | "pagamento-listar" | "pagamento-cadastrar" | "pagamento-buscar" | "pagamento-alterar" | "pagamento-deletar"
+        | "relatorio" | "relatorio-agendamentos-futuros" | "relatorio-contagem-mensal" | "relatorio-historico-cliente"
+        | "relatorio-cliente-completo" | "relatorio-servicos-agendados"
+        | "relatorio-financeiro-pagamentos" // <<< NOVA ROTA ADICIONADA AQUI
+        | "contato";
 }
 
-type OpenMenuType = null | 'clientes' | 'veiculo' | 'oficina' | 'agendamento' | 'relatorio';
+type OpenMenuType = null | 'clientes' | 'veiculo' | 'oficina' | 'agendamento' | 'orcamento' | 'pagamento' | 'relatorio';
 
 export default function NavBar({ active }: NavBarProps) {
     const baseLinkClass = "flex items-center px-1 pb-1 transition-colors duration-200 ease-in-out";
-    const activeLinkClass = "text-sky-100 font-semibold";
-    const inactiveLinkClass = "hover:text-sky-200";
-
+    const activeLinkClass = "text-sky-100 font-semibold border-b-2 border-sky-300";
+    const inactiveLinkClass = "text-slate-300 hover:text-sky-200";
     const [openMenu, setOpenMenu] = useState<OpenMenuType>(null);
 
     const toggleMenu = (menu: OpenMenuType) => {
@@ -53,21 +37,15 @@ export default function NavBar({ active }: NavBarProps) {
     };
 
     const getItemClass = (section: string): string => {
-        if ((section === "inicio" && active === "inicio") ||
-            (section === "pagamento" && active === "pagamento") ||
-            (section === "contato" && active === "contato")) {
+        if (active === section || (active && active.startsWith(section + "-"))) {
             return `${baseLinkClass} ${activeLinkClass}`;
-        } else if (section !== "inicio" && section !== "pagamento" && section !== "contato" && active.startsWith(section)) {
-            return `${baseLinkClass} ${activeLinkClass}`;
-        } else {
-            return `${baseLinkClass} ${inactiveLinkClass}`;
         }
+        return `${baseLinkClass} ${inactiveLinkClass}`;
     };
 
     return (
         <nav className="flex justify-between items-center p-4 md:p-6 bg-gradient-to-r from-[#075985] to-[#012A46] text-white shadow-md relative z-50">
-            {/* Logo/Título */}
-            <Link href="/inicio">
+            <Link href="/inicio" onClick={() => setOpenMenu(null)}>
                 <h1 className="flex items-center text-xl md:text-2xl font-bold cursor-pointer hover:text-sky-200 transition-colors">
                     <MdBuild className="inline-block mr-2 text-2xl" />
                     Oficina On-line
@@ -76,127 +54,86 @@ export default function NavBar({ active }: NavBarProps) {
 
             <ul className="flex flex-wrap gap-3 md:gap-5 text-sm md:text-base items-center">
                 {/* Início */}
-                <li>
-                    <Link href="/inicio" className={getItemClass("inicio")}>
-                        <MdHome className="inline-block mr-1" /> Início
-                    </Link>
-                </li>
+                <li><Link href="/inicio" className={getItemClass("inicio")} onClick={() => setOpenMenu(null)}><MdHome className="mr-1" /> Início</Link></li>
 
                 {/* Clientes */}
                 <li className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleMenu('clientes')}
-                        className={`${getItemClass("clientes")} cursor-pointer`}
-                    >
-                        <MdPeople className="inline-block mr-1" /> Clientes
-                    </button>
-                    {openMenu === 'clientes' && (
-                        <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down">
-                            <li><Link href="/clientes/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Listar Clientes</Link></li>
-                            <li><Link href="/clientes/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Cadastrar Cliente</Link></li>
-                            <li><Link href="/clientes/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Buscar Cliente</Link></li>
-                        </ul>
-                    )}
+                    <button type="button" onClick={() => toggleMenu('clientes')} className={`${getItemClass("clientes")} cursor-pointer`}><MdPeople className="mr-1" /> Clientes</button>
+                    {openMenu === 'clientes' && ( <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10"> <li><Link href="/clientes/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList />Listar</Link></li> <li><Link href="/clientes/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline/>Cadastrar</Link></li> <li><Link href="/clientes/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch/>Buscar</Link></li> </ul> )}
                 </li>
 
                 {/* Veículo */}
                 <li className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleMenu('veiculo')}
-                        className={`${getItemClass("veiculo")} cursor-pointer`}
-                    >
-                        <MdDirectionsCar className="inline-block mr-1" /> Veículo
-                    </button>
-                    {openMenu === 'veiculo' && (
-                        <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down">
-                            <li><Link href="/veiculo/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Listar Veículos</Link></li>
-                            <li><Link href="/veiculo/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Cadastrar Veículo</Link></li>
-                            <li><Link href="/veiculo/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Buscar Veículo</Link></li>
-                        </ul>
-                    )}
+                    <button type="button" onClick={() => toggleMenu('veiculo')} className={`${getItemClass("veiculo")} cursor-pointer`}><MdDirectionsCar className="mr-1" /> Veículo</button>
+                    {openMenu === 'veiculo' && ( <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10"> <li><Link href="/veiculo/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList />Listar</Link></li> <li><Link href="/veiculo/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline/>Cadastrar</Link></li> <li><Link href="/veiculo/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch/>Buscar</Link></li> </ul> )}
                 </li>
 
                 {/* Oficina Online */}
                 <li className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleMenu('oficina')}
-                        className={`${getItemClass("oficinaOnline")} cursor-pointer`}
-                    >
-                        <MdBuild className="inline-block mr-1" /> Oficina On-line
-                    </button>
-                    {openMenu === 'oficina' && (
-                        <ul className="absolute left-0 mt-2 w-48 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down">
-                            <li><Link href="/oficinaOnline/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Listar Registros</Link></li>
-                            <li><Link href="/oficinaOnline/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Novo Diagnóstico</Link></li>
-                            <li><Link href="/oficinaOnline/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Buscar Registro</Link></li>
-                        </ul>
-                    )}
+                    <button type="button" onClick={() => toggleMenu('oficina')} className={`${getItemClass("oficinaOnline")} cursor-pointer`}><MdBuild className="mr-1" /> Oficina On-line</button>
+                    {openMenu === 'oficina' && ( <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10"> <li><Link href="/oficinaOnline/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList />Listar</Link></li> <li><Link href="/oficinaOnline/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline/>Novo Diag.</Link></li> <li><Link href="/oficinaOnline/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch/>Buscar</Link></li> </ul> )}
                 </li>
 
                 {/* Agendamento */}
                 <li className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleMenu('agendamento')}
-                        className={`${getItemClass("agendamento")} cursor-pointer`}
-                    >
-                        <MdSchedule className="inline-block mr-1" /> Agendamento
+                    <button type="button" onClick={() => toggleMenu('agendamento')} className={`${getItemClass("agendamento")} cursor-pointer`}><MdSchedule className="mr-1" /> Agendamento</button>
+                    {openMenu === 'agendamento' && ( <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10"> <li><Link href="/agendamento/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList />Listar</Link></li> <li><Link href="/agendamento/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline/>Novo</Link></li> <li><Link href="/agendamento/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch/>Buscar</Link></li> </ul> )}
+                </li>
+
+                {/* Orçamento */}
+                <li className="relative">
+                    <button type="button" onClick={() => toggleMenu('orcamento')} className={`${getItemClass("orcamento")} cursor-pointer`}>
+                        <MdDescription className="mr-1" /> Orçamento
                     </button>
-                    {openMenu === 'agendamento' && (
-                        <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down">
-                            <li><Link href="/agendamento/listar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Listar Agendamentos</Link></li>
-                            <li><Link href="/agendamento/cadastrar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Novo Agendamento</Link></li>
-                            <li><Link href="/agendamento/buscar" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Buscar Agendamento</Link></li>
+                    {openMenu === 'orcamento' && (
+                        <ul className="absolute left-0 mt-2 w-56 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10">
+                            <li><Link href="/orcamento/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList /> Listar Orçamentos</Link></li>
+                            <li><Link href="/orcamento/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline /> Novo Orçamento</Link></li>
+                            <li><Link href="/orcamento/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch /> Buscar Orçamento</Link></li>
+                        </ul>
+                    )}
+                </li>
+
+                {/* Pagamento */}
+                <li className="relative">
+                    <button type="button" onClick={() => toggleMenu('pagamento')} className={`${getItemClass("pagamento")} cursor-pointer`}>
+                        <MdPayment className="mr-1" /> Pagamento
+                    </button>
+                    {openMenu === 'pagamento' && (
+                        <ul className="absolute left-0 mt-2 w-56 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10">
+                            <li><Link href="/pagamento/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList /> Listar Registros</Link></li>
+                            <li><Link href="/pagamento/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline /> Registrar Pagamento</Link></li>
+                            <li><Link href="/pagamento/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch /> Buscar Pagamento</Link></li>
                         </ul>
                     )}
                 </li>
 
                 {/* Relatório */}
                 <li className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleMenu('relatorio')}
-                        className={`${getItemClass("relatorio")} cursor-pointer`}
-                    >
-                        <MdBarChart className="inline-block mr-1" /> Relatório
-                    </button>
+                    <button type="button" onClick={() => toggleMenu('relatorio')} className={`${getItemClass("relatorio")} cursor-pointer`}><MdBarChart className="mr-1" /> Relatório</button>
                     {openMenu === 'relatorio' && (
-                        <ul className="absolute left-0 mt-2 w-56 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down">
-                            <li><Link href="/relatorio/agendamentos-futuros" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Agendamentos Futuros</Link></li>
-                            <li><Link href="/relatorio/contagem-mensal" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Contagem Mensal</Link></li>
-                            <li><Link href="/relatorio/historico-cliente" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Histórico por Cliente</Link></li>
-                            <li><Link href="/relatorio/servicos-agendados" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Serviços Agendados</Link></li>
-                            <li><Link href="/relatorio/cliente-completo" className="block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors">Relatorio de Cliente</Link></li>
+                        <ul className="absolute right-0 sm:left-auto mt-2 w-64 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10">
+                            <li><Link href="/relatorio/agendamentos-futuros" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdEventNote /> Agendamentos Futuros</Link></li>
+                            <li><Link href="/relatorio/contagem-mensal" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdTrendingUp /> Contagem Mensal</Link></li>
+                            <li><Link href="/relatorio/historico-cliente" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdPersonSearch /> Histórico Cliente</Link></li>
+                            <li><Link href="/relatorio/servicos-agendados" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdEventNote /> Serviços Agendados</Link></li>
+                            <li><Link href="/relatorio/cliente-completo" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdPersonSearch /> Cliente Completo</Link></li>
+                            {/* <<< NOVO LINK ADICIONADO ABAIXO >>> */}
+                            <li><Link href="/relatorio/financeiro-pagamentos" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAssessment /> Financeiro Pagamentos</Link></li>
                         </ul>
                     )}
                 </li>
 
-                {/* Pagamento */}
-                <li>
-                    <Link href="/pagamento" className={getItemClass("pagamento")}>
-                        <MdPayment className="inline-block mr-1" /> Pagamento
-                    </Link>
-                </li>
-
                 {/* Contato */}
-                <li>
-                    <Link href="/contato" className={getItemClass("contato")}>
-                        <MdContactMail className="inline-block mr-1" /> Contato
-                    </Link>
-                </li>
+                <li><Link href="/contato" className={getItemClass("contato")} onClick={() => setOpenMenu(null)}><MdContactMail className="mr-1" /> Contato</Link></li>
             </ul>
 
-            {/* Avatar */}
             <img
                 className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-sky-200"
-                src="https://avatars.githubusercontent.com/u/4350623?v=4"
+                src="https://avatars.githubusercontent.com/u/4350623?v=4" // Mantenha ou altere seu avatar
                 alt="Avatar do usuário"
             />
 
-            {/* Animação fade-in-down */}
             <style jsx>{`
                 @keyframes fade-in-down {
                     from { opacity: 0; transform: translateY(-10px); }
