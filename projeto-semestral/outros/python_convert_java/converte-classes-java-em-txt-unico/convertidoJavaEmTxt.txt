@@ -1,5 +1,5 @@
 // Script: converte-classes-java-em-txt-unico (v3)
-// Data de criação do arquivo de saída: 2025-05-06 14:05:49
+// Data de criação do arquivo de saída: 2025-05-07 07:42:30
 
 // Estrutura de diretórios do projeto:
 java/
@@ -61,8 +61,10 @@ java/
 // br.com.fiap.dto.contato.ContatoResponseDto => br\com\fiap\dto\contato\ContatoResponseDto.java
 // br.com.fiap.dto.endereco.EnderecoRequestDto => br\com\fiap\dto\endereco\EnderecoRequestDto.java
 // br.com.fiap.dto.endereco.EnderecoResponseDto => br\com\fiap\dto\endereco\EnderecoResponseDto.java
+// br.com.fiap.dto.oficina.ItemPecaServicoDto => br\com\fiap\dto\oficina\ItemPecaServicoDto.java
 // br.com.fiap.dto.oficina.OficinaRequestDto => br\com\fiap\dto\oficina\OficinaRequestDto.java
 // br.com.fiap.dto.oficina.OficinaResponseDto => br\com\fiap\dto\oficina\OficinaResponseDto.java
+// br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto => br\com\fiap\dto\orcamento\OrcamentoComServicoRequestDto.java
 // br.com.fiap.dto.orcamento.OrcamentoRequestDto => br\com\fiap\dto\orcamento\OrcamentoRequestDto.java
 // br.com.fiap.dto.orcamento.OrcamentoResponseDto => br\com\fiap\dto\orcamento\OrcamentoResponseDto.java
 // br.com.fiap.dto.pagamento.PagamentoRequestDto => br\com\fiap\dto\pagamento\PagamentoRequestDto.java
@@ -72,7 +74,11 @@ java/
 // br.com.fiap.dto.relatorio.ClienteRelatorioCompletoDTO => br\com\fiap\dto\relatorio\ClienteRelatorioCompletoDTO.java
 // br.com.fiap.dto.relatorio.ContagemMensalDTO => br\com\fiap\dto\relatorio\ContagemMensalDTO.java
 // br.com.fiap.dto.relatorio.ContagemMensalResultadoNativo => br\com\fiap\dto\relatorio\ContagemMensalResultadoNativo.java
+// br.com.fiap.dto.relatorio.EstatisticasPagamentosDto => br\com\fiap\dto\relatorio\EstatisticasPagamentosDto.java
+// br.com.fiap.dto.relatorio.EvolucaoMensalPagamentoNativo => br\com\fiap\dto\relatorio\EvolucaoMensalPagamentoNativo.java
+// br.com.fiap.dto.relatorio.EvolucaoMensalValorDto => br\com\fiap\dto\relatorio\EvolucaoMensalValorDto.java
 // br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO => br\com\fiap\dto\relatorio\HistoricoAgendamentoClienteDTO.java
+// br.com.fiap.dto.relatorio.PagamentoPorTipoDto => br\com\fiap\dto\relatorio\PagamentoPorTipoDto.java
 // br.com.fiap.dto.relatorio.ServicoAgendadoDTO => br\com\fiap\dto\relatorio\ServicoAgendadoDTO.java
 // br.com.fiap.dto.veiculo.VeiculoRequestDto => br\com\fiap\dto\veiculo\VeiculoRequestDto.java
 // br.com.fiap.dto.veiculo.VeiculoResponseDto => br\com\fiap\dto\veiculo\VeiculoResponseDto.java
@@ -975,146 +981,148 @@ public class OficinaController {
 // br\com\fiap\controller\OrcamentoController.java   |   package br.com.fiap.controller   |   class OrcamentoController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// src/main/java/br/com/fiap/Controller/OrcamentoController.java
+// br/com/fiap/controller/OrcamentoController.java
 package br.com.fiap.controller;
 
-import br.com.fiap.dto.orcamento.OrcamentoRequestDto;
+import br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto;
+import br.com.fiap.dto.orcamento.OrcamentoRequestDto; // Para o CRUD simples, se mantido
 import br.com.fiap.dto.orcamento.OrcamentoResponseDto;
-import br.com.fiap.exception.OrcamentoNotFoundException;
+import br.com.fiap.exception.*; // Importa todas as suas custom exceptions
 import br.com.fiap.service.orcamento.OrcamentoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter; // <<< Importar
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag; // <<< Importar
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException; // Import para ResponseStatusException
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rest/orcamento")
+@RequestMapping("/rest/orcamentos")
 @CrossOrigin(origins = "http://localhost:3000")
-@Tag(name = "Orçamentos", description = "Operações relacionadas a orçamentos de serviços") // <<< TAG ADICIONADA
+@Tag(name = "Orçamentos", description = "Operações relacionadas a orçamentos de serviços")
 public class OrcamentoController {
 
     private static final Logger log = LoggerFactory.getLogger(OrcamentoController.class);
+
     @Autowired
     private OrcamentoService orcamentoService;
 
-    @GetMapping("/all")
-    @Cacheable("orcamentos")
-    @Operation(summary = "Listar Todos os Orçamentos", description = "Retorna uma lista de todos os orçamentos cadastrados.") // Descrição
+    @PostMapping("/completo")
+    @Operation(summary = "Registrar Serviço com Orçamento e Peças",
+            description = "Cria um novo serviço de oficina com suas peças e um orçamento associado.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de orçamentos retornada"),
-            @ApiResponse(responseCode = "204", description = "Nenhum orçamento encontrado"),
+            @ApiResponse(responseCode = "201", description = "Serviço e Orçamento registrados com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrcamentoResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
+            @ApiResponse(responseCode = "404", description = "Entidade relacionada não encontrada (ex: Peça, Cliente, Veículo)"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
-    public ResponseEntity<List<OrcamentoResponseDto>> findAll() {
-        log.info("Requisição para listar todos os orçamentos");
-        List<OrcamentoResponseDto> orcamentos = orcamentoService.findAll();
-        if (orcamentos.isEmpty()) { return ResponseEntity.noContent().build(); }
-        return ResponseEntity.ok(orcamentos);
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Buscar Orçamento por ID", description = "Retorna um orçamento específico pelo seu ID.") // Descrição
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Orçamento encontrado"),
-            @ApiResponse(responseCode = "404", description = "Orçamento não encontrado para o ID fornecido"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
-    })
-    public ResponseEntity<OrcamentoResponseDto> findById(
-            @Parameter(description = "ID do orçamento a ser buscado") @PathVariable Long id // <<< @Parameter
-    ) {
-        log.info("Requisição para buscar orçamento por ID: {}", id);
+    public ResponseEntity<OrcamentoResponseDto> registrarServicoComOrcamento(
+            @Parameter(description = "Dados completos do serviço da oficina e do orçamento", required = true)
+            @Valid @RequestBody OrcamentoComServicoRequestDto dto) {
+        log.info("Requisição POST /rest/orcamentos/completo recebida");
         try {
-            OrcamentoResponseDto orcamento = orcamentoService.findById(id);
-            return ResponseEntity.ok(orcamento);
-        } catch (OrcamentoNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            OrcamentoResponseDto orcamentoSalvo = orcamentoService.registrarServicoComOrcamento(dto);
+            URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/rest/orcamentos/{id}")
+                    .buildAndExpand(orcamentoSalvo.getId()).toUri();
+            log.info("Serviço e Orçamento registrados com sucesso. Orçamento ID: {}", orcamentoSalvo.getId());
+            return ResponseEntity.created(location).body(orcamentoSalvo);
+        } catch (PecasNotFoundException | OficinaNotFoundException | ClientesNotFoundException | VeiculoNotFoundException e) {
+            log.warn("Erro de entidade não encontrada ao registrar serviço com orçamento: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Argumento inválido ao registrar serviço com orçamento: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
-            log.error("Erro inesperado ao buscar orçamento ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("Erro interno ao registrar serviço com orçamento: {}", e.getMessage(), e);
+            // CORREÇÃO: Adicionar o throw ou return aqui
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno ao processar a solicitação.", e);
         }
-    }
+    } // Fechamento do método registrarServicoComOrcamento
 
-    @PostMapping
-    @CacheEvict(value = "orcamentos", allEntries = true)
-    @Operation(summary = "Criar Novo Orçamento", description = "Cria um novo registro de orçamento.") // Descrição
+    // Se você decidir manter o CRUD simples de Orcamento (sem peças/serviço detalhado)
+    @PostMapping("/simples")
+    @Operation(summary = "Criar Novo Orçamento (Simples)", description = "Cria um novo registro de orçamento apenas com dados de mão de obra.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Orçamento criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
             @ApiResponse(responseCode = "500", description = "Erro interno ao tentar criar o orçamento")
     })
-    public ResponseEntity<OrcamentoResponseDto> create(
-            @Parameter(description = "Dados do orçamento para criação") @RequestBody @Valid OrcamentoRequestDto orcamentoDto // <<< @Parameter
+    public ResponseEntity<OrcamentoResponseDto> createOrcamentoSimples(
+            @Parameter(description = "Dados do orçamento para criação (apenas mão de obra)")
+            @Valid @RequestBody OrcamentoRequestDto dto
     ) {
-        log.info("Requisição para criar novo orçamento: {}", orcamentoDto.getDataOrcamento());
+        log.info("Requisição POST /rest/orcamentos/simples");
         try {
-            OrcamentoResponseDto savedOrcamento = orcamentoService.create(orcamentoDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedOrcamento);
+            OrcamentoResponseDto orcamentoSalvo = orcamentoService.create(dto); // Chama o método create que recebe OrcamentoRequestDto
+            URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}") // Ajustado para pegar da request atual e adicionar /id
+                    .buildAndExpand(orcamentoSalvo.getId()).toUri();
+            return ResponseEntity.created(location).body(orcamentoSalvo);
         } catch (Exception e) {
-            log.error("Erro ao criar orçamento: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("Erro ao criar orçamento (simples): {}", e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao processar o cadastro do orçamento (simples).", e);
         }
     }
 
-    @PutMapping("/{id}")
-    @CacheEvict(value = "orcamentos", allEntries = true)
-    @Operation(summary = "Atualizar Orçamento", description = "Atualiza um orçamento existente.") // Descrição
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Orçamento atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
-            @ApiResponse(responseCode = "404", description = "Orçamento não encontrado para o ID fornecido"),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao tentar atualizar")
-    })
-    public ResponseEntity<OrcamentoResponseDto> update(
-            @Parameter(description = "ID do orçamento a ser atualizado") @PathVariable Long id, // <<< @Parameter
-            @Parameter(description = "Dados atualizados do orçamento") @RequestBody @Valid OrcamentoRequestDto orcamentoDto // <<< @Parameter
-    ) {
-        log.info("Requisição para atualizar orçamento ID: {}", id);
-        try {
-            OrcamentoResponseDto updatedOrcamento = orcamentoService.update(id, orcamentoDto);
-            return ResponseEntity.ok(updatedOrcamento);
-        } catch (OrcamentoNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Erro ao atualizar orçamento ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+    @GetMapping
+    @Operation(summary = "Listar Todos os Orçamentos (Simples)", description = "Retorna uma lista de todos os orçamentos cadastrados (sem detalhes de peças/serviço).")
+    public ResponseEntity<List<OrcamentoResponseDto>> findAll() {
+        log.info("Requisição para listar todos os orçamentos (simples)");
+        List<OrcamentoResponseDto> orcamentos = orcamentoService.findAll();
+        if (orcamentos.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.ok(orcamentos);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar Orçamento por ID (Simples)", description = "Retorna um orçamento específico pelo seu ID (sem detalhes de peças/serviço).")
+    public ResponseEntity<OrcamentoResponseDto> findById(@PathVariable Long id) {
+        log.info("Requisição para buscar orçamento (simples) por ID: {}", id);
+        // O findById no serviço já lança OrcamentoNotFoundException, que é @ResponseStatus(NOT_FOUND)
+        OrcamentoResponseDto orcamento = orcamentoService.findById(id);
+        return ResponseEntity.ok(orcamento);
     }
 
     @DeleteMapping("/{id}")
-    @CacheEvict(value = "orcamentos", allEntries = true)
-    @Operation(summary = "Deletar Orçamento", description = "Remove um orçamento.") // Descrição
+    @Operation(summary = "Deletar Orçamento", description = "Remove um orçamento e suas associações diretas.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Orçamento deletado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Orçamento não encontrado para o ID fornecido"),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao tentar deletar")
+            @ApiResponse(responseCode = "404", description = "Orçamento não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno ou falha de integridade de dados")
     })
-    public ResponseEntity<Void> delete(
-            @Parameter(description = "ID do orçamento a ser deletado") @PathVariable Long id // <<< @Parameter
-    ) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info("Requisição para deletar orçamento ID: {}", id);
         try {
             orcamentoService.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (OrcamentoNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Erro ao deletar orçamento ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.warn("Orçamento não encontrado para deleção: ID {}", id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) { // Pode ser DataIntegrityViolationException ou outra
+            log.error("Erro ao deletar orçamento ID {}: {}", id, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao deletar orçamento. Verifique dependências.", e);
         }
     }
-}
+    // A linha 102 original provavelmente estava aqui, após o fechamento da classe,
+    // ou dentro de um método que não foi fechado corretamente.
+    // Garantindo que a classe seja fechada corretamente:
+} // <<< ESTA É A CHAVE DE FECHAMENTO DA CLASSE OrcamentoController
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // br\com\fiap\controller\PagamentoController.java   |   package br.com.fiap.controller   |   class PagamentoController
@@ -1464,57 +1472,53 @@ public class PecasController {
 // br\com\fiap\controller\RelatorioController.java   |   package br.com.fiap.controller   |   class RelatorioController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// src/main/java/br/com/fiap/Controller/RelatorioController.java
+// src/main/java/br/com/fiap/controller/RelatorioController.java
 package br.com.fiap.controller;
 
 // --- Imports NECESSÁRIOS ---
-// DTOs
-import br.com.fiap.dto.relatorio.ContagemMensalDTO;
-import br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO;
-import br.com.fiap.dto.relatorio.ServicoAgendadoDTO; // << Import para Serviços Agendados
-// Exceptions
+import br.com.fiap.dto.relatorio.*; // Importa todos os DTOs de relatório
 import br.com.fiap.exception.ClientesNotFoundException;
-// Models
 import br.com.fiap.model.relacionamentos.ClienteId;
-// Services
 import br.com.fiap.service.relatorio.RelatorioService;
-// Swagger / OpenAPI
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-// Logging
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-// Spring Core & Web
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;         // << Import para Page
-import org.springframework.data.domain.Pageable;      // << Import para Pageable
-import org.springframework.format.annotation.DateTimeFormat; // << Import para LocalDate @RequestParam
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;    // << Import para todas as anotações Web
-// Java Util
-import java.time.LocalDate;                         // << Import para LocalDate
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
 import java.util.List;
-// --- Fim Imports ---
 
 @RestController
 @RequestMapping("/rest/relatorios")
-@CrossOrigin(origins = "http://localhost:3000")
-@Tag(name = "Relatórios", description = "Endpoints para geração de relatórios")
+@CrossOrigin(origins = "http://localhost:3000") // Ajuste para sua URL de frontend
+@Tag(name = "Relatórios", description = "Endpoints para geração de relatórios consolidados")
 public class RelatorioController {
 
     private static final Logger log = LoggerFactory.getLogger(RelatorioController.class);
-
     @Autowired
     private RelatorioService relatorioService;
 
-    // Endpoint Contagem Mensal
+    // Endpoint Contagem Mensal (Existente)
     @GetMapping("/contagem-agendamentos-mensal")
-    @Operation(summary = "Relatório de Contagem Mensal")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "500") })
+    @Operation(summary = "Relatório de Contagem Mensal de Agendamentos", description = "Retorna a quantidade de agendamentos agrupados por mês/ano.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Contagem retornada com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ContagemMensalDTO.class))),
+            @ApiResponse(responseCode = "204", description = "Nenhum agendamento encontrado no período"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
     public ResponseEntity<List<ContagemMensalDTO>> getContagemMensal() {
         log.info("Requisição GET /rest/relatorios/contagem-agendamentos-mensal");
         try {
@@ -1522,43 +1526,54 @@ public class RelatorioController {
             if (contagem.isEmpty()) { return ResponseEntity.noContent().build(); }
             return ResponseEntity.ok(contagem);
         } catch (Exception e) {
-            log.error("Erro: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
+            log.error("Erro ao gerar relatório de contagem mensal: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // Endpoint Histórico Cliente
+    // Endpoint Histórico Cliente (Existente)
     @GetMapping("/historico-cliente/{idCliente}/{idEndereco}")
-    @Operation(summary = "Histórico de Agendamentos por Cliente")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "400"), @ApiResponse(responseCode = "404"), @ApiResponse(responseCode = "500") })
+    @Operation(summary = "Histórico de Agendamentos por Cliente", description = "Retorna o histórico de agendamentos para um cliente específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Histórico retornado com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = HistoricoAgendamentoClienteDTO.class))),
+            @ApiResponse(responseCode = "204", description = "Nenhum histórico encontrado para o cliente"),
+            @ApiResponse(responseCode = "400", description = "IDs de cliente ou endereço inválidos"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
     public ResponseEntity<List<HistoricoAgendamentoClienteDTO>> getHistoricoCliente(
             @Parameter(description = "ID_CLI do cliente") @PathVariable Long idCliente,
             @Parameter(description = "ENDERECOS_ID_END do cliente") @PathVariable Long idEndereco
     ) {
-        ClienteId clienteId = new ClienteId(idCliente, idEndereco);
-        log.info("Requisição GET /rest/relatorios/historico-cliente/{}", clienteId);
+        ClienteId clienteIdObj = new ClienteId(idCliente, idEndereco);
+        log.info("Requisição GET /rest/relatorios/historico-cliente/{}", clienteIdObj);
         try {
-            List<HistoricoAgendamentoClienteDTO> historico = relatorioService.getHistoricoAgendamentosCliente(clienteId);
+            List<HistoricoAgendamentoClienteDTO> historico = relatorioService.getHistoricoAgendamentosCliente(clienteIdObj);
             if (historico.isEmpty()) { return ResponseEntity.noContent().build(); }
             return ResponseEntity.ok(historico);
         } catch (ClientesNotFoundException e) {
-            log.warn("Cliente não encontrado: {}", clienteId);
+            log.warn("Cliente não encontrado para histórico: {}", clienteIdObj);
             return ResponseEntity.notFound().build();
         } catch (IllegalArgumentException e) {
-            log.warn("ID inválido: {}: {}", clienteId, e.getMessage());
+            log.warn("ID inválido para histórico de cliente: {}: {}", clienteIdObj, e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            log.error("Erro ao gerar histórico: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
+            log.error("Erro ao gerar histórico para cliente {}: {}", clienteIdObj, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // Endpoint Serviços Agendados
+    // Endpoint Serviços Agendados (Existente)
     @GetMapping("/servicos-agendados")
-    @Operation(summary = "Relatório de Serviços Agendados")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "204"), @ApiResponse(responseCode = "400"), @ApiResponse(responseCode = "500") })
+    @Operation(summary = "Relatório de Serviços Agendados", description = "Lista os serviços agendados a partir de uma data, com detalhes do veículo e diagnóstico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Serviços agendados retornados com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "204", description = "Nenhum serviço agendado encontrado para os critérios"),
+            @ApiResponse(responseCode = "400", description = "Parâmetros de data ou paginação inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
     public ResponseEntity<Page<ServicoAgendadoDTO>> getServicosAgendados(
-            @Parameter(description = "Data inicial (AAAA-MM-DD). Padrão: hoje.")
+            @Parameter(description = "Data inicial (AAAA-MM-DD) para buscar serviços. Padrão: data atual.")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
             @Parameter(hidden = true) Pageable pageable
     ) {
@@ -1570,9 +1585,92 @@ public class RelatorioController {
             return ResponseEntity.ok(paginaServicos);
         } catch (Exception e) {
             log.error("Erro ao gerar relatório de serviços agendados: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    // --- NOVOS ENDPOINTS PARA RELATÓRIOS DE PAGAMENTO ---
+
+    @GetMapping("/pagamentos/estatisticas")
+    @Operation(summary = "Estatísticas Gerais de Pagamentos", description = "Retorna o total de operações, valor total arrecadado e ticket médio dos pagamentos em um período.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estatísticas retornadas com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EstatisticasPagamentosDto.class))),
+            @ApiResponse(responseCode = "400", description = "Parâmetros de data inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<EstatisticasPagamentosDto> getEstatisticasPagamentos(
+            @Parameter(description = "Data inicial do período (AAAA-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @Parameter(description = "Data final do período (AAAA-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim
+    ) {
+        log.info("Requisição GET /rest/relatorios/pagamentos/estatisticas para período: {} a {}", dataInicio, dataFim);
+        if (dataInicio == null || dataFim == null || dataFim.isBefore(dataInicio)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Datas de início e fim são obrigatórias e a data fim não pode ser anterior à data início.");
+        }
+        try {
+            EstatisticasPagamentosDto estatisticas = relatorioService.getEstatisticasPagamentos(dataInicio, dataFim);
+            return ResponseEntity.ok(estatisticas);
+        } catch (Exception e) {
+            log.error("Erro ao gerar estatísticas de pagamentos: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/pagamentos/por-tipo")
+    @Operation(summary = "Pagamentos Agrupados por Tipo", description = "Retorna a quantidade e o valor total de pagamentos agrupados por forma de pagamento em um período.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dados retornados com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagamentoPorTipoDto.class))),
+            @ApiResponse(responseCode = "204", description = "Nenhum pagamento encontrado no período"),
+            @ApiResponse(responseCode = "400", description = "Parâmetros de data inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<List<PagamentoPorTipoDto>> getPagamentosPorTipo(
+            @Parameter(description = "Data inicial do período (AAAA-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @Parameter(description = "Data final do período (AAAA-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim
+    ) {
+        log.info("Requisição GET /rest/relatorios/pagamentos/por-tipo para período: {} a {}", dataInicio, dataFim);
+        if (dataInicio == null || dataFim == null || dataFim.isBefore(dataInicio)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Datas de início e fim são obrigatórias e a data fim não pode ser anterior à data início.");
+        }
+        try {
+            List<PagamentoPorTipoDto> resultado = relatorioService.getPagamentosPorTipo(dataInicio, dataFim);
+            if (resultado.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            log.error("Erro ao gerar relatório de pagamentos por tipo: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/pagamentos/evolucao-mensal-valor")
+    @Operation(summary = "Evolução Mensal do Valor dos Pagamentos", description = "Retorna o valor total de pagamentos agrupados por mês/ano em um período.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dados retornados com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EvolucaoMensalValorDto.class))),
+            @ApiResponse(responseCode = "204", description = "Nenhum pagamento encontrado no período"),
+            @ApiResponse(responseCode = "400", description = "Parâmetros de data inválidos"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<List<EvolucaoMensalValorDto>> getEvolucaoMensalValorPagamentos(
+            @Parameter(description = "Data inicial do período (AAAA-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @Parameter(description = "Data final do período (AAAA-MM-DD)", required = true) @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim
+    ) {
+        log.info("Requisição GET /rest/relatorios/pagamentos/evolucao-mensal-valor para período: {} a {}", dataInicio, dataFim);
+        if (dataInicio == null || dataFim == null || dataFim.isBefore(dataInicio)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Datas de início e fim são obrigatórias e a data fim não pode ser anterior à data início.");
+        }
+        try {
+            List<EvolucaoMensalValorDto> resultado = relatorioService.getEvolucaoMensalValorPagamentos(dataInicio, dataFim);
+            if (resultado.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            log.error("Erro ao gerar relatório de evolução mensal do valor dos pagamentos: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    // ----------------------------------------------------------
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -2061,6 +2159,29 @@ public class EnderecoResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// br\com\fiap\dto\oficina\ItemPecaServicoDto.java   |   package br.com.fiap.dto.oficina   |   class ItemPecaServicoDto
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+// Em br.com.fiap.dto (ou um subpacote como br.com.fiap.dto.servico)
+package br.com.fiap.dto.oficina; // Exemplo de pacote
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ItemPecaServicoDto {
+    @NotNull(message = "ID da peça é obrigatório")
+    private Long pecaId;
+
+    @NotNull(message = "Quantidade da peça é obrigatória")
+    @Min(value = 1, message = "Quantidade deve ser pelo menos 1")
+    private Integer quantidade;
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // br\com\fiap\dto\oficina\OficinaRequestDto.java   |   package br.com.fiap.dto.oficina   |   class OficinaRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2127,6 +2248,81 @@ public class OficinaResponseDto implements Serializable {
     private String diagnostico;
     private String partesAfetadas;
     private String horasTrabalhadas; // Mantido como String
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// br\com\fiap\dto\orcamento\OrcamentoComServicoRequestDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoComServicoRequestDto
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+// Em br.com.fiap.dto.orcamento
+package br.com.fiap.dto.orcamento;
+
+import br.com.fiap.dto.oficina.ItemPecaServicoDto; // Import do DTO acima
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+@Getter
+@Setter
+public class OrcamentoComServicoRequestDto {
+
+    // --- Detalhes do Serviço da Oficina ---
+    @NotNull(message = "Data do serviço da oficina é obrigatória")
+    private LocalDate dataOficina; // Pode ser a mesma da dataOrcamento
+
+    @NotBlank(message = "Descrição do problema é obrigatória")
+    @Size(max = 500, message = "Descrição do problema pode ter no máximo 500 caracteres")
+    private String descricaoProblema;
+
+    @Size(max = 4000, message = "Diagnóstico pode ter no máximo 4000 caracteres")
+    private String diagnostico; // Pode ser preenchido pela IA ou manualmente
+
+    @NotBlank(message = "Partes afetadas são obrigatórias")
+    @Size(max = 500, message = "Partes afetadas podem ter no máximo 500 caracteres")
+    private String partesAfetadas;
+
+    @NotBlank(message = "Horas trabalhadas na oficina são obrigatórias")
+    @Size(max = 5, message = "Horas trabalhadas na oficina devem ter no máximo 5 caracteres")
+    private String horasTrabalhadasOficina; // Ex: "2.5" ou "2:30" - backend precisará parsear
+
+    @Valid // Valida a lista de itens
+    private List<ItemPecaServicoDto> pecasUtilizadas;
+
+    // --- Detalhes do Orçamento ---
+    @NotNull(message = "Data do orçamento é obrigatória")
+    @FutureOrPresent(message = "Data do orçamento não pode ser no passado, apenas presente ou futuro.")
+    private LocalDate dataOrcamento;
+
+    @NotNull(message = "Valor da mão de obra (taxa fixa/adicional) é obrigatório")
+    @PositiveOrZero(message = "Valor da mão de obra não pode ser negativo")
+    private BigDecimal valorMaoDeObraAdicional; // Uma taxa fixa, se houver
+
+    @NotNull(message = "Valor da hora para orçamento é obrigatório")
+    @Positive(message = "Valor da hora deve ser positivo")
+    private BigDecimal valorHoraOrcamento;
+
+    @NotNull(message = "Quantidade de horas para orçamento é obrigatória")
+    @Positive(message = "Quantidade de horas deve ser positiva")
+    private Integer quantidadeHorasOrcamento;
+
+    // --- IDs para Associações (Opcional, mas útil para o frontend) ---
+    private Long clienteId;
+    private Long clienteEnderecoId; // Necessário devido à chave composta de Clientes
+    private Long veiculoId;
+
+    // ID da Oficina, caso o orçamento seja para um serviço já existente e queira apenas adicionar o orçamento
+    private Long oficinaExistenteId;
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -2452,6 +2648,63 @@ public interface ContagemMensalResultadoNativo {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// br\com\fiap\dto\relatorio\EstatisticasPagamentosDto.java   |   package br.com.fiap.dto.relatorio   |   class EstatisticasPagamentosDto
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+package br.com.fiap.dto.relatorio;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class EstatisticasPagamentosDto {
+    private Long totalOperacoes;
+    private BigDecimal valorTotalArrecadado;
+    private BigDecimal ticketMedio;
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// br\com\fiap\dto\relatorio\EvolucaoMensalPagamentoNativo.java   |   package br.com.fiap.dto.relatorio   |   class EvolucaoMensalPagamentoNativo
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+package br.com.fiap.dto.relatorio;
+
+import java.math.BigDecimal;
+
+public interface EvolucaoMensalPagamentoNativo {
+    String getMesAno();
+    BigDecimal getValorTotal();
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// br\com\fiap\dto\relatorio\EvolucaoMensalValorDto.java   |   package br.com.fiap.dto.relatorio   |   class EvolucaoMensalValorDto
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+package br.com.fiap.dto.relatorio;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class EvolucaoMensalValorDto {
+    private String mesAno; // Formato "YYYY-MM"
+    private BigDecimal valorTotal;
+    // private Long quantidade; // Opcional, se quiser mostrar contagem também
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // br\com\fiap\dto\relatorio\HistoricoAgendamentoClienteDTO.java   |   package br.com.fiap.dto.relatorio   |   class HistoricoAgendamentoClienteDTO
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2473,6 +2726,28 @@ public class HistoricoAgendamentoClienteDTO {
     private LocalDate dataAgendamento;
     private String observacao;
     private String veiculoPlaca; // Placa do veículo associado ao agendamento
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// br\com\fiap\dto\relatorio\PagamentoPorTipoDto.java   |   package br.com.fiap.dto.relatorio   |   class PagamentoPorTipoDto
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+package br.com.fiap.dto.relatorio;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class PagamentoPorTipoDto {
+    private String tipoPagamento;
+    private Long quantidade;
+    private BigDecimal valorTotal;
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -2963,45 +3238,84 @@ public interface EnderecoMapper {
 // br\com\fiap\mapper\OficinaMapper.java   |   package br.com.fiap.mapper   |   class OficinaMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// --- src/main/java/br/com/fiap/mapper/OficinaMapper.java ---
+// br/com/fiap/mapper/OficinaMapper.java
 package br.com.fiap.mapper;
 
-import br.com.fiap.dto.oficina.OficinaRequestDto;
+import br.com.fiap.dto.oficina.OficinaRequestDto; // Usado para CRUD simples de Oficina
 import br.com.fiap.dto.oficina.OficinaResponseDto;
+import br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto; // Novo DTO
 import br.com.fiap.model.Oficina;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface OficinaMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "agendaOficinas", ignore = true) // Ignora coleções de relacionamentos
-    @Mapping(target = "oficinaVeiculos", ignore = true)
-    @Mapping(target = "oficinaPecas", ignore = true)
-    @Mapping(target = "oficinaOrcamentos", ignore = true)
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            // Mapeia os campos correspondentes do DTO complexo para a entidade Oficina
+            @Mapping(source = "dataOficina", target = "dataOficina"),
+            @Mapping(source = "descricaoProblema", target = "descricaoProblema"),
+            @Mapping(source = "diagnostico", target = "diagnostico"),
+            @Mapping(source = "partesAfetadas", target = "partesAfetadas"),
+            @Mapping(source = "horasTrabalhadasOficina", target = "horasTrabalhadas"),
+            // Ignora coleções de relacionamento e campos não presentes no DTO parcial
+            @Mapping(target = "agendaOficinas", ignore = true),
+            @Mapping(target = "oficinaVeiculos", ignore = true),
+            @Mapping(target = "oficinaPecas", ignore = true), // Será preenchido no serviço
+            @Mapping(target = "oficinaOrcamentos", ignore = true)
+    })
+    Oficina fromOrcamentoComServicoDto(OrcamentoComServicoRequestDto dto);
+
+    // Métodos existentes para CRUD simples de Oficina (se houver)
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "agendaOficinas", ignore = true),
+            @Mapping(target = "oficinaVeiculos", ignore = true),
+            @Mapping(target = "oficinaPecas", ignore = true),
+            @Mapping(target = "oficinaOrcamentos", ignore = true)
+    })
     Oficina toEntity(OficinaRequestDto dto);
 
     OficinaResponseDto toResponseDto(Oficina entity);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "agendaOficinas", ignore = true)
-    @Mapping(target = "oficinaVeiculos", ignore = true)
-    @Mapping(target = "oficinaPecas", ignore = true)
-    @Mapping(target = "oficinaOrcamentos", ignore = true)
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "agendaOficinas", ignore = true),
+            @Mapping(target = "oficinaVeiculos", ignore = true),
+            @Mapping(target = "oficinaPecas", ignore = true),
+            @Mapping(target = "oficinaOrcamentos", ignore = true)
+    })
     void updateEntityFromDto(OficinaRequestDto dto, @MappingTarget Oficina entity);
+
+    // Novo método para atualizar a partir do DTO complexo
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(source = "dataOficina", target = "dataOficina"),
+            @Mapping(source = "descricaoProblema", target = "descricaoProblema"),
+            @Mapping(source = "diagnostico", target = "diagnostico"),
+            @Mapping(source = "partesAfetadas", target = "partesAfetadas"),
+            @Mapping(source = "horasTrabalhadasOficina", target = "horasTrabalhadas"),
+            @Mapping(target = "agendaOficinas", ignore = true),
+            @Mapping(target = "oficinaVeiculos", ignore = true),
+            @Mapping(target = "oficinaPecas", ignore = true),
+            @Mapping(target = "oficinaOrcamentos", ignore = true)
+    })
+    void updateOficinaFromOrcamentoComServicoDto(OrcamentoComServicoRequestDto dto, @MappingTarget Oficina entity);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // br\com\fiap\mapper\OrcamentoMapper.java   |   package br.com.fiap.mapper   |   class OrcamentoMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// --- src/main/java/br/com/fiap/mapper/OrcamentoMapper.java ---
+// br/com/fiap/mapper/OrcamentoMapper.java
 package br.com.fiap.mapper;
 
-import br.com.fiap.dto.orcamento.OrcamentoRequestDto;
+import br.com.fiap.dto.orcamento.OrcamentoRequestDto; // Usado para CRUD simples de Orcamento
 import br.com.fiap.dto.orcamento.OrcamentoResponseDto;
+import br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto; // Novo DTO
 import br.com.fiap.model.Orcamento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -3013,11 +3327,26 @@ public interface OrcamentoMapper {
 
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "clienteOrcamentos", ignore = true), // Ignora relacionamentos
+            // Mapeia os campos correspondentes do DTO complexo para a entidade Orcamento
+            @Mapping(source = "dataOrcamento", target = "dataOrcamento"),
+            @Mapping(source = "valorMaoDeObraAdicional", target = "maoDeObra"),
+            @Mapping(source = "valorHoraOrcamento", target = "valorHora"),
+            @Mapping(source = "quantidadeHorasOrcamento", target = "quantidadeHoras"),
+            @Mapping(target = "valorTotal", ignore = true), // Calculado no serviço
+            @Mapping(target = "clienteOrcamentos", ignore = true),
+            @Mapping(target = "oficinaOrcamentos", ignore = true), // Será preenchido no serviço
+            @Mapping(target = "pagamentoOrcamentos", ignore = true)
+    })
+    Orcamento fromOrcamentoComServicoDto(OrcamentoComServicoRequestDto dto);
+
+    // Métodos existentes para CRUD simples de Orcamento (se houver)
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "clienteOrcamentos", ignore = true),
             @Mapping(target = "oficinaOrcamentos", ignore = true),
             @Mapping(target = "pagamentoOrcamentos", ignore = true)
     })
-    Orcamento toEntity(OrcamentoRequestDto dto);
+    Orcamento toEntity(OrcamentoRequestDto dto); // Para CRUD simples de orçamento
 
     OrcamentoResponseDto toResponseDto(Orcamento entity);
 
@@ -3027,7 +3356,21 @@ public interface OrcamentoMapper {
             @Mapping(target = "oficinaOrcamentos", ignore = true),
             @Mapping(target = "pagamentoOrcamentos", ignore = true)
     })
-    void updateEntityFromDto(OrcamentoRequestDto dto, @MappingTarget Orcamento entity);
+    void updateEntityFromDto(OrcamentoRequestDto dto, @MappingTarget Orcamento entity); // Para CRUD simples
+
+    // Novo método para atualizar a partir do DTO complexo
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(source = "dataOrcamento", target = "dataOrcamento"),
+            @Mapping(source = "valorMaoDeObraAdicional", target = "maoDeObra"),
+            @Mapping(source = "valorHoraOrcamento", target = "valorHora"),
+            @Mapping(source = "quantidadeHorasOrcamento", target = "quantidadeHoras"),
+            @Mapping(target = "valorTotal", ignore = true),
+            @Mapping(target = "clienteOrcamentos", ignore = true),
+            @Mapping(target = "oficinaOrcamentos", ignore = true),
+            @Mapping(target = "pagamentoOrcamentos", ignore = true)
+    })
+    void updateOrcamentoFromOrcamentoComServicoDto(OrcamentoComServicoRequestDto dto, @MappingTarget Orcamento entity);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -4151,6 +4494,9 @@ public class OficinaPeca implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PECAS_ID_PEC", nullable = false) // FK para PECAS
     private Pecas peca;
+
+    @Column(name = "QUANTIDADE", nullable = false)
+    private Integer quantidade;
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -4408,17 +4754,44 @@ public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
 // br\com\fiap\repository\PagamentoRepository.java   |   package br.com.fiap.repository   |   class PagamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// br/com/fiap/repository/PagamentoRepository.java
 package br.com.fiap.repository;
 
+import br.com.fiap.dto.relatorio.PagamentoPorTipoDto;
 import br.com.fiap.model.Pagamento;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor; // <<< ADICIONAR IMPORT
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
 @Repository
-// Adiciona JpaSpecificationExecutor para permitir buscas com Specification
 public interface PagamentoRepository extends JpaRepository<Pagamento, Long>, JpaSpecificationExecutor<Pagamento> {
-    // Métodos CRUD básicos + findAll(Specification, Pageable) agora disponíveis
+
+    // Query para Estatísticas Gerais
+    @Query("SELECT COUNT(p.id) as totalOperacoes, " +
+            "SUM(p.totalComDesconto) as valorTotalArrecadado, " +
+            "AVG(p.totalComDesconto) as ticketMedio " +
+            "FROM Pagamento p WHERE p.dataPagamento BETWEEN :dataInicio AND :dataFim")
+    List<Object[]> getEstatisticasPagamentos(@Param("dataInicio") LocalDate dataInicio, @Param("dataFim") LocalDate dataFim);
+
+
+    // Query para Pagamentos por Tipo
+    @Query("SELECT new br.com.fiap.dto.relatorio.PagamentoPorTipoDto(p.tipoPagamento, COUNT(p.id), SUM(p.totalComDesconto)) " +
+            "FROM Pagamento p WHERE p.dataPagamento BETWEEN :dataInicio AND :dataFim " +
+            "GROUP BY p.tipoPagamento ORDER BY SUM(p.totalComDesconto) DESC")
+    List<PagamentoPorTipoDto> findPagamentosAgrupadosPorTipo(@Param("dataInicio") LocalDate dataInicio, @Param("dataFim") LocalDate dataFim);
+
+    // Query para Evolução Mensal do Valor
+    // Oracle TO_CHAR para extrair 'YYYY-MM'
+    @Query(value = "SELECT TO_CHAR(p.data_pagamento, 'YYYY-MM') as mesAno, SUM(p.total_pagamento_desconto) as valorTotal " +
+            "FROM PAGAMENTOS p WHERE p.data_pagamento BETWEEN :dataInicio AND :dataFim " +
+            "GROUP BY TO_CHAR(p.data_pagamento, 'YYYY-MM') ORDER BY mesAno ASC", nativeQuery = true)
+    List<Object[]> findEvolucaoMensalValorPagamentosNativo(@Param("dataInicio") LocalDate dataInicio, @Param("dataFim") LocalDate dataFim); // <<< CORRETO: Retorna List<Object[]>
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -4508,18 +4881,23 @@ public interface AgendaVeiculoRepository extends JpaRepository<AgendaVeiculo, Lo
 // br\com\fiap\repository\relacionamentos\ClienteOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClienteOrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// --- Arquivo: src/main/java/br/com/fiap/repository/relacionamentos/ClienteOrcamentoRepository.java ---
+// br/com/fiap/repository/relacionamentos/ClienteOrcamentoRepository.java
 package br.com.fiap.repository.relacionamentos;
 
-import br.com.fiap.model.relacionamentos.ClienteId; // Importar ClienteId
+import br.com.fiap.model.relacionamentos.ClienteId;
 import br.com.fiap.model.relacionamentos.ClienteOrcamento;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List; // Importar List
+import java.util.List;
 
 public interface ClienteOrcamentoRepository extends JpaRepository<ClienteOrcamento, Long> {
 
-    // <<< NOVO MÉTODO ADICIONADO >>>
     List<ClienteOrcamento> findByCliente_Id(ClienteId clienteId);
+
+    // <<< NOVO MÉTODO ADICIONADO >>>
+    List<ClienteOrcamento> findByOrcamentoId(Long orcamentoId);
+
+    // Opcional:
+    // void deleteByOrcamentoId(Long orcamentoId);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -4565,12 +4943,23 @@ public interface ClienteVeiculoRepository extends JpaRepository<ClienteVeiculo, 
 // br\com\fiap\repository\relacionamentos\OficinaOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaOrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// br/com/fiap/repository/relacionamentos/OficinaOrcamentoRepository.java
 package br.com.fiap.repository.relacionamentos;
 
 import br.com.fiap.model.relacionamentos.OficinaOrcamento;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List; // Adicionar este import
 
 public interface OficinaOrcamentoRepository extends JpaRepository<OficinaOrcamento, Long> {
+
+    // <<< NOVO MÉTODO ADICIONADO >>>
+    List<OficinaOrcamento> findByOrcamentoId(Long orcamentoId);
+
+    // Opcionalmente, você poderia adicionar um método para deletar diretamente,
+    // mas buscar e depois deletar a lista é uma abordagem comum e segura.
+    // @Modifying
+    // @Query("DELETE FROM OficinaOrcamento oo WHERE oo.orcamento.id = :orcamentoId")
+    // void deleteByOrcamentoId(@Param("orcamentoId") Long orcamentoId);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -4608,12 +4997,20 @@ public interface OficinaVeiculoRepository extends JpaRepository<OficinaVeiculo, 
 // br\com\fiap\repository\relacionamentos\PagamentoOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class PagamentoOrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// br/com/fiap/repository/relacionamentos/PagamentoOrcamentoRepository.java
 package br.com.fiap.repository.relacionamentos;
 
 import br.com.fiap.model.relacionamentos.PagamentoOrcamento;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List; // Adicionar este import
 
 public interface PagamentoOrcamentoRepository extends JpaRepository<PagamentoOrcamento, Long> {
+
+    // <<< NOVO MÉTODO ADICIONADO >>>
+    List<PagamentoOrcamento> findByOrcamentoId(Long orcamentoId);
+
+    // Opcional:
+    // void deleteByOrcamentoId(Long orcamentoId);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -5489,46 +5886,56 @@ public class GoogleGeminiServiceImpl implements GoogleGeminiService {
 // br\com\fiap\service\oficina\OficinaService.java   |   package br.com.fiap.service.oficina   |   class OficinaService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// br/com/fiap/service/oficina/OficinaService.java
 package br.com.fiap.service.oficina;
 
 import br.com.fiap.dto.oficina.OficinaRequestDto;
 import br.com.fiap.dto.oficina.OficinaResponseDto;
+import br.com.fiap.dto.oficina.ItemPecaServicoDto; // Importar
+import br.com.fiap.model.Oficina; // Importar entidade
 import java.util.List;
 
 public interface OficinaService {
     List<OficinaResponseDto> findAll();
     OficinaResponseDto findById(Long id);
-    OficinaResponseDto create(OficinaRequestDto oficinaDto);
-    OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto);
+    OficinaResponseDto create(OficinaRequestDto oficinaDto); // Para CRUD simples de Oficina
+    OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto); // Para CRUD simples de Oficina
     void deleteById(Long id);
+
+    // Novo método para criar/atualizar Oficina com suas peças
+    // Recebe os dados da oficina e a lista de peças do DTO complexo
+    Oficina salvarOficinaComPecas(Oficina oficinaParcialmenteMapeada, List<ItemPecaServicoDto> pecasDto);
+    Oficina atualizarOficinaComPecas(Long oficinaId, Oficina oficinaParcialmenteMapeada, List<ItemPecaServicoDto> pecasDto);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // br\com\fiap\service\oficina\OficinaServiceImpl.java   |   package br.com.fiap.service.oficina   |   class OficinaServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// ===========================================================================
-// 3. OficinaServiceImpl (Injeção Atualizada)
-// Arquivo: src/main/java/br/com/fiap/service/oficina/OficinaServiceImpl.java
-// ===========================================================================
+// br/com/fiap/service/oficina/OficinaServiceImpl.java
 package br.com.fiap.service.oficina;
 
-// ... (Importações) ...
-import br.com.fiap.service.ia.GoogleGeminiService; // <<< Importa a NOVA interface
+import br.com.fiap.dto.oficina.OficinaRequestDto;
+import br.com.fiap.dto.oficina.OficinaResponseDto;
+import br.com.fiap.dto.oficina.ItemPecaServicoDto; // Importar
+import br.com.fiap.exception.OficinaNotFoundException;
+import br.com.fiap.exception.PecasNotFoundException; // Importar
+import br.com.fiap.mapper.OficinaMapper;
+import br.com.fiap.model.Oficina;
+import br.com.fiap.model.Pecas; // Importar
+import br.com.fiap.model.relacionamentos.OficinaPeca; // Importar
+import br.com.fiap.repository.OficinaRepository;
+import br.com.fiap.repository.PecasRepository; // Importar
+import br.com.fiap.repository.relacionamentos.OficinaPecaRepository; // Importar
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import br.com.fiap.dto.oficina.OficinaRequestDto;
-import br.com.fiap.dto.oficina.OficinaResponseDto;
-import br.com.fiap.exception.OficinaNotFoundException;
-import br.com.fiap.mapper.OficinaMapper;
-import br.com.fiap.model.Oficina;
-import br.com.fiap.repository.OficinaRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 public class OficinaServiceImpl implements OficinaService {
@@ -5536,34 +5943,23 @@ public class OficinaServiceImpl implements OficinaService {
     private static final Logger log = LoggerFactory.getLogger(OficinaServiceImpl.class);
     private final OficinaRepository oficinaRepository;
     private final OficinaMapper oficinaMapper;
-    // Injeção usa o novo nome da interface (pode ser removida se não usada aqui)
-    // private final GoogleGeminiService iaService;
+    private final PecasRepository pecasRepository; // Necessário para buscar Peças
+    private final OficinaPecaRepository oficinaPecaRepository; // Necessário para salvar a junção
 
     @Autowired
     public OficinaServiceImpl(OficinaRepository oficinaRepository,
-                              OficinaMapper oficinaMapper
-            /* , GoogleGeminiService iaService */ ) { // <<< Tipo atualizado (removido do construtor se não for usado aqui)
+                              OficinaMapper oficinaMapper,
+                              PecasRepository pecasRepository,
+                              OficinaPecaRepository oficinaPecaRepository) {
         this.oficinaRepository = oficinaRepository;
         this.oficinaMapper = oficinaMapper;
-        // this.iaService = iaService;
+        this.pecasRepository = pecasRepository;
+        this.oficinaPecaRepository = oficinaPecaRepository;
     }
 
-    // ... (Restante da classe OficinaServiceImpl, método create SEM a chamada iaService) ...
-    @Override
-    @Transactional
-    public OficinaResponseDto create(OficinaRequestDto oficinaDto) {
-        log.info("Criando nova oficina (diagnóstico vindo do DTO)");
-        try {
-            Oficina oficina = oficinaMapper.toEntity(oficinaDto);
-            // Chamada IA foi removida daqui
-            Oficina savedOficina = oficinaRepository.save(oficina);
-            log.info("Oficina criada com ID: {}", savedOficina.getId());
-            return oficinaMapper.toResponseDto(savedOficina);
-        } catch (Exception e) {
-            log.error("Erro ao criar oficina: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha ao criar oficina", e);
-        }
-    }
+    // Métodos CRUD simples existentes (create, update, findAll, findById, deleteById)...
+    // O método create existente recebe OficinaRequestDto, que não tem a lista de peças.
+    // O método update existente recebe OficinaRequestDto.
 
     @Override
     @Transactional(readOnly = true)
@@ -5578,27 +5974,48 @@ public class OficinaServiceImpl implements OficinaService {
     @Transactional(readOnly = true)
     public OficinaResponseDto findById(Long id) {
         log.info("Buscando oficina por ID: {}", id);
-        Oficina oficina = findOficinaById(id);
+        Oficina oficina = findOficinaByIdOrElseThrow(id);
         return oficinaMapper.toResponseDto(oficina);
     }
 
     @Override
     @Transactional
+    public OficinaResponseDto create(OficinaRequestDto oficinaDto) {
+        log.info("Criando nova oficina (diagnóstico vindo do DTO simples)");
+        try {
+            Oficina oficina = oficinaMapper.toEntity(oficinaDto);
+            Oficina savedOficina = oficinaRepository.save(oficina);
+            log.info("Oficina criada com ID: {}", savedOficina.getId());
+            return oficinaMapper.toResponseDto(savedOficina);
+        } catch (Exception e) {
+            log.error("Erro ao criar oficina: {}", e.getMessage(), e);
+            throw new RuntimeException("Falha ao criar oficina", e);
+        }
+    }
+    @Override
+    @Transactional
     public OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto) {
         log.info("Atualizando oficina com ID: {}", id);
-        Oficina existingOficina = findOficinaById(id);
+        Oficina existingOficina = findOficinaByIdOrElseThrow(id);
         oficinaMapper.updateEntityFromDto(oficinaDto, existingOficina);
         Oficina updatedOficina = oficinaRepository.save(existingOficina);
         log.info("Oficina atualizada com ID: {}", updatedOficina.getId());
         return oficinaMapper.toResponseDto(updatedOficina);
     }
 
+
     @Override
     @Transactional
     public void deleteById(Long id) {
         log.info("Deletando oficina com ID: {}", id);
-        Oficina oficina = findOficinaById(id); // Verifica existência
+        Oficina oficina = findOficinaByIdOrElseThrow(id);
         try {
+            // Antes de deletar a oficina, é preciso remover as associações em OFP
+            // Se houver cascade configurado de Oficina para OficinaPeca, isso pode ser automático
+            // Mas é mais seguro limpar manualmente ou garantir que orphanRemoval=true esteja em Oficina.oficinaPecas
+            oficinaPecaRepository.deleteAll(oficina.getOficinaPecas()); // Exemplo, precisa de getOficinaPecas()
+            oficina.getOficinaPecas().clear(); // Limpa a coleção na entidade gerenciada
+
             oficinaRepository.delete(oficina);
             log.info("Oficina deletada com ID: {}", id);
         } catch (Exception e) {
@@ -5607,9 +6024,94 @@ public class OficinaServiceImpl implements OficinaService {
         }
     }
 
-    private Oficina findOficinaById(Long id) {
+
+    // NOVO MÉTODO IMPLEMENTADO
+    @Override
+    @Transactional
+    public Oficina salvarOficinaComPecas(Oficina oficinaEntidade, List<ItemPecaServicoDto> pecasDto) {
+        log.info("Salvando Oficina e associando peças.");
+        // A entidade Oficina já deve ter os campos básicos preenchidos pelo mapper antes de chamar este método
+        // Salva a Oficina primeiro para ter um ID, se for nova
+        Oficina oficinaSalva = oficinaRepository.save(oficinaEntidade);
+
+        // Processa as peças
+        if (pecasDto != null && !pecasDto.isEmpty()) {
+            // Limpa associações antigas se for uma atualização e quiser substituir todas as peças
+            // (Para uma lógica de update mais granular, seria necessário comparar com as existentes)
+            // Por simplicidade, aqui vamos assumir que para update, as peças antigas são removidas e novas são adicionadas.
+            // Se oficinaSalva.getOficinaPecas() não for nulo, limpe-o.
+            if (oficinaSalva.getOficinaPecas() != null) {
+                oficinaPecaRepository.deleteAll(oficinaSalva.getOficinaPecas()); // Remove do banco
+                oficinaSalva.getOficinaPecas().clear(); // Limpa a coleção gerenciada
+            } else {
+                oficinaSalva.setOficinaPecas(new ArrayList<>());
+            }
+
+            for (ItemPecaServicoDto itemPecaDto : pecasDto) {
+                Pecas peca = pecasRepository.findById(itemPecaDto.getPecaId())
+                        .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + itemPecaDto.getPecaId()));
+
+                OficinaPeca oficinaPeca = new OficinaPeca();
+                oficinaPeca.setOficina(oficinaSalva);
+                oficinaPeca.setPeca(peca);
+                oficinaPeca.setQuantidade(itemPecaDto.getQuantidade());
+
+                oficinaSalva.getOficinaPecas().add(oficinaPecaRepository.save(oficinaPeca));
+            }
+        }
+        // O save final da oficinaSalva não é estritamente necessário aqui se o cascade estiver configurado
+        // e a coleção for gerenciada, mas pode ser feito para garantir.
+        return oficinaRepository.save(oficinaSalva);
+    }
+
+    // NOVO MÉTODO IMPLEMENTADO (para o fluxo de atualização do orçamento)
+    @Override
+    @Transactional
+    public Oficina atualizarOficinaComPecas(Long oficinaId, Oficina oficinaParcialmenteMapeada, List<ItemPecaServicoDto> pecasDto) {
+        log.info("Atualizando Oficina ID {} e associando peças.", oficinaId);
+        Oficina oficinaExistente = findOficinaByIdOrElseThrow(oficinaId);
+
+        // Atualiza campos da Oficina (ex: descricaoProblema, diagnostico, etc.)
+        // O mapper já deve ter feito isso na entidade 'oficinaParcialmenteMapeada',
+        // então transferimos os valores para 'oficinaExistente'
+        oficinaExistente.setDataOficina(oficinaParcialmenteMapeada.getDataOficina());
+        oficinaExistente.setDescricaoProblema(oficinaParcialmenteMapeada.getDescricaoProblema());
+        oficinaExistente.setDiagnostico(oficinaParcialmenteMapeada.getDiagnostico());
+        oficinaExistente.setPartesAfetadas(oficinaParcialmenteMapeada.getPartesAfetadas());
+        oficinaExistente.setHorasTrabalhadas(oficinaParcialmenteMapeada.getHorasTrabalhadas());
+        // ... outros campos da Oficina que podem ser atualizados
+
+        // Gerencia as peças: remove antigas, adiciona novas/atualizadas.
+        // Uma abordagem simples é remover todas as OficinaPeca antigas e adicionar as novas.
+        // Se a lista oficinaExistente.getOficinaPecas() não for nula, limpe-a
+        if (oficinaExistente.getOficinaPecas() != null) {
+            oficinaPecaRepository.deleteAllInBatch(oficinaExistente.getOficinaPecas()); // Mais eficiente para bulk delete
+            oficinaExistente.getOficinaPecas().clear();
+        } else {
+            oficinaExistente.setOficinaPecas(new ArrayList<>());
+        }
+
+        if (pecasDto != null && !pecasDto.isEmpty()) {
+            for (ItemPecaServicoDto itemPecaDto : pecasDto) {
+                Pecas peca = pecasRepository.findById(itemPecaDto.getPecaId())
+                        .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + itemPecaDto.getPecaId()));
+
+                OficinaPeca novaOficinaPeca = new OficinaPeca();
+                novaOficinaPeca.setOficina(oficinaExistente);
+                novaOficinaPeca.setPeca(peca);
+                novaOficinaPeca.setQuantidade(itemPecaDto.getQuantidade());
+                oficinaExistente.getOficinaPecas().add(novaOficinaPeca); // Adiciona à coleção gerenciada
+            }
+        }
+        // O save da oficinaExistente vai persistir as novas OficinaPeca devido ao cascade,
+        // e as antigas já foram removidas.
+        return oficinaRepository.save(oficinaExistente);
+    }
+
+
+    private Oficina findOficinaByIdOrElseThrow(Long id) {
         return oficinaRepository.findById(id)
-                .orElseThrow(() -> new OficinaNotFoundException("Oficina não encontrada com ID: " + id));
+                .orElseThrow(() -> new OficinaNotFoundException("Registro de Oficina não encontrado com ID: " + id));
     }
 }
 
@@ -5617,61 +6119,242 @@ public class OficinaServiceImpl implements OficinaService {
 // br\com\fiap\service\orcamento\OrcamentoService.java   |   package br.com.fiap.service.orcamento   |   class OrcamentoService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// br/com/fiap/service/orcamento/OrcamentoService.java
 package br.com.fiap.service.orcamento;
 
 import br.com.fiap.dto.orcamento.OrcamentoRequestDto;
 import br.com.fiap.dto.orcamento.OrcamentoResponseDto;
+import br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto;
 import java.util.List;
 
 public interface OrcamentoService {
     List<OrcamentoResponseDto> findAll();
     OrcamentoResponseDto findById(Long id);
+
+    // Método CRUD simples para criar um orçamento (se necessário)
     OrcamentoResponseDto create(OrcamentoRequestDto orcamentoDto);
+
+    // Método CRUD simples para atualizar um orçamento (se necessário)
     OrcamentoResponseDto update(Long id, OrcamentoRequestDto orcamentoDto);
+
     void deleteById(Long id);
+
+    // Novo método para criar o orçamento completo com serviço e peças
+    OrcamentoResponseDto registrarServicoComOrcamento(OrcamentoComServicoRequestDto dto);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // br\com\fiap\service\orcamento\OrcamentoServiceImpl.java   |   package br.com.fiap.service.orcamento   |   class OrcamentoServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// --- src/main/java/br/com/fiap/service/orcamento/OrcamentoServiceImpl.java ---
+// br/com/fiap/service/orcamento/OrcamentoServiceImpl.java
 package br.com.fiap.service.orcamento;
 
-import br.com.fiap.dto.orcamento.OrcamentoRequestDto;
+import br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto;
 import br.com.fiap.dto.orcamento.OrcamentoResponseDto;
-import br.com.fiap.exception.OrcamentoNotFoundException;
-import br.com.fiap.mapper.OrcamentoMapper; // Importar Mapper
-import br.com.fiap.model.Orcamento;
-import br.com.fiap.repository.OrcamentoRepository;
+import br.com.fiap.dto.orcamento.OrcamentoRequestDto;
+import br.com.fiap.exception.*;
+import br.com.fiap.mapper.OrcamentoMapper;
+import br.com.fiap.mapper.OficinaMapper; // <<< Import que estava faltando e foi adicionado
+// Se ClienteMapper e VeiculoMapper não forem usados diretamente aqui, podem ser removidos dos imports desta classe.
+import br.com.fiap.model.*;
+import br.com.fiap.model.relacionamentos.*;
+import br.com.fiap.repository.*;
+import br.com.fiap.repository.relacionamentos.*;
+import br.com.fiap.service.oficina.OficinaService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-// import java.math.BigDecimal; // Se for implementar cálculo
 
 @Service
 public class OrcamentoServiceImpl implements OrcamentoService {
 
     private static final Logger log = LoggerFactory.getLogger(OrcamentoServiceImpl.class);
+
     private final OrcamentoRepository orcamentoRepository;
-    private final OrcamentoMapper orcamentoMapper; // <-- Injetar Mapper
+    private final OrcamentoMapper orcamentoMapper;
+    private final OficinaMapper oficinaMapper; // Agora o import existe
+    private final OficinaService oficinaService;
+    private final PecasRepository pecasRepository;
+
+    private final OficinaOrcamentoRepository oficinaOrcamentoRepository;
+    private final ClienteOrcamentoRepository clienteOrcamentoRepository;
+    private final ClientesRepository clientesRepository;
+    private final VeiculoRepository veiculoRepository;
+    private final OficinaVeiculoRepository oficinaVeiculoRepository;
 
     @Autowired
-    public OrcamentoServiceImpl(OrcamentoRepository orcamentoRepository, OrcamentoMapper orcamentoMapper) { // <-- Injetar
+    public OrcamentoServiceImpl(OrcamentoRepository orcamentoRepository,
+                                OrcamentoMapper orcamentoMapper,
+                                OficinaMapper oficinaMapper, // Injetado
+                                OficinaService oficinaService,
+                                PecasRepository pecasRepository,
+                                OficinaOrcamentoRepository oficinaOrcamentoRepository,
+                                ClienteOrcamentoRepository clienteOrcamentoRepository,
+                                ClientesRepository clientesRepository,
+                                VeiculoRepository veiculoRepository,
+                                OficinaVeiculoRepository oficinaVeiculoRepository) {
         this.orcamentoRepository = orcamentoRepository;
-        this.orcamentoMapper = orcamentoMapper; // <-- Inicializar
+        this.orcamentoMapper = orcamentoMapper;
+        this.oficinaMapper = oficinaMapper; // Atribuído
+        this.oficinaService = oficinaService;
+        this.pecasRepository = pecasRepository;
+        this.oficinaOrcamentoRepository = oficinaOrcamentoRepository;
+        this.clienteOrcamentoRepository = clienteOrcamentoRepository;
+        this.clientesRepository = clientesRepository;
+        this.veiculoRepository = veiculoRepository;
+        this.oficinaVeiculoRepository = oficinaVeiculoRepository;
+    }
+
+    // ... (Restante do código da classe OrcamentoServiceImpl como na resposta anterior) ...
+    @Override
+    @Transactional
+    public OrcamentoResponseDto registrarServicoComOrcamento(OrcamentoComServicoRequestDto dto) {
+        log.info("Registrando novo serviço com orçamento.");
+
+        Oficina oficinaEntidade;
+        if (dto.getOficinaExistenteId() != null) {
+            log.info("Atualizando oficina existente ID: {}", dto.getOficinaExistenteId());
+            Oficina oficinaParcialmenteMapeadaComDadosDoDto = oficinaMapper.fromOrcamentoComServicoDto(dto);
+            oficinaEntidade = oficinaService.atualizarOficinaComPecas(
+                    dto.getOficinaExistenteId(),
+                    oficinaParcialmenteMapeadaComDadosDoDto,
+                    dto.getPecasUtilizadas()
+            );
+        } else {
+            log.info("Criando nova oficina.");
+            Oficina oficinaParcialmenteMapeadaComDadosDoDto = oficinaMapper.fromOrcamentoComServicoDto(dto);
+            oficinaEntidade = oficinaService.salvarOficinaComPecas(
+                    oficinaParcialmenteMapeadaComDadosDoDto,
+                    dto.getPecasUtilizadas()
+            );
+        }
+        log.info("Oficina ID {} processada com {} peças.", oficinaEntidade.getId(), oficinaEntidade.getOficinaPecas() != null ? oficinaEntidade.getOficinaPecas().size() : 0);
+
+        if (dto.getVeiculoId() != null && oficinaEntidade.getId() != null) {
+            Veiculo veiculo = veiculoRepository.findById(dto.getVeiculoId())
+                    .orElseThrow(() -> new VeiculoNotFoundException("Veículo não encontrado com ID: " + dto.getVeiculoId()));
+
+            boolean associacaoExiste = oficinaEntidade.getOficinaVeiculos() != null &&
+                    oficinaEntidade.getOficinaVeiculos().stream()
+                            .anyMatch(ov -> ov.getVeiculo().getId().equals(dto.getVeiculoId()));
+
+            if (!associacaoExiste) {
+                OficinaVeiculo oficinaVeiculo = new OficinaVeiculo();
+                oficinaVeiculo.setOficina(oficinaEntidade);
+                oficinaVeiculo.setVeiculo(veiculo);
+                oficinaVeiculoRepository.save(oficinaVeiculo);
+                if (oficinaEntidade.getOficinaVeiculos() == null) {
+                    oficinaEntidade.setOficinaVeiculos(new ArrayList<>());
+                }
+                oficinaEntidade.getOficinaVeiculos().add(oficinaVeiculo);
+                log.info("Veículo ID {} associado à Oficina ID {}.", dto.getVeiculoId(), oficinaEntidade.getId());
+            }
+        }
+
+        BigDecimal totalCustoPecas = BigDecimal.ZERO;
+        if (oficinaEntidade.getOficinaPecas() != null) {
+            for (OficinaPeca op : oficinaEntidade.getOficinaPecas()) {
+                if (op.getPeca() != null && op.getPeca().getPreco() != null && op.getQuantidade() != null) {
+                    BigDecimal precoPeca = op.getPeca().getPreco();
+                    BigDecimal quantidadePeca = BigDecimal.valueOf(op.getQuantidade());
+                    totalCustoPecas = totalCustoPecas.add(precoPeca.multiply(quantidadePeca));
+                } else {
+                    log.warn("Peça ou preço da peça nulo para OficinaPeca ID: {} na Oficina ID: {}", op.getId(), oficinaEntidade.getId());
+                }
+            }
+        }
+        log.info("Custo total das peças calculado: {}", totalCustoPecas);
+
+        Orcamento orcamento = orcamentoMapper.fromOrcamentoComServicoDto(dto);
+
+        BigDecimal custoMaoDeObraHoras = BigDecimal.ZERO;
+        if (orcamento.getValorHora() != null && orcamento.getQuantidadeHoras() != null && orcamento.getQuantidadeHoras() >= 0) {
+            custoMaoDeObraHoras = orcamento.getValorHora().multiply(BigDecimal.valueOf(orcamento.getQuantidadeHoras()));
+        }
+        BigDecimal custoMaoDeObraTotal = (orcamento.getMaoDeObra() != null ? orcamento.getMaoDeObra() : BigDecimal.ZERO).add(custoMaoDeObraHoras);
+        log.info("Custo total da mão de obra calculado: {}", custoMaoDeObraTotal);
+
+        BigDecimal valorTotalOrcamento = custoMaoDeObraTotal.add(totalCustoPecas);
+        orcamento.setValorTotal(valorTotalOrcamento.setScale(2, RoundingMode.HALF_UP));
+        log.info("Valor total do orçamento calculado: {}", orcamento.getValorTotal());
+
+        Orcamento orcamentoSalvo = orcamentoRepository.save(orcamento);
+        log.info("Orçamento salvo com ID: {}", orcamentoSalvo.getId());
+
+        OficinaOrcamento oficinaOrcamento = new OficinaOrcamento();
+        oficinaOrcamento.setOficina(oficinaEntidade);
+        oficinaOrcamento.setOrcamento(orcamentoSalvo);
+        oficinaOrcamentoRepository.save(oficinaOrcamento);
+        log.info("Ligação Oficina-Orçamento criada: Oficina ID {}, Orçamento ID {}", oficinaEntidade.getId(), orcamentoSalvo.getId());
+
+        if (dto.getClienteId() != null && dto.getClienteEnderecoId() != null) {
+            ClienteId clientePk = new ClienteId(dto.getClienteId(), dto.getClienteEnderecoId());
+            Clientes cliente = clientesRepository.findById(clientePk)
+                    .orElseThrow(() -> new ClientesNotFoundException("Cliente não encontrado com ID: " + clientePk));
+
+            ClienteOrcamento clienteOrcamento = new ClienteOrcamento();
+            clienteOrcamento.setCliente(cliente);
+            clienteOrcamento.setOrcamento(orcamentoSalvo);
+            clienteOrcamentoRepository.save(clienteOrcamento);
+            log.info("Ligação Cliente-Orçamento criada: Cliente ID {}, Orçamento ID {}", clientePk, orcamentoSalvo.getId());
+        }
+
+        return orcamentoMapper.toResponseDto(orcamentoSalvo);
+    }
+
+    @Override
+    @Transactional
+    public OrcamentoResponseDto create(OrcamentoRequestDto dto) {
+        log.info("Criando novo orçamento (simples)");
+        Orcamento orcamento = orcamentoMapper.toEntity(dto);
+
+        BigDecimal maoDeObra = orcamento.getMaoDeObra() != null ? orcamento.getMaoDeObra() : BigDecimal.ZERO;
+        BigDecimal valorHora = orcamento.getValorHora() != null ? orcamento.getValorHora() : BigDecimal.ZERO;
+        Integer qtdHoras = orcamento.getQuantidadeHoras() != null ? orcamento.getQuantidadeHoras() : 0;
+
+        BigDecimal custoHoras = valorHora.multiply(BigDecimal.valueOf(qtdHoras));
+        orcamento.setValorTotal(maoDeObra.add(custoHoras).setScale(2, RoundingMode.HALF_UP));
+
+        Orcamento savedOrcamento = orcamentoRepository.save(orcamento);
+        log.info("Orçamento (simples) criado com ID: {}", savedOrcamento.getId());
+        return orcamentoMapper.toResponseDto(savedOrcamento);
+    }
+
+    @Override
+    @Transactional
+    public OrcamentoResponseDto update(Long id, OrcamentoRequestDto dto) {
+        log.info("Atualizando orçamento (simples) com ID: {}", id);
+        Orcamento existingOrcamento = findOrcamentoByIdOrElseThrow(id);
+
+        orcamentoMapper.updateEntityFromDto(dto, existingOrcamento);
+
+        BigDecimal maoDeObra = existingOrcamento.getMaoDeObra() != null ? existingOrcamento.getMaoDeObra() : BigDecimal.ZERO;
+        BigDecimal valorHora = existingOrcamento.getValorHora() != null ? existingOrcamento.getValorHora() : BigDecimal.ZERO;
+        Integer qtdHoras = existingOrcamento.getQuantidadeHoras() != null ? existingOrcamento.getQuantidadeHoras() : 0;
+
+        BigDecimal custoHoras = valorHora.multiply(BigDecimal.valueOf(qtdHoras));
+        existingOrcamento.setValorTotal(maoDeObra.add(custoHoras).setScale(2, RoundingMode.HALF_UP));
+
+        Orcamento updatedOrcamento = orcamentoRepository.save(existingOrcamento);
+        log.info("Orçamento (simples) atualizado com ID: {}", updatedOrcamento.getId());
+        return orcamentoMapper.toResponseDto(updatedOrcamento);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<OrcamentoResponseDto> findAll() {
-        log.info("Buscando todos os orçamentos");
+        log.info("Buscando todos os orçamentos (simples)");
         return orcamentoRepository.findAll().stream()
-                .map(orcamentoMapper::toResponseDto) // <-- Usar Mapper
+                .map(orcamentoMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -5679,68 +6362,46 @@ public class OrcamentoServiceImpl implements OrcamentoService {
     @Transactional(readOnly = true)
     public OrcamentoResponseDto findById(Long id) {
         log.info("Buscando orçamento por ID: {}", id);
-        Orcamento orcamento = findOrcamentoById(id);
-        return orcamentoMapper.toResponseDto(orcamento); // <-- Usar Mapper
-    }
-
-    @Override
-    @Transactional
-    public OrcamentoResponseDto create(OrcamentoRequestDto orcamentoDto) {
-        log.info("Criando novo orçamento");
-        // Adicionar lógica de cálculo se necessário antes de mapear/salvar
-        try {
-            Orcamento orcamento = orcamentoMapper.toEntity(orcamentoDto); // <-- Usar Mapper
-            // Recalcular valor total aqui se a regra for essa
-            // orcamento.setValorTotal(calcularValorTotal(orcamento));
-            Orcamento savedOrcamento = orcamentoRepository.save(orcamento);
-            log.info("Orçamento criado com ID: {}", savedOrcamento.getId());
-            return orcamentoMapper.toResponseDto(savedOrcamento); // <-- Usar Mapper
-        } catch (Exception e) {
-            log.error("Erro ao criar orçamento: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha ao criar orçamento", e);
-        }
-    }
-
-    @Override
-    @Transactional
-    public OrcamentoResponseDto update(Long id, OrcamentoRequestDto orcamentoDto) {
-        log.info("Atualizando orçamento com ID: {}", id);
-        Orcamento existingOrcamento = findOrcamentoById(id);
-        orcamentoMapper.updateEntityFromDto(orcamentoDto, existingOrcamento); // <-- Usar Mapper
-        // Recalcular valor total se necessário
-        // existingOrcamento.setValorTotal(calcularValorTotal(existingOrcamento));
-        Orcamento updatedOrcamento = orcamentoRepository.save(existingOrcamento);
-        log.info("Orçamento atualizado com ID: {}", updatedOrcamento.getId());
-        return orcamentoMapper.toResponseDto(updatedOrcamento); // <-- Usar Mapper
+        Orcamento orcamento = findOrcamentoByIdOrElseThrow(id);
+        return orcamentoMapper.toResponseDto(orcamento);
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
         log.info("Deletando orçamento com ID: {}", id);
-        Orcamento orcamento = findOrcamentoById(id); // Verifica existência
+        Orcamento orcamento = findOrcamentoByIdOrElseThrow(id);
+
+        log.warn("Lógica de remoção de associações (OFO, CO, PAO) para o orçamento ID {} precisa ser implementada antes da exclusão final.", id);
+
+        // Exemplo de como remover associações em OFO (OficinaOrcamento)
+        // Assumindo que você tenha um método no OficinaOrcamentoRepository para buscar por orcamentoId
+        List<OficinaOrcamento> oficinaOrcamentos = oficinaOrcamentoRepository.findByOrcamentoId(id); // Precisa existir esse método no repo
+        if (oficinaOrcamentos != null && !oficinaOrcamentos.isEmpty()) {
+            oficinaOrcamentoRepository.deleteAll(oficinaOrcamentos);
+            log.info("Associações Oficina-Orçamento removidas para Orçamento ID: {}", id);
+        }
+
+        List<ClienteOrcamento> clienteOrcamentos = clienteOrcamentoRepository.findByOrcamentoId(id); // Precisa existir esse método no repo
+        if (clienteOrcamentos != null && !clienteOrcamentos.isEmpty()) {
+            clienteOrcamentoRepository.deleteAll(clienteOrcamentos);
+            log.info("Associações Cliente-Orçamento removidas para Orçamento ID: {}", id);
+        }
+        // Adicionar lógica para PagamentoOrcamentoRepository.deleteByOrcamentoId(id); se aplicável
+
         try {
             orcamentoRepository.delete(orcamento);
             log.info("Orçamento deletado com ID: {}", id);
         } catch (Exception e) {
             log.error("Erro ao deletar orçamento com ID {}: {}", id, e.getMessage(), e);
-            throw new RuntimeException("Falha ao deletar orçamento com ID: " + id, e);
+            throw new RuntimeException("Falha ao deletar orçamento. Pode estar associado a outros registros. ID: " + id, e);
         }
     }
 
-    // --- Método auxiliar ---
-    private Orcamento findOrcamentoById(Long id) {
+    private Orcamento findOrcamentoByIdOrElseThrow(Long id) {
         return orcamentoRepository.findById(id)
                 .orElseThrow(() -> new OrcamentoNotFoundException("Orçamento não encontrado com ID: " + id));
     }
-
-    // REMOVER os métodos manuais de mapeamento:
-    // mapEntityToResponseDto(Orcamento entity)
-    // mapRequestDtoToEntity(OrcamentoRequestDto dto)
-    // updateEntityFromDto(Orcamento entity, OrcamentoRequestDto dto)
-
-    // Manter método de cálculo se existir e for usado:
-    // private BigDecimal calcularValorTotal(Orcamento orcamento) { ... }
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -6100,23 +6761,24 @@ public class PecasServiceImpl implements PecasService {
 // src/main/java/br/com/fiap/service/relatorio/RelatorioService.java
 package br.com.fiap.service.relatorio;
 
-import br.com.fiap.dto.relatorio.ContagemMensalDTO;
-import br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO;
-import br.com.fiap.dto.relatorio.ServicoAgendadoDTO; // <<< Importar
+import br.com.fiap.dto.relatorio.*; // Importa todos os DTOs de relatório
 import br.com.fiap.model.relacionamentos.ClienteId;
-import org.springframework.data.domain.Page;      // <<< Importar Page
-import org.springframework.data.domain.Pageable;   // <<< Importar Pageable
-import java.time.LocalDate;                     // <<< Importar LocalDate
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface RelatorioService {
 
     List<ContagemMensalDTO> getContagemMensalAgendamentos();
     List<HistoricoAgendamentoClienteDTO> getHistoricoAgendamentosCliente(ClienteId id);
-
-    // <<< Assinatura Adicionada >>>
     Page<ServicoAgendadoDTO> findServicosAgendados(LocalDate dataInicio, Pageable pageable);
-    // ---------------------------
+
+    // --- NOVOS MÉTODOS PARA RELATÓRIOS DE PAGAMENTO ---
+    EstatisticasPagamentosDto getEstatisticasPagamentos(LocalDate dataInicio, LocalDate dataFim);
+    List<PagamentoPorTipoDto> getPagamentosPorTipo(LocalDate dataInicio, LocalDate dataFim);
+    List<EvolucaoMensalValorDto> getEvolucaoMensalValorPagamentos(LocalDate dataInicio, LocalDate dataFim);
+    // ----------------------------------------------------
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -6126,14 +6788,12 @@ public interface RelatorioService {
 // src/main/java/br/com/fiap/service/relatorio/RelatorioServiceImpl.java
 package br.com.fiap.service.relatorio;
 
-import br.com.fiap.dto.relatorio.ContagemMensalDTO;
-import br.com.fiap.dto.relatorio.ContagemMensalResultadoNativo;
-import br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO;
-import br.com.fiap.dto.relatorio.ServicoAgendadoDTO;
+import br.com.fiap.dto.relatorio.*;
 import br.com.fiap.exception.ClientesNotFoundException;
 import br.com.fiap.model.relacionamentos.ClienteId;
 import br.com.fiap.repository.AgendaRepository;
 import br.com.fiap.repository.ClientesRepository;
+import br.com.fiap.repository.PagamentoRepository; // Importado
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6141,6 +6801,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -6152,11 +6814,15 @@ public class RelatorioServiceImpl implements RelatorioService {
     private static final Logger log = LoggerFactory.getLogger(RelatorioServiceImpl.class);
     private final AgendaRepository agendaRepository;
     private final ClientesRepository clientesRepository;
+    private final PagamentoRepository pagamentoRepository; // Injetado
 
     @Autowired
-    public RelatorioServiceImpl(AgendaRepository agendaRepository, ClientesRepository clientesRepository) {
+    public RelatorioServiceImpl(AgendaRepository agendaRepository,
+                                ClientesRepository clientesRepository,
+                                PagamentoRepository pagamentoRepository) { // Adicionado ao construtor
         this.agendaRepository = agendaRepository;
         this.clientesRepository = clientesRepository;
+        this.pagamentoRepository = pagamentoRepository; // Atribuído
     }
 
     @Override
@@ -6169,7 +6835,7 @@ public class RelatorioServiceImpl implements RelatorioService {
                     .map(nativo -> new ContagemMensalDTO(nativo.getMesAno(), nativo.getQuantidade()))
                     .collect(Collectors.toList());
             log.info("Relatório de contagem mensal gerado com {} resultados.", resultadoDTO.size());
-            return resultadoDTO; // <<< CORREÇÃO: ADICIONADO O RETURN AQUI
+            return resultadoDTO;
         } catch (Exception e) {
             log.error("Erro ao gerar relatório de contagem mensal: {}", e.getMessage(), e);
             return Collections.emptyList();
@@ -6180,27 +6846,22 @@ public class RelatorioServiceImpl implements RelatorioService {
     @Transactional(readOnly = true)
     public List<HistoricoAgendamentoClienteDTO> getHistoricoAgendamentosCliente(ClienteId id) {
         log.info("Buscando histórico de agendamentos para Cliente ID: {}", id);
-        // 1. Valida ID composto
         if (id == null || id.getIdCli() == null || id.getEnderecoId() == null) {
             throw new IllegalArgumentException("ID do Cliente (composto) inválido para buscar histórico.");
         }
-        // 2. Verifica se o cliente existe
         if (!clientesRepository.existsById(id)) {
             log.warn("Tentativa de buscar histórico para cliente inexistente: {}", id);
             throw new ClientesNotFoundException("Cliente não encontrado com ID: " + id);
         }
-        // 3. Busca o histórico
         try {
             List<HistoricoAgendamentoClienteDTO> historico = agendaRepository.findHistoricoAgendamentosByClienteId(id.getIdCli(), id.getEnderecoId());
             log.info("Encontrados {} registros de histórico para o cliente ID {}", historico.size(), id);
-            return historico; // Return no sucesso
+            return historico;
         } catch (Exception e) {
             log.error("Erro ao buscar histórico para cliente ID {}: {}", id, e.getMessage(), e);
-            return Collections.emptyList(); // Return no erro
+            return Collections.emptyList();
         }
-        // Não há return fora do try/catch pois todas as branches retornam
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -6212,12 +6873,76 @@ public class RelatorioServiceImpl implements RelatorioService {
                     pagina.getNumberOfElements(),
                     pageable.getPageNumber(),
                     pagina.getTotalPages());
-            return pagina; // Return no sucesso
+            return pagina;
         } catch (Exception e) {
             log.error("Erro ao buscar relatório de serviços agendados: {}", e.getMessage(), e);
-            return Page.empty(pageable); // Return no erro
+            return Page.empty(pageable);
         }
-        // Não há return fora do try/catch pois todas as branches retornam
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EstatisticasPagamentosDto getEstatisticasPagamentos(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Gerando estatísticas de pagamentos para o período de {} a {}", dataInicio, dataFim);
+        try {
+            List<Object[]> result = pagamentoRepository.getEstatisticasPagamentos(dataInicio, dataFim);
+            if (result != null && !result.isEmpty() && result.get(0) != null) {
+                Object[] stats = result.get(0);
+                Long totalOperacoes = (stats[0] instanceof Number) ? ((Number) stats[0]).longValue() : 0L;
+                BigDecimal valorTotalArrecadado = (stats[1] instanceof BigDecimal) ? (BigDecimal) stats[1] : BigDecimal.ZERO;
+                BigDecimal ticketMedio = BigDecimal.ZERO;
+                if (stats[2] instanceof Number) {
+                    ticketMedio = BigDecimal.valueOf(((Number) stats[2]).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                } else if (stats[2] instanceof BigDecimal) {
+                    ticketMedio = ((BigDecimal) stats[2]).setScale(2, BigDecimal.ROUND_HALF_UP);
+                }
+                valorTotalArrecadado = valorTotalArrecadado == null ? BigDecimal.ZERO : valorTotalArrecadado;
+                ticketMedio = ticketMedio == null ? BigDecimal.ZERO : ticketMedio;
+                return new EstatisticasPagamentosDto(totalOperacoes, valorTotalArrecadado, ticketMedio);
+            }
+            return new EstatisticasPagamentosDto(0L, BigDecimal.ZERO, BigDecimal.ZERO);
+        } catch (Exception e) {
+            log.error("Erro ao gerar estatísticas de pagamentos: {}", e.getMessage(), e);
+            return new EstatisticasPagamentosDto(0L, BigDecimal.ZERO, BigDecimal.ZERO);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PagamentoPorTipoDto> getPagamentosPorTipo(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Gerando relatório de pagamentos por tipo para o período de {} a {}", dataInicio, dataFim);
+        try {
+            return pagamentoRepository.findPagamentosAgrupadosPorTipo(dataInicio, dataFim);
+        } catch (Exception e) {
+            log.error("Erro ao gerar relatório de pagamentos por tipo: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EvolucaoMensalValorDto> getEvolucaoMensalValorPagamentos(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Gerando relatório de evolução mensal do valor dos pagamentos para o período de {} a {}", dataInicio, dataFim);
+        try {
+            // CORREÇÃO APLICADA AQUI: Processar List<Object[]>
+            List<Object[]> resultadosNativos = pagamentoRepository.findEvolucaoMensalValorPagamentosNativo(dataInicio, dataFim);
+            return resultadosNativos.stream()
+                    .map(record -> {
+                        String mesAno = (String) record[0];
+                        // O SUM no Oracle pode retornar um tipo numérico que precisa ser convertido para BigDecimal
+                        BigDecimal valorTotal = BigDecimal.ZERO;
+                        if (record[1] instanceof BigDecimal) {
+                            valorTotal = (BigDecimal) record[1];
+                        } else if (record[1] instanceof Number) {
+                            valorTotal = BigDecimal.valueOf(((Number)record[1]).doubleValue());
+                        }
+                        return new EvolucaoMensalValorDto(mesAno, valorTotal != null ? valorTotal : BigDecimal.ZERO);
+                    })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Erro ao gerar relatório de evolução mensal do valor dos pagamentos: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
 }
 

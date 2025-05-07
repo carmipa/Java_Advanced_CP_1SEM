@@ -1,13 +1,14 @@
 // --- Arquivo: src/main/java/br/com/fiap/controller/ClientesController.java ---
 package br.com.fiap.controller;
 
-// --- Imports necessários para as operações restantes ---
+import br.com.fiap.dto.veiculo.VeiculoResponseDto;
+
 import br.com.fiap.dto.cliente.ClienteInfoDTO;
 import br.com.fiap.dto.cliente.ClienteRequestDto;
 import br.com.fiap.dto.cliente.ClienteResponseDto;
 import br.com.fiap.exception.ClientesNotFoundException;
 import br.com.fiap.model.relacionamentos.ClienteId;
-import br.com.fiap.service.clientes.ClienteService; // Apenas o ClienteService é necessário aqui
+import br.com.fiap.service.clientes.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,8 +23,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-// Remover import do ClienteRelatorioCompletoDTO e RelatorioClienteService se existirem
+import org.springframework.web.server.ResponseStatusException; // Importar
+
 import java.util.List;
+
 // ------------------------------------------------------
 
 @RestController
@@ -187,6 +190,42 @@ public class ClientesController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    // <<< NOVO ENDPOINT ADICIONADO >>>
+    @GetMapping("/{idCliente}/{idEndereco}/veiculos")
+    @Operation(summary = "Listar Veículos de um Cliente", description = "Retorna a lista de veículos associados a um cliente específico pelo seu ID composto.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de veículos retornada"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado com os IDs fornecidos"),
+            @ApiResponse(responseCode = "204", description = "Nenhum veículo encontrado para este cliente (lista vazia)"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<List<VeiculoResponseDto>> getVeiculosByClienteId(
+            @Parameter(description = "ID numérico do cliente") @PathVariable Long idCliente,
+            @Parameter(description = "ID do endereço associado ao cliente") @PathVariable Long idEndereco
+    ) {
+        ClienteId clienteIdObj = new ClienteId(idCliente, idEndereco);
+        log.info("Requisição GET /rest/clientes/{}/{}/veiculos", idCliente, idEndereco);
+        try {
+            List<VeiculoResponseDto> veiculos = clienteService.findVeiculosByClienteId(clienteIdObj);
+            if (veiculos.isEmpty()) {
+                return ResponseEntity.noContent().build(); // 204
+            }
+            return ResponseEntity.ok(veiculos); // 200
+        } catch (ClientesNotFoundException e) {
+            log.warn("Cliente não encontrado para listar veículos: {}", clienteIdObj);
+            // A exceção ClientesNotFoundException já pode ter @ResponseStatus(HttpStatus.NOT_FOUND)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            log.warn("Argumento inválido para listar veículos: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Erro inesperado ao listar veículos do cliente {}: {}", clienteIdObj, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao listar veículos", e);
+        }
+    }
+    // --- Fim do Novo Endpoint ---
+
 
 
     // <<< O ENDPOINT /relatorio-completo FOI REMOVIDO DAQUI >>>
