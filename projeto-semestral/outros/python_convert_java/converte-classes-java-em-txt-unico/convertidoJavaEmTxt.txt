@@ -1,176 +1,179 @@
 // Script: converte-classes-java-em-txt-unico (v3)
-// Data de criação do arquivo de saída: 2025-05-07 07:42:30
+// Data de criação do arquivo de saída: 2025-05-07 18:11:40
 
 // Estrutura de diretórios do projeto:
-java/
-    br/
-        com/
-            fiap/
-                config/
-                controller/
-                dto/
-                    agenda/
-                    cliente/
-                    contato/
-                    endereco/
-                    oficina/
-                    orcamento/
-                    pagamento/
-                    pecas/
-                    relatorio/
-                    veiculo/
-                exception/
-                mapper/
-                model/
-                    relacionamentos/
-                repository/
-                    relacionamentos/
-                    specification/
-                service/
-                    agenda/
-                    cep/
-                    clientes/
-                    ia/
-                    oficina/
-                    orcamento/
-                    pagamento/
-                    pecas/
-                    relatorio/
+main/
+    java/
+        br/
+            com/
+                fiap/
+                    config/
+                    controller/
+                    dto/
+                        agenda/
                         cliente/
-                    veiculo/
+                        contato/
+                        endereco/
+                        oficina/
+                        orcamento/
+                        pagamento/
+                        pecas/
+                        relatorio/
+                        veiculo/
+                    exception/
+                    mapper/
+                    model/
+                        relacionamentos/
+                    repository/
+                        relacionamentos/
+                        specification/
+                    service/
+                        agenda/
+                        cep/
+                        clientes/
+                        ia/
+                        oficina/
+                        orcamento/
+                        pagamento/
+                        pecas/
+                        relatorio/
+                            cliente/
+                        veiculo/
+    resources/
 
 // Arquivos encontrados (FQN => caminho relativo):
-// br.com.fiap.App => br\com\fiap\App.java
-// br.com.fiap.config.SwaggerBrowserLauncher => br\com\fiap\config\SwaggerBrowserLauncher.java
-// br.com.fiap.controller.AgendaController => br\com\fiap\controller\AgendaController.java
-// br.com.fiap.controller.ClienteRelatorioController => br\com\fiap\controller\ClienteRelatorioController.java
-// br.com.fiap.controller.ClientesController => br\com\fiap\controller\ClientesController.java
-// br.com.fiap.controller.IaController => br\com\fiap\controller\IaController.java
-// br.com.fiap.controller.OficinaController => br\com\fiap\controller\OficinaController.java
-// br.com.fiap.controller.OrcamentoController => br\com\fiap\controller\OrcamentoController.java
-// br.com.fiap.controller.PagamentoController => br\com\fiap\controller\PagamentoController.java
-// br.com.fiap.controller.PecasController => br\com\fiap\controller\PecasController.java
-// br.com.fiap.controller.RelatorioController => br\com\fiap\controller\RelatorioController.java
-// br.com.fiap.controller.VeiculoController => br\com\fiap\controller\VeiculoController.java
-// br.com.fiap.dto.agenda.AgendaRequestDto => br\com\fiap\dto\agenda\AgendaRequestDto.java
-// br.com.fiap.dto.agenda.AgendaResponseDto => br\com\fiap\dto\agenda\AgendaResponseDto.java
-// br.com.fiap.dto.cliente.ClienteInfoDTO => br\com\fiap\dto\cliente\ClienteInfoDTO.java
-// br.com.fiap.dto.cliente.ClienteRequestDto => br\com\fiap\dto\cliente\ClienteRequestDto.java
-// br.com.fiap.dto.cliente.ClienteResponseDto => br\com\fiap\dto\cliente\ClienteResponseDto.java
-// br.com.fiap.dto.contato.ContatoRequestDto => br\com\fiap\dto\contato\ContatoRequestDto.java
-// br.com.fiap.dto.contato.ContatoResponseDto => br\com\fiap\dto\contato\ContatoResponseDto.java
-// br.com.fiap.dto.endereco.EnderecoRequestDto => br\com\fiap\dto\endereco\EnderecoRequestDto.java
-// br.com.fiap.dto.endereco.EnderecoResponseDto => br\com\fiap\dto\endereco\EnderecoResponseDto.java
-// br.com.fiap.dto.oficina.ItemPecaServicoDto => br\com\fiap\dto\oficina\ItemPecaServicoDto.java
-// br.com.fiap.dto.oficina.OficinaRequestDto => br\com\fiap\dto\oficina\OficinaRequestDto.java
-// br.com.fiap.dto.oficina.OficinaResponseDto => br\com\fiap\dto\oficina\OficinaResponseDto.java
-// br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto => br\com\fiap\dto\orcamento\OrcamentoComServicoRequestDto.java
-// br.com.fiap.dto.orcamento.OrcamentoRequestDto => br\com\fiap\dto\orcamento\OrcamentoRequestDto.java
-// br.com.fiap.dto.orcamento.OrcamentoResponseDto => br\com\fiap\dto\orcamento\OrcamentoResponseDto.java
-// br.com.fiap.dto.pagamento.PagamentoRequestDto => br\com\fiap\dto\pagamento\PagamentoRequestDto.java
-// br.com.fiap.dto.pagamento.PagamentoResponseDto => br\com\fiap\dto\pagamento\PagamentoResponseDto.java
-// br.com.fiap.dto.pecas.PecasRequestDto => br\com\fiap\dto\pecas\PecasRequestDto.java
-// br.com.fiap.dto.pecas.PecasResponseDto => br\com\fiap\dto\pecas\PecasResponseDto.java
-// br.com.fiap.dto.relatorio.ClienteRelatorioCompletoDTO => br\com\fiap\dto\relatorio\ClienteRelatorioCompletoDTO.java
-// br.com.fiap.dto.relatorio.ContagemMensalDTO => br\com\fiap\dto\relatorio\ContagemMensalDTO.java
-// br.com.fiap.dto.relatorio.ContagemMensalResultadoNativo => br\com\fiap\dto\relatorio\ContagemMensalResultadoNativo.java
-// br.com.fiap.dto.relatorio.EstatisticasPagamentosDto => br\com\fiap\dto\relatorio\EstatisticasPagamentosDto.java
-// br.com.fiap.dto.relatorio.EvolucaoMensalPagamentoNativo => br\com\fiap\dto\relatorio\EvolucaoMensalPagamentoNativo.java
-// br.com.fiap.dto.relatorio.EvolucaoMensalValorDto => br\com\fiap\dto\relatorio\EvolucaoMensalValorDto.java
-// br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO => br\com\fiap\dto\relatorio\HistoricoAgendamentoClienteDTO.java
-// br.com.fiap.dto.relatorio.PagamentoPorTipoDto => br\com\fiap\dto\relatorio\PagamentoPorTipoDto.java
-// br.com.fiap.dto.relatorio.ServicoAgendadoDTO => br\com\fiap\dto\relatorio\ServicoAgendadoDTO.java
-// br.com.fiap.dto.veiculo.VeiculoRequestDto => br\com\fiap\dto\veiculo\VeiculoRequestDto.java
-// br.com.fiap.dto.veiculo.VeiculoResponseDto => br\com\fiap\dto\veiculo\VeiculoResponseDto.java
-// br.com.fiap.exception.AgendaNotFoundException => br\com\fiap\exception\AgendaNotFoundException.java
-// br.com.fiap.exception.AssociacaoNotFoundException => br\com\fiap\exception\AssociacaoNotFoundException.java
-// br.com.fiap.exception.AutenticarNotFoundException => br\com\fiap\exception\AutenticarNotFoundException.java
-// br.com.fiap.exception.ClientesNotFoundException => br\com\fiap\exception\ClientesNotFoundException.java
-// br.com.fiap.exception.ContatoNotFoundException => br\com\fiap\exception\ContatoNotFoundException.java
-// br.com.fiap.exception.EnderecoNotFoundException => br\com\fiap\exception\EnderecoNotFoundException.java
-// br.com.fiap.exception.OficinaNotFoundException => br\com\fiap\exception\OficinaNotFoundException.java
-// br.com.fiap.exception.OrcamentoNotFoundException => br\com\fiap\exception\OrcamentoNotFoundException.java
-// br.com.fiap.exception.PagamentoNotFoundException => br\com\fiap\exception\PagamentoNotFoundException.java
-// br.com.fiap.exception.PecasNotFoundException => br\com\fiap\exception\PecasNotFoundException.java
-// br.com.fiap.exception.VeiculoNotFoundException => br\com\fiap\exception\VeiculoNotFoundException.java
-// br.com.fiap.mapper.AgendaMapper => br\com\fiap\mapper\AgendaMapper.java
-// br.com.fiap.mapper.ClienteMapper => br\com\fiap\mapper\ClienteMapper.java
-// br.com.fiap.mapper.ContatoMapper => br\com\fiap\mapper\ContatoMapper.java
-// br.com.fiap.mapper.EnderecoMapper => br\com\fiap\mapper\EnderecoMapper.java
-// br.com.fiap.mapper.OficinaMapper => br\com\fiap\mapper\OficinaMapper.java
-// br.com.fiap.mapper.OrcamentoMapper => br\com\fiap\mapper\OrcamentoMapper.java
-// br.com.fiap.mapper.PagamentoMapper => br\com\fiap\mapper\PagamentoMapper.java
-// br.com.fiap.mapper.PecasMapper => br\com\fiap\mapper\PecasMapper.java
-// br.com.fiap.mapper.VeiculoMapper => br\com\fiap\mapper\VeiculoMapper.java
-// br.com.fiap.model.Agenda => br\com\fiap\model\Agenda.java
-// br.com.fiap.model.Autenticar => br\com\fiap\model\Autenticar.java
-// br.com.fiap.model.Clientes => br\com\fiap\model\Clientes.java
-// br.com.fiap.model.Contato => br\com\fiap\model\Contato.java
-// br.com.fiap.model.Endereco => br\com\fiap\model\Endereco.java
-// br.com.fiap.model.Oficina => br\com\fiap\model\Oficina.java
-// br.com.fiap.model.Orcamento => br\com\fiap\model\Orcamento.java
-// br.com.fiap.model.Pagamento => br\com\fiap\model\Pagamento.java
-// br.com.fiap.model.Pecas => br\com\fiap\model\Pecas.java
-// br.com.fiap.model.Veiculo => br\com\fiap\model\Veiculo.java
-// br.com.fiap.model.relacionamentos.AgendaOficina => br\com\fiap\model\relacionamentos\AgendaOficina.java
-// br.com.fiap.model.relacionamentos.AgendaVeiculo => br\com\fiap\model\relacionamentos\AgendaVeiculo.java
-// br.com.fiap.model.relacionamentos.ClienteId => br\com\fiap\model\relacionamentos\ClienteId.java
-// br.com.fiap.model.relacionamentos.ClienteOrcamento => br\com\fiap\model\relacionamentos\ClienteOrcamento.java
-// br.com.fiap.model.relacionamentos.ClientePagamento => br\com\fiap\model\relacionamentos\ClientePagamento.java
-// br.com.fiap.model.relacionamentos.ClienteVeiculo => br\com\fiap\model\relacionamentos\ClienteVeiculo.java
-// br.com.fiap.model.relacionamentos.OficinaOrcamento => br\com\fiap\model\relacionamentos\OficinaOrcamento.java
-// br.com.fiap.model.relacionamentos.OficinaPeca => br\com\fiap\model\relacionamentos\OficinaPeca.java
-// br.com.fiap.model.relacionamentos.OficinaVeiculo => br\com\fiap\model\relacionamentos\OficinaVeiculo.java
-// br.com.fiap.model.relacionamentos.PagamentoOrcamento => br\com\fiap\model\relacionamentos\PagamentoOrcamento.java
-// br.com.fiap.model.relacionamentos.PecaVeiculo => br\com\fiap\model\relacionamentos\PecaVeiculo.java
-// br.com.fiap.repository.AgendaRepository => br\com\fiap\repository\AgendaRepository.java
-// br.com.fiap.repository.AutenticarRepository => br\com\fiap\repository\AutenticarRepository.java
-// br.com.fiap.repository.ClientesRepository => br\com\fiap\repository\ClientesRepository.java
-// br.com.fiap.repository.ContatoRepository => br\com\fiap\repository\ContatoRepository.java
-// br.com.fiap.repository.EnderecoRepository => br\com\fiap\repository\EnderecoRepository.java
-// br.com.fiap.repository.OficinaRepository => br\com\fiap\repository\OficinaRepository.java
-// br.com.fiap.repository.OrcamentoRepository => br\com\fiap\repository\OrcamentoRepository.java
-// br.com.fiap.repository.PagamentoRepository => br\com\fiap\repository\PagamentoRepository.java
-// br.com.fiap.repository.PecasRepository => br\com\fiap\repository\PecasRepository.java
-// br.com.fiap.repository.VeiculoRepository => br\com\fiap\repository\VeiculoRepository.java
-// br.com.fiap.repository.relacionamentos.AgendaOficinaRepository => br\com\fiap\repository\relacionamentos\AgendaOficinaRepository.java
-// br.com.fiap.repository.relacionamentos.AgendaVeiculoRepository => br\com\fiap\repository\relacionamentos\AgendaVeiculoRepository.java
-// br.com.fiap.repository.relacionamentos.ClienteOrcamentoRepository => br\com\fiap\repository\relacionamentos\ClienteOrcamentoRepository.java
-// br.com.fiap.repository.relacionamentos.ClientePagamentoRepository => br\com\fiap\repository\relacionamentos\ClientePagamentoRepository.java
-// br.com.fiap.repository.relacionamentos.ClienteVeiculoRepository => br\com\fiap\repository\relacionamentos\ClienteVeiculoRepository.java
-// br.com.fiap.repository.relacionamentos.OficinaOrcamentoRepository => br\com\fiap\repository\relacionamentos\OficinaOrcamentoRepository.java
-// br.com.fiap.repository.relacionamentos.OficinaPecaRepository => br\com\fiap\repository\relacionamentos\OficinaPecaRepository.java
-// br.com.fiap.repository.relacionamentos.OficinaVeiculoRepository => br\com\fiap\repository\relacionamentos\OficinaVeiculoRepository.java
-// br.com.fiap.repository.relacionamentos.PagamentoOrcamentoRepository => br\com\fiap\repository\relacionamentos\PagamentoOrcamentoRepository.java
-// br.com.fiap.repository.relacionamentos.PecaVeiculoRepository => br\com\fiap\repository\relacionamentos\PecaVeiculoRepository.java
-// br.com.fiap.repository.specification.AgendaSpecification => br\com\fiap\repository\specification\AgendaSpecification.java
-// br.com.fiap.repository.specification.ClienteSpecification => br\com\fiap\repository\specification\ClienteSpecification.java
-// br.com.fiap.repository.specification.PagamentoSpecification => br\com\fiap\repository\specification\PagamentoSpecification.java
-// br.com.fiap.repository.specification.VeiculoSpecification => br\com\fiap\repository\specification\VeiculoSpecification.java
-// br.com.fiap.service.agenda.AgendaService => br\com\fiap\service\agenda\AgendaService.java
-// br.com.fiap.service.agenda.AgendaServiceImpl => br\com\fiap\service\agenda\AgendaServiceImpl.java
-// br.com.fiap.service.cep.CepService => br\com\fiap\service\cep\CepService.java
-// br.com.fiap.service.clientes.ClienteService => br\com\fiap\service\clientes\ClienteService.java
-// br.com.fiap.service.clientes.ClienteServiceImpl => br\com\fiap\service\clientes\ClienteServiceImpl.java
-// br.com.fiap.service.ia.GoogleGeminiService => br\com\fiap\service\ia\GoogleGeminiService.java
-// br.com.fiap.service.ia.GoogleGeminiServiceImpl => br\com\fiap\service\ia\GoogleGeminiServiceImpl.java
-// br.com.fiap.service.oficina.OficinaService => br\com\fiap\service\oficina\OficinaService.java
-// br.com.fiap.service.oficina.OficinaServiceImpl => br\com\fiap\service\oficina\OficinaServiceImpl.java
-// br.com.fiap.service.orcamento.OrcamentoService => br\com\fiap\service\orcamento\OrcamentoService.java
-// br.com.fiap.service.orcamento.OrcamentoServiceImpl => br\com\fiap\service\orcamento\OrcamentoServiceImpl.java
-// br.com.fiap.service.pagamento.PagamentoService => br\com\fiap\service\pagamento\PagamentoService.java
-// br.com.fiap.service.pagamento.PagamentoServiceImpl => br\com\fiap\service\pagamento\PagamentoServiceImpl.java
-// br.com.fiap.service.pecas.PecasService => br\com\fiap\service\pecas\PecasService.java
-// br.com.fiap.service.pecas.PecasServiceImpl => br\com\fiap\service\pecas\PecasServiceImpl.java
-// br.com.fiap.service.relatorio.RelatorioService => br\com\fiap\service\relatorio\RelatorioService.java
-// br.com.fiap.service.relatorio.RelatorioServiceImpl => br\com\fiap\service\relatorio\RelatorioServiceImpl.java
-// br.com.fiap.service.relatorio.cliente.RelatorioClienteService => br\com\fiap\service\relatorio\cliente\RelatorioClienteService.java
-// br.com.fiap.service.relatorio.cliente.RelatorioClienteServiceImpl => br\com\fiap\service\relatorio\cliente\RelatorioClienteServiceImpl.java
-// br.com.fiap.service.veiculo.VeiculoService => br\com\fiap\service\veiculo\VeiculoService.java
-// br.com.fiap.service.veiculo.VeiculoServiceImpl => br\com\fiap\service\veiculo\VeiculoServiceImpl.java
+// br.com.fiap.App => java\br\com\fiap\App.java
+// br.com.fiap.config.SwaggerBrowserLauncher => java\br\com\fiap\config\SwaggerBrowserLauncher.java
+// br.com.fiap.controller.AgendaController => java\br\com\fiap\controller\AgendaController.java
+// br.com.fiap.controller.ClienteRelatorioController => java\br\com\fiap\controller\ClienteRelatorioController.java
+// br.com.fiap.controller.ClientesController => java\br\com\fiap\controller\ClientesController.java
+// br.com.fiap.controller.IaController => java\br\com\fiap\controller\IaController.java
+// br.com.fiap.controller.OficinaController => java\br\com\fiap\controller\OficinaController.java
+// br.com.fiap.controller.OrcamentoController => java\br\com\fiap\controller\OrcamentoController.java
+// br.com.fiap.controller.PagamentoController => java\br\com\fiap\controller\PagamentoController.java
+// br.com.fiap.controller.PecasController => java\br\com\fiap\controller\PecasController.java
+// br.com.fiap.controller.RelatorioController => java\br\com\fiap\controller\RelatorioController.java
+// br.com.fiap.controller.VeiculoController => java\br\com\fiap\controller\VeiculoController.java
+// br.com.fiap.dto.agenda.AgendaRequestDto => java\br\com\fiap\dto\agenda\AgendaRequestDto.java
+// br.com.fiap.dto.agenda.AgendaResponseDto => java\br\com\fiap\dto\agenda\AgendaResponseDto.java
+// br.com.fiap.dto.cliente.ClienteInfoDTO => java\br\com\fiap\dto\cliente\ClienteInfoDTO.java
+// br.com.fiap.dto.cliente.ClienteRequestDto => java\br\com\fiap\dto\cliente\ClienteRequestDto.java
+// br.com.fiap.dto.cliente.ClienteResponseDto => java\br\com\fiap\dto\cliente\ClienteResponseDto.java
+// br.com.fiap.dto.contato.ContatoRequestDto => java\br\com\fiap\dto\contato\ContatoRequestDto.java
+// br.com.fiap.dto.contato.ContatoResponseDto => java\br\com\fiap\dto\contato\ContatoResponseDto.java
+// br.com.fiap.dto.endereco.EnderecoRequestDto => java\br\com\fiap\dto\endereco\EnderecoRequestDto.java
+// br.com.fiap.dto.endereco.EnderecoResponseDto => java\br\com\fiap\dto\endereco\EnderecoResponseDto.java
+// br.com.fiap.dto.oficina.ItemPecaServicoDto => java\br\com\fiap\dto\oficina\ItemPecaServicoDto.java
+// br.com.fiap.dto.oficina.OficinaRequestDto => java\br\com\fiap\dto\oficina\OficinaRequestDto.java
+// br.com.fiap.dto.oficina.OficinaResponseDto => java\br\com\fiap\dto\oficina\OficinaResponseDto.java
+// br.com.fiap.dto.oficina.ServicoHistoricoResponseDto => java\br\com\fiap\dto\oficina\ServicoHistoricoResponseDto.java
+// br.com.fiap.dto.orcamento.OrcamentoComServicoRequestDto => java\br\com\fiap\dto\orcamento\OrcamentoComServicoRequestDto.java
+// br.com.fiap.dto.orcamento.OrcamentoRequestDto => java\br\com\fiap\dto\orcamento\OrcamentoRequestDto.java
+// br.com.fiap.dto.orcamento.OrcamentoResponseDto => java\br\com\fiap\dto\orcamento\OrcamentoResponseDto.java
+// br.com.fiap.dto.pagamento.PagamentoRequestDto => java\br\com\fiap\dto\pagamento\PagamentoRequestDto.java
+// br.com.fiap.dto.pagamento.PagamentoResponseDto => java\br\com\fiap\dto\pagamento\PagamentoResponseDto.java
+// br.com.fiap.dto.pecas.PecasRequestDto => java\br\com\fiap\dto\pecas\PecasRequestDto.java
+// br.com.fiap.dto.pecas.PecasResponseDto => java\br\com\fiap\dto\pecas\PecasResponseDto.java
+// br.com.fiap.dto.relatorio.ClienteRelatorioCompletoDTO => java\br\com\fiap\dto\relatorio\ClienteRelatorioCompletoDTO.java
+// br.com.fiap.dto.relatorio.ContagemMensalDTO => java\br\com\fiap\dto\relatorio\ContagemMensalDTO.java
+// br.com.fiap.dto.relatorio.ContagemMensalResultadoNativo => java\br\com\fiap\dto\relatorio\ContagemMensalResultadoNativo.java
+// br.com.fiap.dto.relatorio.EstatisticasPagamentosDto => java\br\com\fiap\dto\relatorio\EstatisticasPagamentosDto.java
+// br.com.fiap.dto.relatorio.EvolucaoMensalPagamentoNativo => java\br\com\fiap\dto\relatorio\EvolucaoMensalPagamentoNativo.java
+// br.com.fiap.dto.relatorio.EvolucaoMensalValorDto => java\br\com\fiap\dto\relatorio\EvolucaoMensalValorDto.java
+// br.com.fiap.dto.relatorio.HistoricoAgendamentoClienteDTO => java\br\com\fiap\dto\relatorio\HistoricoAgendamentoClienteDTO.java
+// br.com.fiap.dto.relatorio.PagamentoPorTipoDto => java\br\com\fiap\dto\relatorio\PagamentoPorTipoDto.java
+// br.com.fiap.dto.relatorio.ServicoAgendadoDTO => java\br\com\fiap\dto\relatorio\ServicoAgendadoDTO.java
+// br.com.fiap.dto.veiculo.VeiculoRequestDto => java\br\com\fiap\dto\veiculo\VeiculoRequestDto.java
+// br.com.fiap.dto.veiculo.VeiculoResponseDto => java\br\com\fiap\dto\veiculo\VeiculoResponseDto.java
+// br.com.fiap.exception.AgendaNotFoundException => java\br\com\fiap\exception\AgendaNotFoundException.java
+// br.com.fiap.exception.AssociacaoNotFoundException => java\br\com\fiap\exception\AssociacaoNotFoundException.java
+// br.com.fiap.exception.AutenticarNotFoundException => java\br\com\fiap\exception\AutenticarNotFoundException.java
+// br.com.fiap.exception.ClientesNotFoundException => java\br\com\fiap\exception\ClientesNotFoundException.java
+// br.com.fiap.exception.ContatoNotFoundException => java\br\com\fiap\exception\ContatoNotFoundException.java
+// br.com.fiap.exception.EnderecoNotFoundException => java\br\com\fiap\exception\EnderecoNotFoundException.java
+// br.com.fiap.exception.OficinaNotFoundException => java\br\com\fiap\exception\OficinaNotFoundException.java
+// br.com.fiap.exception.OrcamentoNotFoundException => java\br\com\fiap\exception\OrcamentoNotFoundException.java
+// br.com.fiap.exception.PagamentoNotFoundException => java\br\com\fiap\exception\PagamentoNotFoundException.java
+// br.com.fiap.exception.PecasNotFoundException => java\br\com\fiap\exception\PecasNotFoundException.java
+// br.com.fiap.exception.VeiculoNotFoundException => java\br\com\fiap\exception\VeiculoNotFoundException.java
+// br.com.fiap.mapper.AgendaMapper => java\br\com\fiap\mapper\AgendaMapper.java
+// br.com.fiap.mapper.ClienteMapper => java\br\com\fiap\mapper\ClienteMapper.java
+// br.com.fiap.mapper.ContatoMapper => java\br\com\fiap\mapper\ContatoMapper.java
+// br.com.fiap.mapper.EnderecoMapper => java\br\com\fiap\mapper\EnderecoMapper.java
+// br.com.fiap.mapper.OficinaMapper => java\br\com\fiap\mapper\OficinaMapper.java
+// br.com.fiap.mapper.OrcamentoMapper => java\br\com\fiap\mapper\OrcamentoMapper.java
+// br.com.fiap.mapper.PagamentoMapper => java\br\com\fiap\mapper\PagamentoMapper.java
+// br.com.fiap.mapper.PecasMapper => java\br\com\fiap\mapper\PecasMapper.java
+// br.com.fiap.mapper.VeiculoMapper => java\br\com\fiap\mapper\VeiculoMapper.java
+// br.com.fiap.model.Agenda => java\br\com\fiap\model\Agenda.java
+// br.com.fiap.model.Autenticar => java\br\com\fiap\model\Autenticar.java
+// br.com.fiap.model.Clientes => java\br\com\fiap\model\Clientes.java
+// br.com.fiap.model.Contato => java\br\com\fiap\model\Contato.java
+// br.com.fiap.model.Endereco => java\br\com\fiap\model\Endereco.java
+// br.com.fiap.model.Oficina => java\br\com\fiap\model\Oficina.java
+// br.com.fiap.model.Orcamento => java\br\com\fiap\model\Orcamento.java
+// br.com.fiap.model.Pagamento => java\br\com\fiap\model\Pagamento.java
+// br.com.fiap.model.Pecas => java\br\com\fiap\model\Pecas.java
+// br.com.fiap.model.Veiculo => java\br\com\fiap\model\Veiculo.java
+// br.com.fiap.model.relacionamentos.AgendaOficina => java\br\com\fiap\model\relacionamentos\AgendaOficina.java
+// br.com.fiap.model.relacionamentos.AgendaVeiculo => java\br\com\fiap\model\relacionamentos\AgendaVeiculo.java
+// br.com.fiap.model.relacionamentos.ClienteId => java\br\com\fiap\model\relacionamentos\ClienteId.java
+// br.com.fiap.model.relacionamentos.ClienteOrcamento => java\br\com\fiap\model\relacionamentos\ClienteOrcamento.java
+// br.com.fiap.model.relacionamentos.ClientePagamento => java\br\com\fiap\model\relacionamentos\ClientePagamento.java
+// br.com.fiap.model.relacionamentos.ClienteVeiculo => java\br\com\fiap\model\relacionamentos\ClienteVeiculo.java
+// br.com.fiap.model.relacionamentos.OficinaOrcamento => java\br\com\fiap\model\relacionamentos\OficinaOrcamento.java
+// br.com.fiap.model.relacionamentos.OficinaPeca => java\br\com\fiap\model\relacionamentos\OficinaPeca.java
+// br.com.fiap.model.relacionamentos.OficinaVeiculo => java\br\com\fiap\model\relacionamentos\OficinaVeiculo.java
+// br.com.fiap.model.relacionamentos.PagamentoOrcamento => java\br\com\fiap\model\relacionamentos\PagamentoOrcamento.java
+// br.com.fiap.model.relacionamentos.PecaVeiculo => java\br\com\fiap\model\relacionamentos\PecaVeiculo.java
+// br.com.fiap.repository.AgendaRepository => java\br\com\fiap\repository\AgendaRepository.java
+// br.com.fiap.repository.AutenticarRepository => java\br\com\fiap\repository\AutenticarRepository.java
+// br.com.fiap.repository.ClientesRepository => java\br\com\fiap\repository\ClientesRepository.java
+// br.com.fiap.repository.ContatoRepository => java\br\com\fiap\repository\ContatoRepository.java
+// br.com.fiap.repository.EnderecoRepository => java\br\com\fiap\repository\EnderecoRepository.java
+// br.com.fiap.repository.OficinaRepository => java\br\com\fiap\repository\OficinaRepository.java
+// br.com.fiap.repository.OrcamentoRepository => java\br\com\fiap\repository\OrcamentoRepository.java
+// br.com.fiap.repository.PagamentoRepository => java\br\com\fiap\repository\PagamentoRepository.java
+// br.com.fiap.repository.PecasRepository => java\br\com\fiap\repository\PecasRepository.java
+// br.com.fiap.repository.VeiculoRepository => java\br\com\fiap\repository\VeiculoRepository.java
+// br.com.fiap.repository.relacionamentos.AgendaOficinaRepository => java\br\com\fiap\repository\relacionamentos\AgendaOficinaRepository.java
+// br.com.fiap.repository.relacionamentos.AgendaVeiculoRepository => java\br\com\fiap\repository\relacionamentos\AgendaVeiculoRepository.java
+// br.com.fiap.repository.relacionamentos.ClienteOrcamentoRepository => java\br\com\fiap\repository\relacionamentos\ClienteOrcamentoRepository.java
+// br.com.fiap.repository.relacionamentos.ClientePagamentoRepository => java\br\com\fiap\repository\relacionamentos\ClientePagamentoRepository.java
+// br.com.fiap.repository.relacionamentos.ClienteVeiculoRepository => java\br\com\fiap\repository\relacionamentos\ClienteVeiculoRepository.java
+// br.com.fiap.repository.relacionamentos.OficinaOrcamentoRepository => java\br\com\fiap\repository\relacionamentos\OficinaOrcamentoRepository.java
+// br.com.fiap.repository.relacionamentos.OficinaPecaRepository => java\br\com\fiap\repository\relacionamentos\OficinaPecaRepository.java
+// br.com.fiap.repository.relacionamentos.OficinaVeiculoRepository => java\br\com\fiap\repository\relacionamentos\OficinaVeiculoRepository.java
+// br.com.fiap.repository.relacionamentos.PagamentoOrcamentoRepository => java\br\com\fiap\repository\relacionamentos\PagamentoOrcamentoRepository.java
+// br.com.fiap.repository.relacionamentos.PecaVeiculoRepository => java\br\com\fiap\repository\relacionamentos\PecaVeiculoRepository.java
+// br.com.fiap.repository.specification.AgendaSpecification => java\br\com\fiap\repository\specification\AgendaSpecification.java
+// br.com.fiap.repository.specification.ClienteSpecification => java\br\com\fiap\repository\specification\ClienteSpecification.java
+// br.com.fiap.repository.specification.PagamentoSpecification => java\br\com\fiap\repository\specification\PagamentoSpecification.java
+// br.com.fiap.repository.specification.VeiculoSpecification => java\br\com\fiap\repository\specification\VeiculoSpecification.java
+// br.com.fiap.service.agenda.AgendaService => java\br\com\fiap\service\agenda\AgendaService.java
+// br.com.fiap.service.agenda.AgendaServiceImpl => java\br\com\fiap\service\agenda\AgendaServiceImpl.java
+// br.com.fiap.service.cep.CepService => java\br\com\fiap\service\cep\CepService.java
+// br.com.fiap.service.clientes.ClienteService => java\br\com\fiap\service\clientes\ClienteService.java
+// br.com.fiap.service.clientes.ClienteServiceImpl => java\br\com\fiap\service\clientes\ClienteServiceImpl.java
+// br.com.fiap.service.ia.GoogleGeminiService => java\br\com\fiap\service\ia\GoogleGeminiService.java
+// br.com.fiap.service.ia.GoogleGeminiServiceImpl => java\br\com\fiap\service\ia\GoogleGeminiServiceImpl.java
+// br.com.fiap.service.oficina.OficinaService => java\br\com\fiap\service\oficina\OficinaService.java
+// br.com.fiap.service.oficina.OficinaServiceImpl => java\br\com\fiap\service\oficina\OficinaServiceImpl.java
+// br.com.fiap.service.orcamento.OrcamentoService => java\br\com\fiap\service\orcamento\OrcamentoService.java
+// br.com.fiap.service.orcamento.OrcamentoServiceImpl => java\br\com\fiap\service\orcamento\OrcamentoServiceImpl.java
+// br.com.fiap.service.pagamento.PagamentoService => java\br\com\fiap\service\pagamento\PagamentoService.java
+// br.com.fiap.service.pagamento.PagamentoServiceImpl => java\br\com\fiap\service\pagamento\PagamentoServiceImpl.java
+// br.com.fiap.service.pecas.PecasService => java\br\com\fiap\service\pecas\PecasService.java
+// br.com.fiap.service.pecas.PecasServiceImpl => java\br\com\fiap\service\pecas\PecasServiceImpl.java
+// br.com.fiap.service.relatorio.RelatorioService => java\br\com\fiap\service\relatorio\RelatorioService.java
+// br.com.fiap.service.relatorio.RelatorioServiceImpl => java\br\com\fiap\service\relatorio\RelatorioServiceImpl.java
+// br.com.fiap.service.relatorio.cliente.RelatorioClienteService => java\br\com\fiap\service\relatorio\cliente\RelatorioClienteService.java
+// br.com.fiap.service.relatorio.cliente.RelatorioClienteServiceImpl => java\br\com\fiap\service\relatorio\cliente\RelatorioClienteServiceImpl.java
+// br.com.fiap.service.veiculo.VeiculoService => java\br\com\fiap\service\veiculo\VeiculoService.java
+// br.com.fiap.service.veiculo.VeiculoServiceImpl => java\br\com\fiap\service\veiculo\VeiculoServiceImpl.java
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\App.java   |   package br.com.fiap   |   class App
+// java\br\com\fiap\App.java   |   package br.com.fiap   |   class App
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap;
@@ -205,7 +208,7 @@ public class App {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\config\SwaggerBrowserLauncher.java   |   package br.com.fiap.config   |   class SwaggerBrowserLauncher
+// java\br\com\fiap\config\SwaggerBrowserLauncher.java   |   package br.com.fiap.config   |   class SwaggerBrowserLauncher
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.config; // Ou o pacote que preferir
@@ -276,7 +279,7 @@ public class SwaggerBrowserLauncher {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\AgendaController.java   |   package br.com.fiap.controller   |   class AgendaController
+// java\br\com\fiap\controller\AgendaController.java   |   package br.com.fiap.controller   |   class AgendaController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/Controller/AgendaController.java
@@ -502,7 +505,7 @@ public class AgendaController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\ClienteRelatorioController.java   |   package br.com.fiap.controller   |   class ClienteRelatorioController
+// java\br\com\fiap\controller\ClienteRelatorioController.java   |   package br.com.fiap.controller   |   class ClienteRelatorioController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/controller/ClienteRelatorioController.java ---
@@ -568,19 +571,20 @@ public class ClienteRelatorioController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\ClientesController.java   |   package br.com.fiap.controller   |   class ClientesController
+// java\br\com\fiap\controller\ClientesController.java   |   package br.com.fiap.controller   |   class ClientesController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/controller/ClientesController.java ---
 package br.com.fiap.controller;
 
-// --- Imports necessários para as operações restantes ---
+import br.com.fiap.dto.veiculo.VeiculoResponseDto;
+
 import br.com.fiap.dto.cliente.ClienteInfoDTO;
 import br.com.fiap.dto.cliente.ClienteRequestDto;
 import br.com.fiap.dto.cliente.ClienteResponseDto;
 import br.com.fiap.exception.ClientesNotFoundException;
 import br.com.fiap.model.relacionamentos.ClienteId;
-import br.com.fiap.service.clientes.ClienteService; // Apenas o ClienteService é necessário aqui
+import br.com.fiap.service.clientes.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -595,8 +599,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-// Remover import do ClienteRelatorioCompletoDTO e RelatorioClienteService se existirem
+import org.springframework.web.server.ResponseStatusException; // Importar
+
 import java.util.List;
+
 // ------------------------------------------------------
 
 @RestController
@@ -761,13 +767,49 @@ public class ClientesController {
         }
     }
 
+    // <<< NOVO ENDPOINT ADICIONADO >>>
+    @GetMapping("/{idCliente}/{idEndereco}/veiculos")
+    @Operation(summary = "Listar Veículos de um Cliente", description = "Retorna a lista de veículos associados a um cliente específico pelo seu ID composto.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de veículos retornada"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado com os IDs fornecidos"),
+            @ApiResponse(responseCode = "204", description = "Nenhum veículo encontrado para este cliente (lista vazia)"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<List<VeiculoResponseDto>> getVeiculosByClienteId(
+            @Parameter(description = "ID numérico do cliente") @PathVariable Long idCliente,
+            @Parameter(description = "ID do endereço associado ao cliente") @PathVariable Long idEndereco
+    ) {
+        ClienteId clienteIdObj = new ClienteId(idCliente, idEndereco);
+        log.info("Requisição GET /rest/clientes/{}/{}/veiculos", idCliente, idEndereco);
+        try {
+            List<VeiculoResponseDto> veiculos = clienteService.findVeiculosByClienteId(clienteIdObj);
+            if (veiculos.isEmpty()) {
+                return ResponseEntity.noContent().build(); // 204
+            }
+            return ResponseEntity.ok(veiculos); // 200
+        } catch (ClientesNotFoundException e) {
+            log.warn("Cliente não encontrado para listar veículos: {}", clienteIdObj);
+            // A exceção ClientesNotFoundException já pode ter @ResponseStatus(HttpStatus.NOT_FOUND)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            log.warn("Argumento inválido para listar veículos: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Erro inesperado ao listar veículos do cliente {}: {}", clienteIdObj, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao listar veículos", e);
+        }
+    }
+    // --- Fim do Novo Endpoint ---
+
+
 
     // <<< O ENDPOINT /relatorio-completo FOI REMOVIDO DAQUI >>>
 
 } // Fim da classe ClientesController
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\IaController.java   |   package br.com.fiap.controller   |   class IaController
+// java\br\com\fiap\controller\IaController.java   |   package br.com.fiap.controller   |   class IaController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/Controller/IaController.java
@@ -831,7 +873,7 @@ public class IaController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\OficinaController.java   |   package br.com.fiap.controller   |   class OficinaController
+// java\br\com\fiap\controller\OficinaController.java   |   package br.com.fiap.controller   |   class OficinaController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/Controller/OficinaController.java
@@ -978,7 +1020,7 @@ public class OficinaController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\OrcamentoController.java   |   package br.com.fiap.controller   |   class OrcamentoController
+// java\br\com\fiap\controller\OrcamentoController.java   |   package br.com.fiap.controller   |   class OrcamentoController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/controller/OrcamentoController.java
@@ -1125,7 +1167,7 @@ public class OrcamentoController {
 } // <<< ESTA É A CHAVE DE FECHAMENTO DA CLASSE OrcamentoController
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\PagamentoController.java   |   package br.com.fiap.controller   |   class PagamentoController
+// java\br\com\fiap\controller\PagamentoController.java   |   package br.com.fiap.controller   |   class PagamentoController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.controller;
@@ -1324,7 +1366,7 @@ public class PagamentoController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\PecasController.java   |   package br.com.fiap.controller   |   class PecasController
+// java\br\com\fiap\controller\PecasController.java   |   package br.com.fiap.controller   |   class PecasController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/Controller/PecasController.java
@@ -1469,7 +1511,7 @@ public class PecasController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\RelatorioController.java   |   package br.com.fiap.controller   |   class RelatorioController
+// java\br\com\fiap\controller\RelatorioController.java   |   package br.com.fiap.controller   |   class RelatorioController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/controller/RelatorioController.java
@@ -1674,21 +1716,25 @@ public class RelatorioController {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\controller\VeiculoController.java   |   package br.com.fiap.controller   |   class VeiculoController
+// java\br\com\fiap\controller\VeiculoController.java   |   package br.com.fiap.controller   |   class VeiculoController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// src/main/java/br/com/fiap/Controller/VeiculoController.java
+// Pacote: br.com.fiap.controller
+
 package br.com.fiap.controller;
 
+// Imports necessários
+import br.com.fiap.dto.oficina.ServicoHistoricoResponseDto; // DTO para o histórico
 import br.com.fiap.dto.veiculo.VeiculoRequestDto;
 import br.com.fiap.dto.veiculo.VeiculoResponseDto;
 import br.com.fiap.exception.VeiculoNotFoundException;
-import br.com.fiap.service.veiculo.VeiculoService;
+import br.com.fiap.service.oficina.OficinaService; // <<< SERVIÇO DA OFICINA
+import br.com.fiap.service.veiculo.VeiculoService; // <<< SERVIÇO DO VEÍCULO
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter; // <<< Importar
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag; // <<< Importar
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1698,74 +1744,73 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestParam; // <<< Importar para busca
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/rest/veiculo")
-@CrossOrigin(origins = "http://localhost:3000")
-@Tag(name = "Veículos", description = "Operações relacionadas a veículos") // <<< TAG ATUALIZADA
+@RequestMapping("/rest/veiculo") // Mantendo o path base original
+@CrossOrigin(origins = "http://localhost:3000") // Ajuste se necessário
+@Tag(name = "Veículos", description = "Operações relacionadas a veículos e seu histórico de serviços") // Tag atualizada
 public class VeiculoController {
 
     private static final Logger log = LoggerFactory.getLogger(VeiculoController.class);
+
+    // Injeção do VeiculoService (já existente)
     @Autowired
     private VeiculoService veiculoService;
 
-    // Endpoint de Busca/Listagem com Filtro
-    @GetMapping("/all") // Mantido como /all, mas agora aceita filtros
-    @Cacheable("veiculos") // Cache pode ser menos eficaz com filtros dinâmicos
-    @Operation(summary = "Listar ou Buscar Veículos",
-            description = "Retorna uma lista de veículos. Pode ser filtrada por placa, modelo ou proprietário (parâmetros de query opcionais).") // Descrição unificada
+    // <<< ADICIONADO: Injeção do OficinaService >>>
+    @Autowired
+    private OficinaService oficinaService;
+    // <<< FIM DA ADIÇÃO >>>
+
+    // --- Endpoints CRUD de Veículo (Existente) ---
+
+    @GetMapping("/all")
+    @Cacheable("veiculos")
+    @Operation(summary = "Listar ou Buscar Veículos", description = "Retorna veículos, podendo filtrar por placa, modelo ou proprietário.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de veículos retornada (pode ser vazia se filtro não encontrar nada)"),
-            @ApiResponse(responseCode = "204", description = "Nenhum veículo cadastrado no sistema (sem filtros)"), // Aplica-se mais sem filtros
+            @ApiResponse(responseCode = "200", description = "Lista de veículos retornada"),
+            @ApiResponse(responseCode = "204", description = "Nenhum veículo encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
-    public ResponseEntity<List<VeiculoResponseDto>> findVeiculos( // Nome do método mais genérico
-                                                                  @Parameter(description = "Filtrar por parte da placa (case-insensitive)") @RequestParam(required = false) String placa,
-                                                                  @Parameter(description = "Filtrar por parte do modelo (case-insensitive)") @RequestParam(required = false) String modelo,
-                                                                  @Parameter(description = "Filtrar por parte do nome do proprietário (case-insensitive)") @RequestParam(required = false) String proprietario
-    ) {
+    public ResponseEntity<List<VeiculoResponseDto>> findVeiculos(
+            @Parameter(description = "Filtrar por parte da placa") @RequestParam(required = false) String placa,
+            @Parameter(description = "Filtrar por parte do modelo") @RequestParam(required = false) String modelo,
+            @Parameter(description = "Filtrar por parte do proprietário") @RequestParam(required = false) String proprietario) {
         log.info("Requisição para buscar/listar veículos com filtros: placa='{}', modelo='{}', proprietario='{}'", placa, modelo, proprietario);
         List<VeiculoResponseDto> veiculos;
-        // Chama o método de busca do service se houver filtros
         if ((placa != null && !placa.isBlank()) || (modelo != null && !modelo.isBlank()) || (proprietario != null && !proprietario.isBlank())) {
             veiculos = veiculoService.buscarVeiculos(placa, modelo, proprietario);
         } else {
-            // Chama o findAll normal se não houver filtros
             veiculos = veiculoService.findAll();
         }
-
         if (veiculos.isEmpty()) {
-            // Retorna 204 se a busca com filtros não retornou nada, ou se não há veículos cadastrados
-            log.info("Nenhum veículo encontrado para os critérios ou nenhum veículo cadastrado.");
             return ResponseEntity.noContent().build();
         }
-        log.info("Retornando {} veículos.", veiculos.size());
         return ResponseEntity.ok(veiculos);
     }
-
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar Veículo por ID", description = "Retorna um veículo específico pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Veículo encontrado"),
-            @ApiResponse(responseCode = "404", description = "Veículo não encontrado para o ID fornecido"),
+            @ApiResponse(responseCode = "404", description = "Veículo não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
     public ResponseEntity<VeiculoResponseDto> findById(
-            @Parameter(description = "ID do veículo a ser buscado") @PathVariable Long id
-    ) {
+            @Parameter(description = "ID do veículo") @PathVariable Long id) {
         log.info("Requisição para buscar veículo por ID: {}", id);
         try {
             VeiculoResponseDto veiculo = veiculoService.findById(id);
             return ResponseEntity.ok(veiculo);
         } catch (VeiculoNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            // A exceção já tem @ResponseStatus(NOT_FOUND), mas relançar com ResponseStatusException dá mais controle se necessário
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         } catch (Exception e) {
             log.error("Erro inesperado ao buscar veículo ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar veículo", e);
         }
     }
 
@@ -1775,18 +1820,18 @@ public class VeiculoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Veículo criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao tentar criar o veículo")
+            @ApiResponse(responseCode = "500", description = "Erro interno ao criar veículo")
     })
     public ResponseEntity<VeiculoResponseDto> create(
-            @Parameter(description = "Dados do veículo para criação") @RequestBody @Valid VeiculoRequestDto veiculoDto
-    ) {
+            @Parameter(description = "Dados do veículo") @Valid @RequestBody VeiculoRequestDto veiculoDto) {
         log.info("Requisição para criar novo veículo: {}", veiculoDto.getPlaca());
         try {
             VeiculoResponseDto savedVeiculo = veiculoService.create(veiculoDto);
+            // Considerar retornar a URI do recurso criado no header Location
             return ResponseEntity.status(HttpStatus.CREATED).body(savedVeiculo);
         } catch (Exception e) {
             log.error("Erro ao criar veículo: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao criar veículo", e);
         }
     }
 
@@ -1795,23 +1840,22 @@ public class VeiculoController {
     @Operation(summary = "Atualizar Veículo", description = "Atualiza um veículo existente.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Veículo atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
-            @ApiResponse(responseCode = "404", description = "Veículo não encontrado para o ID fornecido"),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao tentar atualizar")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Veículo não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno")
     })
     public ResponseEntity<VeiculoResponseDto> update(
-            @Parameter(description = "ID do veículo a ser atualizado") @PathVariable Long id,
-            @Parameter(description = "Dados atualizados do veículo") @RequestBody @Valid VeiculoRequestDto veiculoDto
-    ) {
+            @Parameter(description = "ID do veículo") @PathVariable Long id,
+            @Parameter(description = "Dados atualizados") @Valid @RequestBody VeiculoRequestDto veiculoDto) {
         log.info("Requisição para atualizar veículo ID: {}", id);
         try {
             VeiculoResponseDto updatedVeiculo = veiculoService.update(id, veiculoDto);
             return ResponseEntity.ok(updatedVeiculo);
         } catch (VeiculoNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         } catch (Exception e) {
             log.error("Erro ao atualizar veículo ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar veículo", e);
         }
     }
 
@@ -1820,27 +1864,58 @@ public class VeiculoController {
     @Operation(summary = "Deletar Veículo", description = "Remove um veículo.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Veículo deletado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Veículo não encontrado para o ID fornecido"),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao tentar deletar") // Ou 409
+            @ApiResponse(responseCode = "404", description = "Veículo não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno ou violação de integridade")
     })
     public ResponseEntity<Void> delete(
-            @Parameter(description = "ID do veículo a ser deletado") @PathVariable Long id
-    ) {
+            @Parameter(description = "ID do veículo") @PathVariable Long id) {
         log.info("Requisição para deletar veículo ID: {}", id);
         try {
             veiculoService.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build(); // 204
         } catch (VeiculoNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) { // Captura DataIntegrityViolation etc.
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+            // Capturar DataIntegrityViolationException se quiser retornar 409 Conflict
+        } catch (Exception e) {
             log.error("Erro ao deletar veículo ID {}: {}", id, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao deletar veículo", e);
         }
     }
-}
+
+    // --- NOVO ENDPOINT: Histórico de Serviços do Veículo ---
+    @GetMapping("/{veiculoId}/servicos")
+    @Operation(summary = "Listar Histórico de Serviços de um Veículo", description = "Retorna a lista de serviços/diagnósticos associados a um veículo específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de serviços retornada"),
+            @ApiResponse(responseCode = "404", description = "Veículo não encontrado com o ID fornecido"),
+            @ApiResponse(responseCode = "204", description = "Nenhum serviço encontrado para este veículo"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<List<ServicoHistoricoResponseDto>> getServicosByVeiculoId(
+            @Parameter(description = "ID do veículo") @PathVariable Long veiculoId
+    ) {
+        log.info("Requisição GET /rest/veiculo/{}/servicos", veiculoId);
+        try {
+            // <<< USA O oficinaService INJETADO >>>
+            List<ServicoHistoricoResponseDto> historico = oficinaService.findServicosByVeiculoId(veiculoId);
+            if (historico.isEmpty()) {
+                return ResponseEntity.noContent().build(); // 204
+            }
+            return ResponseEntity.ok(historico); // 200
+        } catch (VeiculoNotFoundException e) {
+            log.warn("Veículo não encontrado ao buscar histórico de serviços: ID {}", veiculoId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Erro inesperado ao listar histórico do veículo {}: {}", veiculoId, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao listar histórico do veículo", e);
+        }
+    }
+    // --- Fim do Novo Endpoint ---
+
+} // <<< FIM DA CLASSE VeiculoController >>>
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\agenda\AgendaRequestDto.java   |   package br.com.fiap.dto.agenda   |   class AgendaRequestDto
+// java\br\com\fiap\dto\agenda\AgendaRequestDto.java   |   package br.com.fiap.dto.agenda   |   class AgendaRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.agenda;
@@ -1869,7 +1944,7 @@ public class AgendaRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\agenda\AgendaResponseDto.java   |   package br.com.fiap.dto.agenda   |   class AgendaResponseDto
+// java\br\com\fiap\dto\agenda\AgendaResponseDto.java   |   package br.com.fiap.dto.agenda   |   class AgendaResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.agenda;
@@ -1890,7 +1965,7 @@ public class AgendaResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\cliente\ClienteInfoDTO.java   |   package br.com.fiap.dto.cliente   |   class ClienteInfoDTO
+// java\br\com\fiap\dto\cliente\ClienteInfoDTO.java   |   package br.com.fiap.dto.cliente   |   class ClienteInfoDTO
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/dto/cliente/ClienteInfoDTO.java
@@ -1924,7 +1999,7 @@ public class ClienteInfoDTO {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\cliente\ClienteRequestDto.java   |   package br.com.fiap.dto.cliente   |   class ClienteRequestDto
+// java\br\com\fiap\dto\cliente\ClienteRequestDto.java   |   package br.com.fiap.dto.cliente   |   class ClienteRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.cliente;
@@ -1989,7 +2064,7 @@ public class ClienteRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\cliente\ClienteResponseDto.java   |   package br.com.fiap.dto.cliente   |   class ClienteResponseDto
+// java\br\com\fiap\dto\cliente\ClienteResponseDto.java   |   package br.com.fiap.dto.cliente   |   class ClienteResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.cliente;
@@ -2026,7 +2101,7 @@ public class ClienteResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\contato\ContatoRequestDto.java   |   package br.com.fiap.dto.contato   |   class ContatoRequestDto
+// java\br\com\fiap\dto\contato\ContatoRequestDto.java   |   package br.com.fiap.dto.contato   |   class ContatoRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.contato;
@@ -2060,7 +2135,7 @@ public class ContatoRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\contato\ContatoResponseDto.java   |   package br.com.fiap.dto.contato   |   class ContatoResponseDto
+// java\br\com\fiap\dto\contato\ContatoResponseDto.java   |   package br.com.fiap.dto.contato   |   class ContatoResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.contato;
@@ -2081,7 +2156,7 @@ public class ContatoResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\endereco\EnderecoRequestDto.java   |   package br.com.fiap.dto.endereco   |   class EnderecoRequestDto
+// java\br\com\fiap\dto\endereco\EnderecoRequestDto.java   |   package br.com.fiap.dto.endereco   |   class EnderecoRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.endereco;
@@ -2131,7 +2206,7 @@ public class EnderecoRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\endereco\EnderecoResponseDto.java   |   package br.com.fiap.dto.endereco   |   class EnderecoResponseDto
+// java\br\com\fiap\dto\endereco\EnderecoResponseDto.java   |   package br.com.fiap.dto.endereco   |   class EnderecoResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.endereco;
@@ -2159,30 +2234,42 @@ public class EnderecoResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\oficina\ItemPecaServicoDto.java   |   package br.com.fiap.dto.oficina   |   class ItemPecaServicoDto
+// java\br\com\fiap\dto\oficina\ItemPecaServicoDto.java   |   package br.com.fiap.dto.oficina   |   class ItemPecaServicoDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// Em br.com.fiap.dto (ou um subpacote como br.com.fiap.dto.servico)
-package br.com.fiap.dto.oficina; // Exemplo de pacote
+// Pacote: br.com.fiap.dto.oficina
+package br.com.fiap.dto.oficina;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor // Lombok gera o construtor com todos os argumentos
 public class ItemPecaServicoDto {
+
     @NotNull(message = "ID da peça é obrigatório")
     private Long pecaId;
+
+    // Estes campos são opcionais no DTO de *request* para orçamento,
+    // mas podem ser preenchidos na *resposta* do histórico
+    private String descricaoPeca;
+    private String fabricantePeca;
 
     @NotNull(message = "Quantidade da peça é obrigatória")
     @Min(value = 1, message = "Quantidade deve ser pelo menos 1")
     private Integer quantidade;
+
+    // NENHUM CONSTRUTOR MANUAL AQUI, deixe o Lombok cuidar disso com @AllArgsConstructor
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\oficina\OficinaRequestDto.java   |   package br.com.fiap.dto.oficina   |   class OficinaRequestDto
+// java\br\com\fiap\dto\oficina\OficinaRequestDto.java   |   package br.com.fiap.dto.oficina   |   class OficinaRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.oficina;
@@ -2227,7 +2314,7 @@ public class OficinaRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\oficina\OficinaResponseDto.java   |   package br.com.fiap.dto.oficina   |   class OficinaResponseDto
+// java\br\com\fiap\dto\oficina\OficinaResponseDto.java   |   package br.com.fiap.dto.oficina   |   class OficinaResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.oficina;
@@ -2251,7 +2338,46 @@ public class OficinaResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\orcamento\OrcamentoComServicoRequestDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoComServicoRequestDto
+// java\br\com\fiap\dto\oficina\ServicoHistoricoResponseDto.java   |   package br.com.fiap.dto.oficina   |   class ServicoHistoricoResponseDto
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+// Pacote: br.com.fiap.dto.oficina (ou br.com.fiap.dto.relatorio)
+
+package br.com.fiap.dto.oficina; // Ou br.com.fiap.dto.relatorio
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class ServicoHistoricoResponseDto {
+    private Long idOficina; // ID da Oficina (serviço)
+    private LocalDate dataOficina;
+    private String descricaoProblema;
+    private String diagnostico;
+    private String partesAfetadas;
+    private String horasTrabalhadas;
+    private List<ItemPecaServicoDto> pecasUtilizadas; // Reutiliza o DTO existente
+
+    // Construtor pode ser útil
+    public ServicoHistoricoResponseDto(Long idOficina, LocalDate dataOficina, String descricaoProblema, String diagnostico, String partesAfetadas, String horasTrabalhadas, List<ItemPecaServicoDto> pecasUtilizadas) {
+        this.idOficina = idOficina;
+        this.dataOficina = dataOficina;
+        this.descricaoProblema = descricaoProblema;
+        this.diagnostico = diagnostico;
+        this.partesAfetadas = partesAfetadas;
+        this.horasTrabalhadas = horasTrabalhadas;
+        this.pecasUtilizadas = pecasUtilizadas;
+    }
+}
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// java\br\com\fiap\dto\orcamento\OrcamentoComServicoRequestDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoComServicoRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // Em br.com.fiap.dto.orcamento
@@ -2326,7 +2452,7 @@ public class OrcamentoComServicoRequestDto {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\orcamento\OrcamentoRequestDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoRequestDto
+// java\br\com\fiap\dto\orcamento\OrcamentoRequestDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.orcamento;
@@ -2370,7 +2496,7 @@ public class OrcamentoRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\orcamento\OrcamentoResponseDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoResponseDto
+// java\br\com\fiap\dto\orcamento\OrcamentoResponseDto.java   |   package br.com.fiap.dto.orcamento   |   class OrcamentoResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.orcamento;
@@ -2395,7 +2521,7 @@ public class OrcamentoResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\pagamento\PagamentoRequestDto.java   |   package br.com.fiap.dto.pagamento   |   class PagamentoRequestDto
+// java\br\com\fiap\dto\pagamento\PagamentoRequestDto.java   |   package br.com.fiap.dto.pagamento   |   class PagamentoRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.pagamento; // Pacote correto
@@ -2440,7 +2566,7 @@ public class PagamentoRequestDto {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\pagamento\PagamentoResponseDto.java   |   package br.com.fiap.dto.pagamento   |   class PagamentoResponseDto
+// java\br\com\fiap\dto\pagamento\PagamentoResponseDto.java   |   package br.com.fiap.dto.pagamento   |   class PagamentoResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.pagamento; // Pacote correto
@@ -2468,7 +2594,7 @@ public class PagamentoResponseDto {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\pecas\PecasRequestDto.java   |   package br.com.fiap.dto.pecas   |   class PecasRequestDto
+// java\br\com\fiap\dto\pecas\PecasRequestDto.java   |   package br.com.fiap.dto.pecas   |   class PecasRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.pecas;
@@ -2517,7 +2643,7 @@ public class PecasRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\pecas\PecasResponseDto.java   |   package br.com.fiap.dto.pecas   |   class PecasResponseDto
+// java\br\com\fiap\dto\pecas\PecasResponseDto.java   |   package br.com.fiap.dto.pecas   |   class PecasResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.pecas;
@@ -2544,7 +2670,7 @@ public class PecasResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\ClienteRelatorioCompletoDTO.java   |   package br.com.fiap.dto.relatorio   |   class ClienteRelatorioCompletoDTO
+// java\br\com\fiap\dto\relatorio\ClienteRelatorioCompletoDTO.java   |   package br.com.fiap.dto.relatorio   |   class ClienteRelatorioCompletoDTO
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/dto/relatorio/ClienteRelatorioCompletoDTO.java ---
@@ -2614,7 +2740,7 @@ public class ClienteRelatorioCompletoDTO implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\ContagemMensalDTO.java   |   package br.com.fiap.dto.relatorio   |   class ContagemMensalDTO
+// java\br\com\fiap\dto\relatorio\ContagemMensalDTO.java   |   package br.com.fiap.dto.relatorio   |   class ContagemMensalDTO
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/dto/relatorio/ContagemMensalDTO.java
@@ -2635,7 +2761,7 @@ public class ContagemMensalDTO {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\ContagemMensalResultadoNativo.java   |   package br.com.fiap.dto.relatorio   |   class ContagemMensalResultadoNativo
+// java\br\com\fiap\dto\relatorio\ContagemMensalResultadoNativo.java   |   package br.com.fiap.dto.relatorio   |   class ContagemMensalResultadoNativo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/dto/relatorio/ContagemMensalResultadoNativo.java
@@ -2648,7 +2774,7 @@ public interface ContagemMensalResultadoNativo {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\EstatisticasPagamentosDto.java   |   package br.com.fiap.dto.relatorio   |   class EstatisticasPagamentosDto
+// java\br\com\fiap\dto\relatorio\EstatisticasPagamentosDto.java   |   package br.com.fiap.dto.relatorio   |   class EstatisticasPagamentosDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.relatorio;
@@ -2670,7 +2796,7 @@ public class EstatisticasPagamentosDto {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\EvolucaoMensalPagamentoNativo.java   |   package br.com.fiap.dto.relatorio   |   class EvolucaoMensalPagamentoNativo
+// java\br\com\fiap\dto\relatorio\EvolucaoMensalPagamentoNativo.java   |   package br.com.fiap.dto.relatorio   |   class EvolucaoMensalPagamentoNativo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.relatorio;
@@ -2683,7 +2809,7 @@ public interface EvolucaoMensalPagamentoNativo {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\EvolucaoMensalValorDto.java   |   package br.com.fiap.dto.relatorio   |   class EvolucaoMensalValorDto
+// java\br\com\fiap\dto\relatorio\EvolucaoMensalValorDto.java   |   package br.com.fiap.dto.relatorio   |   class EvolucaoMensalValorDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.relatorio;
@@ -2705,7 +2831,7 @@ public class EvolucaoMensalValorDto {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\HistoricoAgendamentoClienteDTO.java   |   package br.com.fiap.dto.relatorio   |   class HistoricoAgendamentoClienteDTO
+// java\br\com\fiap\dto\relatorio\HistoricoAgendamentoClienteDTO.java   |   package br.com.fiap.dto.relatorio   |   class HistoricoAgendamentoClienteDTO
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/dto/relatorio/HistoricoAgendamentoClienteDTO.java
@@ -2729,7 +2855,7 @@ public class HistoricoAgendamentoClienteDTO {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\PagamentoPorTipoDto.java   |   package br.com.fiap.dto.relatorio   |   class PagamentoPorTipoDto
+// java\br\com\fiap\dto\relatorio\PagamentoPorTipoDto.java   |   package br.com.fiap.dto.relatorio   |   class PagamentoPorTipoDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.relatorio;
@@ -2751,7 +2877,7 @@ public class PagamentoPorTipoDto {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\relatorio\ServicoAgendadoDTO.java   |   package br.com.fiap.dto.relatorio   |   class ServicoAgendadoDTO
+// java\br\com\fiap\dto\relatorio\ServicoAgendadoDTO.java   |   package br.com.fiap.dto.relatorio   |   class ServicoAgendadoDTO
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/dto/relatorio/ServicoAgendadoDTO.java
@@ -2778,7 +2904,7 @@ public class ServicoAgendadoDTO {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\veiculo\VeiculoRequestDto.java   |   package br.com.fiap.dto.veiculo   |   class VeiculoRequestDto
+// java\br\com\fiap\dto\veiculo\VeiculoRequestDto.java   |   package br.com.fiap.dto.veiculo   |   class VeiculoRequestDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.veiculo;
@@ -2836,7 +2962,7 @@ public class VeiculoRequestDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\dto\veiculo\VeiculoResponseDto.java   |   package br.com.fiap.dto.veiculo   |   class VeiculoResponseDto
+// java\br\com\fiap\dto\veiculo\VeiculoResponseDto.java   |   package br.com.fiap.dto.veiculo   |   class VeiculoResponseDto
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.dto.veiculo;
@@ -2864,7 +2990,7 @@ public class VeiculoResponseDto implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\AgendaNotFoundException.java   |   package br.com.fiap.exception   |   class AgendaNotFoundException
+// java\br\com\fiap\exception\AgendaNotFoundException.java   |   package br.com.fiap.exception   |   class AgendaNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -2889,7 +3015,7 @@ public class AgendaNotFoundException extends RuntimeException{
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\AssociacaoNotFoundException.java   |   package br.com.fiap.exception   |   class AssociacaoNotFoundException
+// java\br\com\fiap\exception\AssociacaoNotFoundException.java   |   package br.com.fiap.exception   |   class AssociacaoNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/exception/AssociacaoNotFoundException.java ---
@@ -2906,7 +3032,7 @@ public class AssociacaoNotFoundException extends RuntimeException {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\AutenticarNotFoundException.java   |   package br.com.fiap.exception   |   class AutenticarNotFoundException
+// java\br\com\fiap\exception\AutenticarNotFoundException.java   |   package br.com.fiap.exception   |   class AutenticarNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -2924,7 +3050,7 @@ public class AutenticarNotFoundException extends RuntimeException{
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\ClientesNotFoundException.java   |   package br.com.fiap.exception   |   class ClientesNotFoundException
+// java\br\com\fiap\exception\ClientesNotFoundException.java   |   package br.com.fiap.exception   |   class ClientesNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -2942,7 +3068,7 @@ public class ClientesNotFoundException extends RuntimeException{
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\ContatoNotFoundException.java   |   package br.com.fiap.exception   |   class ContatoNotFoundException
+// java\br\com\fiap\exception\ContatoNotFoundException.java   |   package br.com.fiap.exception   |   class ContatoNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -2964,7 +3090,7 @@ public class ContatoNotFoundException extends RuntimeException {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\EnderecoNotFoundException.java   |   package br.com.fiap.exception   |   class EnderecoNotFoundException
+// java\br\com\fiap\exception\EnderecoNotFoundException.java   |   package br.com.fiap.exception   |   class EnderecoNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -2986,7 +3112,7 @@ public class EnderecoNotFoundException extends RuntimeException{
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\OficinaNotFoundException.java   |   package br.com.fiap.exception   |   class OficinaNotFoundException
+// java\br\com\fiap\exception\OficinaNotFoundException.java   |   package br.com.fiap.exception   |   class OficinaNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -3008,7 +3134,7 @@ public class OficinaNotFoundException extends RuntimeException{
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\OrcamentoNotFoundException.java   |   package br.com.fiap.exception   |   class OrcamentoNotFoundException
+// java\br\com\fiap\exception\OrcamentoNotFoundException.java   |   package br.com.fiap.exception   |   class OrcamentoNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -3030,7 +3156,7 @@ public class OrcamentoNotFoundException extends RuntimeException {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\PagamentoNotFoundException.java   |   package br.com.fiap.exception   |   class PagamentoNotFoundException
+// java\br\com\fiap\exception\PagamentoNotFoundException.java   |   package br.com.fiap.exception   |   class PagamentoNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -3051,7 +3177,7 @@ public class PagamentoNotFoundException extends RuntimeException {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\PecasNotFoundException.java   |   package br.com.fiap.exception   |   class PecasNotFoundException
+// java\br\com\fiap\exception\PecasNotFoundException.java   |   package br.com.fiap.exception   |   class PecasNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -3073,7 +3199,7 @@ public class PecasNotFoundException extends RuntimeException{
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\exception\VeiculoNotFoundException.java   |   package br.com.fiap.exception   |   class VeiculoNotFoundException
+// java\br\com\fiap\exception\VeiculoNotFoundException.java   |   package br.com.fiap.exception   |   class VeiculoNotFoundException
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.exception;
@@ -3095,7 +3221,7 @@ public class VeiculoNotFoundException extends RuntimeException {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\AgendaMapper.java   |   package br.com.fiap.mapper   |   class AgendaMapper
+// java\br\com\fiap\mapper\AgendaMapper.java   |   package br.com.fiap.mapper   |   class AgendaMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.mapper;
@@ -3129,7 +3255,7 @@ public interface AgendaMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\ClienteMapper.java   |   package br.com.fiap.mapper   |   class ClienteMapper
+// java\br\com\fiap\mapper\ClienteMapper.java   |   package br.com.fiap.mapper   |   class ClienteMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/mapper/ClienteMapper.java ---
@@ -3183,7 +3309,7 @@ public interface ClienteMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\ContatoMapper.java   |   package br.com.fiap.mapper   |   class ContatoMapper
+// java\br\com\fiap\mapper\ContatoMapper.java   |   package br.com.fiap.mapper   |   class ContatoMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/mapper/ContatoMapper.java ---
@@ -3209,7 +3335,7 @@ public interface ContatoMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\EnderecoMapper.java   |   package br.com.fiap.mapper   |   class EnderecoMapper
+// java\br\com\fiap\mapper\EnderecoMapper.java   |   package br.com.fiap.mapper   |   class EnderecoMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/mapper/EnderecoMapper.java ---
@@ -3235,7 +3361,7 @@ public interface EnderecoMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\OficinaMapper.java   |   package br.com.fiap.mapper   |   class OficinaMapper
+// java\br\com\fiap\mapper\OficinaMapper.java   |   package br.com.fiap.mapper   |   class OficinaMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/mapper/OficinaMapper.java
@@ -3307,7 +3433,7 @@ public interface OficinaMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\OrcamentoMapper.java   |   package br.com.fiap.mapper   |   class OrcamentoMapper
+// java\br\com\fiap\mapper\OrcamentoMapper.java   |   package br.com.fiap.mapper   |   class OrcamentoMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/mapper/OrcamentoMapper.java
@@ -3374,7 +3500,7 @@ public interface OrcamentoMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\PagamentoMapper.java   |   package br.com.fiap.mapper   |   class PagamentoMapper
+// java\br\com\fiap\mapper\PagamentoMapper.java   |   package br.com.fiap.mapper   |   class PagamentoMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.mapper;
@@ -3418,7 +3544,7 @@ public interface PagamentoMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\PecasMapper.java   |   package br.com.fiap.mapper   |   class PecasMapper
+// java\br\com\fiap\mapper\PecasMapper.java   |   package br.com.fiap.mapper   |   class PecasMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/mapper/PecasMapper.java ---
@@ -3453,7 +3579,7 @@ public interface PecasMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\mapper\VeiculoMapper.java   |   package br.com.fiap.mapper   |   class VeiculoMapper
+// java\br\com\fiap\mapper\VeiculoMapper.java   |   package br.com.fiap.mapper   |   class VeiculoMapper
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/mapper/VeiculoMapper.java ---
@@ -3492,7 +3618,7 @@ public interface VeiculoMapper {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Agenda.java   |   package br.com.fiap.model   |   class Agenda
+// java\br\com\fiap\model\Agenda.java   |   package br.com.fiap.model   |   class Agenda
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/model/Agenda.java
@@ -3543,7 +3669,7 @@ public class Agenda implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Autenticar.java   |   package br.com.fiap.model   |   class Autenticar
+// java\br\com\fiap\model\Autenticar.java   |   package br.com.fiap.model   |   class Autenticar
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -3595,7 +3721,7 @@ public class Autenticar implements Serializable { // Boa prática implementar Se
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Clientes.java   |   package br.com.fiap.model   |   class Clientes
+// java\br\com\fiap\model\Clientes.java   |   package br.com.fiap.model   |   class Clientes
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -3684,7 +3810,7 @@ public class Clientes {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Contato.java   |   package br.com.fiap.model   |   class Contato
+// java\br\com\fiap\model\Contato.java   |   package br.com.fiap.model   |   class Contato
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -3727,7 +3853,7 @@ public class Contato implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Endereco.java   |   package br.com.fiap.model   |   class Endereco
+// java\br\com\fiap\model\Endereco.java   |   package br.com.fiap.model   |   class Endereco
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -3787,7 +3913,7 @@ public class Endereco implements Serializable { // Implementar Serializable é u
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Oficina.java   |   package br.com.fiap.model   |   class Oficina
+// java\br\com\fiap\model\Oficina.java   |   package br.com.fiap.model   |   class Oficina
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -3870,7 +3996,7 @@ public class Oficina implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Orcamento.java   |   package br.com.fiap.model   |   class Orcamento
+// java\br\com\fiap\model\Orcamento.java   |   package br.com.fiap.model   |   class Orcamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -3947,7 +4073,7 @@ public class Orcamento implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Pagamento.java   |   package br.com.fiap.model   |   class Pagamento
+// java\br\com\fiap\model\Pagamento.java   |   package br.com.fiap.model   |   class Pagamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -4027,7 +4153,7 @@ public class Pagamento implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Pecas.java   |   package br.com.fiap.model   |   class Pecas
+// java\br\com\fiap\model\Pecas.java   |   package br.com.fiap.model   |   class Pecas
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -4104,7 +4230,7 @@ public class Pecas implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\Veiculo.java   |   package br.com.fiap.model   |   class Veiculo
+// java\br\com\fiap\model\Veiculo.java   |   package br.com.fiap.model   |   class Veiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model;
@@ -4198,7 +4324,7 @@ public class Veiculo implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\AgendaOficina.java   |   package br.com.fiap.model.relacionamentos   |   class AgendaOficina
+// java\br\com\fiap\model\relacionamentos\AgendaOficina.java   |   package br.com.fiap.model.relacionamentos   |   class AgendaOficina
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4231,7 +4357,7 @@ public class AgendaOficina implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\AgendaVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class AgendaVeiculo
+// java\br\com\fiap\model\relacionamentos\AgendaVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class AgendaVeiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou um subpacote como br.com.fiap.model.join
@@ -4277,7 +4403,7 @@ public class AgendaVeiculo implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\ClienteId.java   |   package br.com.fiap.model.relacionamentos   |   class ClienteId
+// java\br\com\fiap\model\relacionamentos\ClienteId.java   |   package br.com.fiap.model.relacionamentos   |   class ClienteId
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos;
@@ -4306,7 +4432,7 @@ public class ClienteId implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\ClienteOrcamento.java   |   package br.com.fiap.model.relacionamentos   |   class ClienteOrcamento
+// java\br\com\fiap\model\relacionamentos\ClienteOrcamento.java   |   package br.com.fiap.model.relacionamentos   |   class ClienteOrcamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4342,7 +4468,7 @@ public class ClienteOrcamento implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\ClientePagamento.java   |   package br.com.fiap.model.relacionamentos   |   class ClientePagamento
+// java\br\com\fiap\model\relacionamentos\ClientePagamento.java   |   package br.com.fiap.model.relacionamentos   |   class ClientePagamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4378,7 +4504,7 @@ public class ClientePagamento implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\ClienteVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class ClienteVeiculo
+// java\br\com\fiap\model\relacionamentos\ClienteVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class ClienteVeiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos;
@@ -4423,7 +4549,7 @@ public class ClienteVeiculo implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\OficinaOrcamento.java   |   package br.com.fiap.model.relacionamentos   |   class OficinaOrcamento
+// java\br\com\fiap\model\relacionamentos\OficinaOrcamento.java   |   package br.com.fiap.model.relacionamentos   |   class OficinaOrcamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4456,7 +4582,7 @@ public class OficinaOrcamento implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\OficinaPeca.java   |   package br.com.fiap.model.relacionamentos   |   class OficinaPeca
+// java\br\com\fiap\model\relacionamentos\OficinaPeca.java   |   package br.com.fiap.model.relacionamentos   |   class OficinaPeca
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos;
@@ -4500,7 +4626,7 @@ public class OficinaPeca implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\OficinaVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class OficinaVeiculo
+// java\br\com\fiap\model\relacionamentos\OficinaVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class OficinaVeiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4533,7 +4659,7 @@ public class OficinaVeiculo implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\PagamentoOrcamento.java   |   package br.com.fiap.model.relacionamentos   |   class PagamentoOrcamento
+// java\br\com\fiap\model\relacionamentos\PagamentoOrcamento.java   |   package br.com.fiap.model.relacionamentos   |   class PagamentoOrcamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4566,7 +4692,7 @@ public class PagamentoOrcamento implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\model\relacionamentos\PecaVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class PecaVeiculo
+// java\br\com\fiap\model\relacionamentos\PecaVeiculo.java   |   package br.com.fiap.model.relacionamentos   |   class PecaVeiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.model.relacionamentos; // Ou subpacote
@@ -4599,7 +4725,7 @@ public class PecaVeiculo implements Serializable {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\AgendaRepository.java   |   package br.com.fiap.repository   |   class AgendaRepository
+// java\br\com\fiap\repository\AgendaRepository.java   |   package br.com.fiap.repository   |   class AgendaRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/repository/AgendaRepository.java
@@ -4675,7 +4801,7 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long>, JpaSpecif
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\AutenticarRepository.java   |   package br.com.fiap.repository   |   class AutenticarRepository
+// java\br\com\fiap\repository\AutenticarRepository.java   |   package br.com.fiap.repository   |   class AutenticarRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository;
@@ -4687,7 +4813,7 @@ public interface AutenticarRepository extends JpaRepository<Autenticar, Long> {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\ClientesRepository.java   |   package br.com.fiap.repository   |   class ClientesRepository
+// java\br\com\fiap\repository\ClientesRepository.java   |   package br.com.fiap.repository   |   class ClientesRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/repository/ClientesRepository.java
@@ -4703,7 +4829,7 @@ public interface ClientesRepository extends JpaRepository<Clientes, ClienteId>, 
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\ContatoRepository.java   |   package br.com.fiap.repository   |   class ContatoRepository
+// java\br\com\fiap\repository\ContatoRepository.java   |   package br.com.fiap.repository   |   class ContatoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository;
@@ -4715,7 +4841,7 @@ public interface ContatoRepository extends JpaRepository<Contato, Long> {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\EnderecoRepository.java   |   package br.com.fiap.repository   |   class EnderecoRepository
+// java\br\com\fiap\repository\EnderecoRepository.java   |   package br.com.fiap.repository   |   class EnderecoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository;
@@ -4727,7 +4853,7 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\OficinaRepository.java   |   package br.com.fiap.repository   |   class OficinaRepository
+// java\br\com\fiap\repository\OficinaRepository.java   |   package br.com.fiap.repository   |   class OficinaRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository;
@@ -4739,7 +4865,7 @@ public interface OficinaRepository extends JpaRepository<Oficina, Long> {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\OrcamentoRepository.java   |   package br.com.fiap.repository   |   class OrcamentoRepository
+// java\br\com\fiap\repository\OrcamentoRepository.java   |   package br.com.fiap.repository   |   class OrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository;
@@ -4751,7 +4877,7 @@ public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\PagamentoRepository.java   |   package br.com.fiap.repository   |   class PagamentoRepository
+// java\br\com\fiap\repository\PagamentoRepository.java   |   package br.com.fiap.repository   |   class PagamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/repository/PagamentoRepository.java
@@ -4795,7 +4921,7 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, Long>, Jpa
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\PecasRepository.java   |   package br.com.fiap.repository   |   class PecasRepository
+// java\br\com\fiap\repository\PecasRepository.java   |   package br.com.fiap.repository   |   class PecasRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository;
@@ -4807,7 +4933,7 @@ public interface PecasRepository extends JpaRepository<Pecas, Long> {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\VeiculoRepository.java   |   package br.com.fiap.repository   |   class VeiculoRepository
+// java\br\com\fiap\repository\VeiculoRepository.java   |   package br.com.fiap.repository   |   class VeiculoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/repository/VeiculoRepository.java
@@ -4823,7 +4949,7 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Long>, JpaSpec
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\AgendaOficinaRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class AgendaOficinaRepository
+// java\br\com\fiap\repository\relacionamentos\AgendaOficinaRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class AgendaOficinaRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository.relacionamentos;
@@ -4835,7 +4961,7 @@ public interface AgendaOficinaRepository extends JpaRepository<AgendaOficina, Lo
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\AgendaVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class AgendaVeiculoRepository
+// java\br\com\fiap\repository\relacionamentos\AgendaVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class AgendaVeiculoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/repository/relacionamentos/AgendaVeiculoRepository.java ---
@@ -4878,7 +5004,7 @@ public interface AgendaVeiculoRepository extends JpaRepository<AgendaVeiculo, Lo
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\ClienteOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClienteOrcamentoRepository
+// java\br\com\fiap\repository\relacionamentos\ClienteOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClienteOrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/repository/relacionamentos/ClienteOrcamentoRepository.java
@@ -4901,7 +5027,7 @@ public interface ClienteOrcamentoRepository extends JpaRepository<ClienteOrcamen
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\ClientePagamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClientePagamentoRepository
+// java\br\com\fiap\repository\relacionamentos\ClientePagamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClientePagamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/repository/relacionamentos/ClientePagamentoRepository.java ---
@@ -4919,7 +5045,7 @@ public interface ClientePagamentoRepository extends JpaRepository<ClientePagamen
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\ClienteVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClienteVeiculoRepository
+// java\br\com\fiap\repository\relacionamentos\ClienteVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class ClienteVeiculoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/repository/relacionamentos/ClienteVeiculoRepository.java ---
@@ -4940,7 +5066,7 @@ public interface ClienteVeiculoRepository extends JpaRepository<ClienteVeiculo, 
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\OficinaOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaOrcamentoRepository
+// java\br\com\fiap\repository\relacionamentos\OficinaOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaOrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/repository/relacionamentos/OficinaOrcamentoRepository.java
@@ -4963,7 +5089,7 @@ public interface OficinaOrcamentoRepository extends JpaRepository<OficinaOrcamen
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\OficinaPecaRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaPecaRepository
+// java\br\com\fiap\repository\relacionamentos\OficinaPecaRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaPecaRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository.relacionamentos;
@@ -4978,23 +5104,26 @@ public interface OficinaPecaRepository extends JpaRepository<OficinaPeca, Long> 
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\OficinaVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaVeiculoRepository
+// java\br\com\fiap\repository\relacionamentos\OficinaVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class OficinaVeiculoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// Pacote: br.com.fiap.repository.relacionamentos
 package br.com.fiap.repository.relacionamentos;
 
 import br.com.fiap.model.relacionamentos.OficinaVeiculo;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List; // Certifique-se que List está importado
-
+import java.util.List;
 
 public interface OficinaVeiculoRepository extends JpaRepository<OficinaVeiculo, Long> {
 
     List<OficinaVeiculo> findByVeiculoIdIn(List<Long> veiculoIds);
+
+    // <<< NOVO MÉTODO ADICIONADO >>>
+    List<OficinaVeiculo> findByVeiculoId(Long veiculoId);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\PagamentoOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class PagamentoOrcamentoRepository
+// java\br\com\fiap\repository\relacionamentos\PagamentoOrcamentoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class PagamentoOrcamentoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/repository/relacionamentos/PagamentoOrcamentoRepository.java
@@ -5014,7 +5143,7 @@ public interface PagamentoOrcamentoRepository extends JpaRepository<PagamentoOrc
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\relacionamentos\PecaVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class PecaVeiculoRepository
+// java\br\com\fiap\repository\relacionamentos\PecaVeiculoRepository.java   |   package br.com.fiap.repository.relacionamentos   |   class PecaVeiculoRepository
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository.relacionamentos;
@@ -5026,7 +5155,7 @@ public interface PecaVeiculoRepository extends JpaRepository<PecaVeiculo, Long> 
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\specification\AgendaSpecification.java   |   package br.com.fiap.repository.specification   |   class AgendaSpecification
+// java\br\com\fiap\repository\specification\AgendaSpecification.java   |   package br.com.fiap.repository.specification   |   class AgendaSpecification
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/repository/specification/AgendaSpecification.java ---
@@ -5070,7 +5199,7 @@ public class AgendaSpecification {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\specification\ClienteSpecification.java   |   package br.com.fiap.repository.specification   |   class ClienteSpecification
+// java\br\com\fiap\repository\specification\ClienteSpecification.java   |   package br.com.fiap.repository.specification   |   class ClienteSpecification
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/repository/specification/ClienteSpecification.java
@@ -5116,7 +5245,7 @@ public class ClienteSpecification {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\specification\PagamentoSpecification.java   |   package br.com.fiap.repository.specification   |   class PagamentoSpecification
+// java\br\com\fiap\repository\specification\PagamentoSpecification.java   |   package br.com.fiap.repository.specification   |   class PagamentoSpecification
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.repository.specification;
@@ -5215,7 +5344,7 @@ public class PagamentoSpecification {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\repository\specification\VeiculoSpecification.java   |   package br.com.fiap.repository.specification   |   class VeiculoSpecification
+// java\br\com\fiap\repository\specification\VeiculoSpecification.java   |   package br.com.fiap.repository.specification   |   class VeiculoSpecification
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/repository/specification/VeiculoSpecification.java
@@ -5255,7 +5384,7 @@ public class VeiculoSpecification {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\agenda\AgendaService.java   |   package br.com.fiap.service.agenda   |   class AgendaService
+// java\br\com\fiap\service\agenda\AgendaService.java   |   package br.com.fiap.service.agenda   |   class AgendaService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/service/agenda/AgendaService.java ---
@@ -5286,7 +5415,7 @@ public interface AgendaService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\agenda\AgendaServiceImpl.java   |   package br.com.fiap.service.agenda   |   class AgendaServiceImpl
+// java\br\com\fiap\service\agenda\AgendaServiceImpl.java   |   package br.com.fiap.service.agenda   |   class AgendaServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/service/agenda/AgendaServiceImpl.java ---
@@ -5499,7 +5628,7 @@ public class AgendaServiceImpl implements AgendaService { // Chave de abertura d
 } // <<<===== CERTIFIQUE-SE DE QUE ESTA CHAVE FINAL EXISTE NO SEU ARQUIVO!
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\cep\CepService.java   |   package br.com.fiap.service.cep   |   class CepService
+// java\br\com\fiap\service\cep\CepService.java   |   package br.com.fiap.service.cep   |   class CepService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.service.cep;
@@ -5571,14 +5700,16 @@ public class CepService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\clientes\ClienteService.java   |   package br.com.fiap.service.clientes   |   class ClienteService
+// java\br\com\fiap\service\clientes\ClienteService.java   |   package br.com.fiap.service.clientes   |   class ClienteService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
+// Pacote: br.com.fiap.service.clientes
 package br.com.fiap.service.clientes;
 
-import br.com.fiap.dto.cliente.ClienteInfoDTO;    // <<< Importar
+import br.com.fiap.dto.cliente.ClienteInfoDTO;
 import br.com.fiap.dto.cliente.ClienteRequestDto;
 import br.com.fiap.dto.cliente.ClienteResponseDto;
+import br.com.fiap.dto.veiculo.VeiculoResponseDto; // <<< IMPORTAR DTO DO VEÍCULO
 import br.com.fiap.model.relacionamentos.ClienteId;
 import java.util.List;
 
@@ -5588,41 +5719,50 @@ public interface ClienteService {
     ClienteResponseDto create(ClienteRequestDto clienteDto);
     ClienteResponseDto update(ClienteId id, ClienteRequestDto clienteDto);
     void deleteById(ClienteId id);
-
-    // Assinatura do novo método de busca
     List<ClienteInfoDTO> buscarClientes(String nome, String documento, Long idCliente);
+
+    // <<< NOVA ASSINATURA ADICIONADA >>>
+    List<VeiculoResponseDto> findVeiculosByClienteId(ClienteId clienteId);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\clientes\ClienteServiceImpl.java   |   package br.com.fiap.service.clientes   |   class ClienteServiceImpl
+// java\br\com\fiap\service\clientes\ClienteServiceImpl.java   |   package br.com.fiap.service.clientes   |   class ClienteServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// src/main/java/br/com/fiap/service/clientes/ClienteServiceImpl.java
+// Pacote: br.com.fiap.service.clientes
 package br.com.fiap.service.clientes;
 
-import br.com.fiap.dto.cliente.ClienteInfoDTO; // <<< Importar
+import br.com.fiap.dto.cliente.ClienteInfoDTO;
 import br.com.fiap.dto.cliente.ClienteRequestDto;
 import br.com.fiap.dto.cliente.ClienteResponseDto;
+import br.com.fiap.dto.veiculo.VeiculoResponseDto;
 import br.com.fiap.exception.ClientesNotFoundException;
 import br.com.fiap.mapper.ClienteMapper;
 import br.com.fiap.mapper.ContatoMapper;
 import br.com.fiap.mapper.EnderecoMapper;
+import br.com.fiap.mapper.VeiculoMapper;
 import br.com.fiap.model.Clientes;
 import br.com.fiap.model.Contato;
 import br.com.fiap.model.Endereco;
+// Remova o import de Veiculo se não for usado diretamente aqui
+// import br.com.fiap.model.Veiculo;
 import br.com.fiap.model.relacionamentos.ClienteId;
-import br.com.fiap.repository.AutenticarRepository; // Se usar
+import br.com.fiap.model.relacionamentos.ClienteVeiculo;
+import br.com.fiap.repository.AutenticarRepository; // Mantenha se usar Autenticar
 import br.com.fiap.repository.ClientesRepository;
 import br.com.fiap.repository.ContatoRepository;
 import br.com.fiap.repository.EnderecoRepository;
-import br.com.fiap.repository.specification.ClienteSpecification; // <<< Importar Specification
+import br.com.fiap.repository.relacionamentos.ClienteVeiculoRepository;
+import br.com.fiap.repository.specification.ClienteSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification; // <<< Importar Specification
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -5630,16 +5770,25 @@ import java.util.stream.Collectors;
 public class ClienteServiceImpl implements ClienteService {
 
     private static final Logger log = LoggerFactory.getLogger(ClienteServiceImpl.class);
+
+    // Campos marcados como 'final' - boa prática com injeção via construtor
     private final ClientesRepository clienteRepository;
     private final EnderecoRepository enderecoRepository;
     private final ContatoRepository contatoRepository;
-    private final AutenticarRepository autenticarRepository; // Mantenha se usar
+    private final AutenticarRepository autenticarRepository; // Mantenha se usar Autenticar
     private final ClienteMapper clienteMapper;
     private final EnderecoMapper enderecoMapper;
     private final ContatoMapper contatoMapper;
+    private final ClienteVeiculoRepository clienteVeiculoRepository;
+    private final VeiculoMapper veiculoMapper;
 
     @Autowired
-    public ClienteServiceImpl(ClientesRepository clientesRepository, EnderecoRepository enderecoRepository, ContatoRepository contatoRepository, AutenticarRepository autenticarRepository, ClienteMapper clienteMapper, EnderecoMapper enderecoMapper, ContatoMapper contatoMapper) {
+    public ClienteServiceImpl(ClientesRepository clientesRepository, EnderecoRepository enderecoRepository,
+                              ContatoRepository contatoRepository, AutenticarRepository autenticarRepository,
+                              ClienteMapper clienteMapper, EnderecoMapper enderecoMapper, ContatoMapper contatoMapper,
+                              ClienteVeiculoRepository clienteVeiculoRepository,
+                              VeiculoMapper veiculoMapper) {
+        // Certifique-se que TODAS as atribuições estão aqui e corretas
         this.clienteRepository = clientesRepository;
         this.enderecoRepository = enderecoRepository;
         this.contatoRepository = contatoRepository;
@@ -5647,58 +5796,16 @@ public class ClienteServiceImpl implements ClienteService {
         this.clienteMapper = clienteMapper;
         this.enderecoMapper = enderecoMapper;
         this.contatoMapper = contatoMapper;
+        this.clienteVeiculoRepository = clienteVeiculoRepository;
+        this.veiculoMapper = veiculoMapper;
     }
-
-    // --- IMPLEMENTAÇÃO DA BUSCA DE CLIENTES ---
-    @Override
-    @Transactional(readOnly = true)
-    public List<ClienteInfoDTO> buscarClientes(String nome, String documento, Long idCliente) {
-        log.info("Buscando clientes com critérios: nome='{}', documento='{}', idCliente={}", nome, documento, idCliente);
-
-        Specification<Clientes> spec = Specification.where(null); // Inicia sem filtro
-
-        // Adiciona filtros conforme os parâmetros recebidos
-        if (nome != null && !nome.isBlank()) {
-            spec = spec.and(ClienteSpecification.nomeContains(nome));
-        }
-        if (documento != null && !documento.isBlank()) {
-            spec = spec.and(ClienteSpecification.numeroDocumentoEquals(documento));
-        }
-        if (idCliente != null && idCliente > 0) {
-            spec = spec.and(ClienteSpecification.idCliEquals(idCliente));
-        }
-
-        // Evita buscar tudo se nenhum critério for fornecido (opcional)
-        if ((nome == null || nome.isBlank()) && (documento == null || documento.isBlank()) && (idCliente == null || idCliente <= 0)) {
-            log.warn("Busca de clientes chamada sem critérios.");
-            return List.of(); // Retorna lista vazia ou lança exceção
-        }
-
-
-        List<Clientes> clientesEncontrados = clienteRepository.findAll(spec);
-        log.info("Encontrados {} clientes para os critérios.", clientesEncontrados.size());
-
-        // Mapeia para DTO incluindo os IDs necessários
-        return clientesEncontrados.stream()
-                .map(cliente -> new ClienteInfoDTO(
-                        cliente.getId().getIdCli(),
-                        cliente.getId().getEnderecoId(), // <<< Pega o ID do endereço do relacionamento
-                        cliente.getNome(),
-                        cliente.getSobrenome(),
-                        cliente.getNumeroDocumento()
-                ))
-                .collect(Collectors.toList());
-    }
-    // ----------------------------------------
-
-    // --- Mantenha seus métodos findAll, findById, create, update, deleteById como estavam ---
-    // ... (Seu código existente para os outros métodos do ClienteService) ...
 
     @Override
     @Transactional(readOnly = true)
     public List<ClienteResponseDto> findAll() {
         log.info("Buscando todos os clientes");
-        return clienteRepository.findAll().stream()
+        List<Clientes> clientes = clienteRepository.findAll();
+        return clientes.stream()
                 .map(clienteMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
@@ -5707,69 +5814,78 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional(readOnly = true)
     public ClienteResponseDto findById(ClienteId id) {
         log.info("Buscando cliente por ID: {}", id);
-        Clientes cliente = findClienteById(id);
+        // Chama o método auxiliar privado
+        Clientes cliente = findClienteByIdOrElseThrow(id);
         return clienteMapper.toResponseDto(cliente);
     }
 
     @Override
     @Transactional
     public ClienteResponseDto create(ClienteRequestDto clienteDto) {
-        //...(seu código create como antes)...
         log.info("Criando novo cliente: {}", clienteDto.getNome());
         try {
+            // Salvar Endereço
             Endereco enderecoEntity = enderecoMapper.toEntity(clienteDto.getEndereco());
             Endereco savedEndereco = enderecoRepository.save(enderecoEntity);
             log.info("Endereço criado/salvo com ID: {}", savedEndereco.getCodigo());
 
+            // Salvar Contato
             Contato contatoEntity = contatoMapper.toEntity(clienteDto.getContato());
             Contato savedContato = contatoRepository.save(contatoEntity);
             log.info("Contato criado/salvo com ID: {}", savedContato.getCodigo());
 
+            // Mapear Cliente e Associar
             Clientes clienteEntity = clienteMapper.toEntity(clienteDto);
             clienteEntity.setEndereco(savedEndereco);
             clienteEntity.setContato(savedContato);
 
-            // Importante: Inicializar o ClienteId se não for feito automaticamente
+            // Inicializar ID se necessário (geralmente @MapsId cuida disso)
             if (clienteEntity.getId() == null) {
                 clienteEntity.setId(new ClienteId());
             }
-            // O @MapsId no relacionamento com Endereco deve cuidar de setar enderecoId
-            // O idCli será gerado pelo sequence/trigger do banco
+            // O ID do cliente (ID_CLI) será gerado pela trigger/sequence do banco
 
             Clientes savedCliente = clienteRepository.save(clienteEntity);
             log.info("Cliente criado com ID_CLI: {}, ID_ENDERECO: {}", savedCliente.getId().getIdCli(), savedCliente.getId().getEnderecoId());
 
             return clienteMapper.toResponseDto(savedCliente);
-
         } catch (Exception e) {
             log.error("Erro ao criar cliente: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha ao criar cliente", e);
+            throw new RuntimeException("Falha ao criar cliente: " + e.getMessage(), e);
         }
     }
+
 
     @Override
     @Transactional
     public ClienteResponseDto update(ClienteId id, ClienteRequestDto clienteDto) {
-        //...(seu código update como antes)...
         log.info("Atualizando cliente com ID: {}", id);
-        Clientes existingCliente = findClienteById(id);
-        Endereco existingEndereco = existingCliente.getEndereco();
-        if (existingEndereco != null && clienteDto.getEndereco() != null) {
-            enderecoMapper.updateEntityFromDto(clienteDto.getEndereco(), existingEndereco);
-            enderecoRepository.save(existingEndereco);
-        } else {
-            log.warn("Endereço existente ou DTO de endereço nulo para cliente ID {}. Não foi possível atualizar o endereço.", id);
+        // Chama o método auxiliar privado
+        Clientes existingCliente = findClienteByIdOrElseThrow(id);
+
+        // Atualiza Endereço
+        if (clienteDto.getEndereco() != null && existingCliente.getEndereco() != null) {
+            log.info("Atualizando endereço ID {} para cliente ID {}", existingCliente.getEndereco().getCodigo(), id);
+            enderecoMapper.updateEntityFromDto(clienteDto.getEndereco(), existingCliente.getEndereco());
+        } else if (clienteDto.getEndereco() != null && existingCliente.getEndereco() == null) {
+            log.warn("Tentando atualizar endereço para cliente ID {}, mas o cliente não possui endereço associado.", id);
+            // Você pode optar por criar um novo endereço aqui ou lançar um erro/aviso.
+            // Por segurança, vamos ignorar por enquanto.
         }
 
-        Contato existingContato = existingCliente.getContato();
-        if (existingContato != null && clienteDto.getContato() != null) {
-            contatoMapper.updateEntityFromDto(clienteDto.getContato(), existingContato);
-            contatoRepository.save(existingContato);
-        } else {
-            log.warn("Contato existente ou DTO de contato nulo para cliente ID {}. Não foi possível atualizar o contato.", id);
+        // Atualiza Contato
+        if (clienteDto.getContato() != null && existingCliente.getContato() != null) {
+            log.info("Atualizando contato ID {} para cliente ID {}", existingCliente.getContato().getCodigo(), id);
+            contatoMapper.updateEntityFromDto(clienteDto.getContato(), existingCliente.getContato());
+        } else if (clienteDto.getContato() != null && existingCliente.getContato() == null) {
+            log.warn("Tentando atualizar contato para cliente ID {}, mas o cliente não possui contato associado.", id);
+            // Mesma lógica do endereço. Ignorando por segurança.
         }
 
+        // Atualiza dados do cliente
         clienteMapper.updateEntityFromDto(clienteDto, existingCliente);
+
+        // Salva o cliente (JPA/Hibernate gerencia as atualizações em cascata se configurado)
         Clientes updatedCliente = clienteRepository.save(existingCliente);
         log.info("Cliente atualizado com ID: {}", updatedCliente.getId());
         return clienteMapper.toResponseDto(updatedCliente);
@@ -5778,30 +5894,99 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public void deleteById(ClienteId id) {
-        //...(seu código deleteById como antes)...
-        log.info("Deletando cliente com ID: {}", id);
-        Clientes cliente = findClienteById(id);
+        log.warn("Tentando deletar cliente com ID: {}", id);
+        // Chama o método auxiliar privado
+        Clientes cliente = findClienteByIdOrElseThrow(id);
+
+        // Lógica de verificação de dependências (IMPORTANTE)
+        // Exemplo:
+        if (!clienteVeiculoRepository.findByCliente_Id(id).isEmpty()) {
+            throw new DataIntegrityViolationException("Não é possível excluir cliente pois ele possui veículos associados.");
+        }
+        // Adicionar verificações para ClienteOrcamento, ClientePagamento, etc.
+
         try {
             clienteRepository.delete(cliente);
-            log.info("Cliente deletado com ID: {}", id);
-            // Considere deletar Endereco/Contato órfãos aqui se necessário e seguro
+            log.info("Cliente ID {} deletado com sucesso.", id);
+            // Não deletar endereço/contato órfãos automaticamente por segurança
+        } catch (DataIntegrityViolationException e) {
+            log.error("Erro de integridade ao deletar cliente ID {}: {}", id, e.getMessage());
+            throw new RuntimeException("Não é possível excluir o cliente pois ele possui registros associados (veículos, orçamentos, etc.). Verifique e remova as associações primeiro.", e);
         } catch (Exception e) {
-            log.error("Erro ao deletar cliente com ID {}: {}", id, e.getMessage(), e);
-            throw new RuntimeException("Falha ao deletar cliente com ID: " + id, e);
+            log.error("Erro inesperado ao deletar cliente ID {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Falha ao deletar cliente.", e);
         }
     }
 
-    private Clientes findClienteById(ClienteId id) {
+    @Override
+    @Transactional(readOnly = true)
+    public List<ClienteInfoDTO> buscarClientes(String nome, String documento, Long idCliente) {
+        log.info("Buscando clientes com critérios: nome='{}', documento='{}', idCliente={}", nome, documento, idCliente);
+        Specification<Clientes> spec = Specification.where(null);
+
+        if (nome != null && !nome.isBlank()) spec = spec.and(ClienteSpecification.nomeContains(nome));
+        if (documento != null && !documento.isBlank()) spec = spec.and(ClienteSpecification.numeroDocumentoEquals(documento));
+        if (idCliente != null && idCliente > 0) spec = spec.and(ClienteSpecification.idCliEquals(idCliente));
+
+        if ((nome == null || nome.isBlank()) && (documento == null || documento.isBlank()) && (idCliente == null || idCliente <= 0)) {
+            log.warn("Busca de clientes chamada sem critérios válidos.");
+            return List.of();
+        }
+
+        List<Clientes> clientesEncontrados = clienteRepository.findAll(spec);
+        log.info("Encontrados {} clientes para os critérios.", clientesEncontrados.size());
+
+        return clientesEncontrados.stream()
+                .map(cliente -> new ClienteInfoDTO(
+                        cliente.getId().getIdCli(),
+                        cliente.getEndereco().getCodigo(), // Pega o ID do objeto Endereco associado
+                        cliente.getNome(),
+                        cliente.getSobrenome(),
+                        cliente.getNumeroDocumento()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VeiculoResponseDto> findVeiculosByClienteId(ClienteId clienteId) {
+        log.info("Buscando veículos para o cliente ID: {}", clienteId);
+        // Chama o método auxiliar privado
+        if (!clienteRepository.existsById(clienteId)) {
+            throw new ClientesNotFoundException("Cliente não encontrado com ID: " + clienteId + " ao buscar veículos.");
+        }
+
+        List<ClienteVeiculo> associacoes = clienteVeiculoRepository.findByCliente_Id(clienteId);
+        if (associacoes.isEmpty()) {
+            log.info("Nenhum veículo encontrado para o cliente ID: {}", clienteId);
+            return Collections.emptyList();
+        }
+
+        List<VeiculoResponseDto> veiculosDto = associacoes.stream()
+                .map(ClienteVeiculo::getVeiculo)
+                .map(veiculoMapper::toResponseDto)
+                .collect(Collectors.toList());
+
+        log.info("Encontrados {} veículos para o cliente ID: {}", veiculosDto.size(), clienteId);
+        return veiculosDto;
+    }
+
+    // --- MÉTODO AUXILIAR PRIVADO ---
+    // Garante que está DENTRO da classe ClienteServiceImpl
+    private Clientes findClienteByIdOrElseThrow(ClienteId id) {
         if (id == null || id.getIdCli() == null || id.getEnderecoId() == null) {
             throw new IllegalArgumentException("ID do Cliente (composto) não pode ser nulo ou incompleto.");
         }
+        // Busca pelo ID composto ou lança ClientesNotFoundException
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new ClientesNotFoundException("Cliente não encontrado com ID: " + id));
     }
-}
+    // --- FIM DO MÉTODO AUXILIAR ---
+
+} // <<< FIM DA CLASSE ClienteServiceImpl
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\ia\GoogleGeminiService.java   |   package br.com.fiap.service.ia   |   class GoogleGeminiService
+// java\br\com\fiap\service\ia\GoogleGeminiService.java   |   package br.com.fiap.service.ia   |   class GoogleGeminiService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // ===========================================================================
@@ -5823,7 +6008,7 @@ public interface GoogleGeminiService { // <<< Interface Renomeada
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\ia\GoogleGeminiServiceImpl.java   |   package br.com.fiap.service.ia   |   class GoogleGeminiServiceImpl
+// java\br\com\fiap\service\ia\GoogleGeminiServiceImpl.java   |   package br.com.fiap.service.ia   |   class GoogleGeminiServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.service.ia;
@@ -5883,57 +6068,65 @@ public class GoogleGeminiServiceImpl implements GoogleGeminiService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\oficina\OficinaService.java   |   package br.com.fiap.service.oficina   |   class OficinaService
+// java\br\com\fiap\service\oficina\OficinaService.java   |   package br.com.fiap.service.oficina   |   class OficinaService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// br/com/fiap/service/oficina/OficinaService.java
+// Pacote: br.com.fiap.service.oficina
 package br.com.fiap.service.oficina;
 
 import br.com.fiap.dto.oficina.OficinaRequestDto;
 import br.com.fiap.dto.oficina.OficinaResponseDto;
-import br.com.fiap.dto.oficina.ItemPecaServicoDto; // Importar
-import br.com.fiap.model.Oficina; // Importar entidade
+import br.com.fiap.dto.oficina.ItemPecaServicoDto;
+import br.com.fiap.dto.oficina.ServicoHistoricoResponseDto; // <<< IMPORTAR NOVO DTO
+import br.com.fiap.model.Oficina;
 import java.util.List;
 
 public interface OficinaService {
     List<OficinaResponseDto> findAll();
     OficinaResponseDto findById(Long id);
-    OficinaResponseDto create(OficinaRequestDto oficinaDto); // Para CRUD simples de Oficina
-    OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto); // Para CRUD simples de Oficina
+    OficinaResponseDto create(OficinaRequestDto oficinaDto);
+    OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto);
     void deleteById(Long id);
-
-    // Novo método para criar/atualizar Oficina com suas peças
-    // Recebe os dados da oficina e a lista de peças do DTO complexo
     Oficina salvarOficinaComPecas(Oficina oficinaParcialmenteMapeada, List<ItemPecaServicoDto> pecasDto);
     Oficina atualizarOficinaComPecas(Long oficinaId, Oficina oficinaParcialmenteMapeada, List<ItemPecaServicoDto> pecasDto);
+
+    // <<< NOVA ASSINATURA ADICIONADA >>>
+    List<ServicoHistoricoResponseDto> findServicosByVeiculoId(Long veiculoId);
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\oficina\OficinaServiceImpl.java   |   package br.com.fiap.service.oficina   |   class OficinaServiceImpl
+// java\br\com\fiap\service\oficina\OficinaServiceImpl.java   |   package br.com.fiap.service.oficina   |   class OficinaServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// br/com/fiap/service/oficina/OficinaServiceImpl.java
+// Pacote: br.com.fiap.service.oficina
 package br.com.fiap.service.oficina;
 
 import br.com.fiap.dto.oficina.OficinaRequestDto;
 import br.com.fiap.dto.oficina.OficinaResponseDto;
-import br.com.fiap.dto.oficina.ItemPecaServicoDto; // Importar
+import br.com.fiap.dto.oficina.ItemPecaServicoDto;
+import br.com.fiap.dto.oficina.ServicoHistoricoResponseDto;
 import br.com.fiap.exception.OficinaNotFoundException;
-import br.com.fiap.exception.PecasNotFoundException; // Importar
+import br.com.fiap.exception.PecasNotFoundException;
+import br.com.fiap.exception.VeiculoNotFoundException;
 import br.com.fiap.mapper.OficinaMapper;
 import br.com.fiap.model.Oficina;
-import br.com.fiap.model.Pecas; // Importar
-import br.com.fiap.model.relacionamentos.OficinaPeca; // Importar
+import br.com.fiap.model.Pecas;
+import br.com.fiap.model.relacionamentos.OficinaPeca;
+import br.com.fiap.model.relacionamentos.OficinaVeiculo;
 import br.com.fiap.repository.OficinaRepository;
-import br.com.fiap.repository.PecasRepository; // Importar
-import br.com.fiap.repository.relacionamentos.OficinaPecaRepository; // Importar
+import br.com.fiap.repository.PecasRepository;
+import br.com.fiap.repository.VeiculoRepository;
+import br.com.fiap.repository.relacionamentos.OficinaPecaRepository;
+import br.com.fiap.repository.relacionamentos.OficinaVeiculoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -5941,30 +6134,35 @@ import java.util.stream.Collectors;
 public class OficinaServiceImpl implements OficinaService {
 
     private static final Logger log = LoggerFactory.getLogger(OficinaServiceImpl.class);
+
+    // Marcar campos como final é boa prática com injeção via construtor
     private final OficinaRepository oficinaRepository;
     private final OficinaMapper oficinaMapper;
-    private final PecasRepository pecasRepository; // Necessário para buscar Peças
-    private final OficinaPecaRepository oficinaPecaRepository; // Necessário para salvar a junção
+    private final PecasRepository pecasRepository;
+    private final OficinaPecaRepository oficinaPecaRepository;
+    private final VeiculoRepository veiculoRepository;
+    private final OficinaVeiculoRepository oficinaVeiculoRepository;
 
     @Autowired
     public OficinaServiceImpl(OficinaRepository oficinaRepository,
                               OficinaMapper oficinaMapper,
                               PecasRepository pecasRepository,
-                              OficinaPecaRepository oficinaPecaRepository) {
+                              OficinaPecaRepository oficinaPecaRepository,
+                              VeiculoRepository veiculoRepository,
+                              OficinaVeiculoRepository oficinaVeiculoRepository) {
         this.oficinaRepository = oficinaRepository;
         this.oficinaMapper = oficinaMapper;
         this.pecasRepository = pecasRepository;
         this.oficinaPecaRepository = oficinaPecaRepository;
+        this.veiculoRepository = veiculoRepository;
+        this.oficinaVeiculoRepository = oficinaVeiculoRepository;
     }
 
-    // Métodos CRUD simples existentes (create, update, findAll, findById, deleteById)...
-    // O método create existente recebe OficinaRequestDto, que não tem a lista de peças.
-    // O método update existente recebe OficinaRequestDto.
-
+    // --- Implementação dos Métodos CRUD Simples ---
     @Override
     @Transactional(readOnly = true)
     public List<OficinaResponseDto> findAll() {
-        log.info("Buscando todas as oficinas");
+        log.info("Buscando todos os registros de oficina");
         return oficinaRepository.findAll().stream()
                 .map(oficinaMapper::toResponseDto)
                 .collect(Collectors.toList());
@@ -5973,7 +6171,7 @@ public class OficinaServiceImpl implements OficinaService {
     @Override
     @Transactional(readOnly = true)
     public OficinaResponseDto findById(Long id) {
-        log.info("Buscando oficina por ID: {}", id);
+        log.info("Buscando registro de oficina por ID: {}", id);
         Oficina oficina = findOficinaByIdOrElseThrow(id);
         return oficinaMapper.toResponseDto(oficina);
     }
@@ -5981,142 +6179,226 @@ public class OficinaServiceImpl implements OficinaService {
     @Override
     @Transactional
     public OficinaResponseDto create(OficinaRequestDto oficinaDto) {
-        log.info("Criando nova oficina (diagnóstico vindo do DTO simples)");
+        log.info("Criando novo registro de oficina (via DTO simples)");
         try {
             Oficina oficina = oficinaMapper.toEntity(oficinaDto);
+            // Aqui não há associação de peças, pois vem do DTO simples
             Oficina savedOficina = oficinaRepository.save(oficina);
-            log.info("Oficina criada com ID: {}", savedOficina.getId());
+            log.info("Registro de oficina criado com ID: {}", savedOficina.getId());
             return oficinaMapper.toResponseDto(savedOficina);
         } catch (Exception e) {
-            log.error("Erro ao criar oficina: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha ao criar oficina", e);
+            log.error("Erro ao criar registro de oficina: {}", e.getMessage(), e);
+            throw new RuntimeException("Falha ao criar registro de oficina", e);
         }
     }
+
     @Override
     @Transactional
     public OficinaResponseDto update(Long id, OficinaRequestDto oficinaDto) {
-        log.info("Atualizando oficina com ID: {}", id);
+        log.info("Atualizando registro de oficina ID: {} (via DTO simples)", id);
         Oficina existingOficina = findOficinaByIdOrElseThrow(id);
+        // Este mapper só atualiza os campos presentes no OficinaRequestDto
         oficinaMapper.updateEntityFromDto(oficinaDto, existingOficina);
+        // Associações existentes (peças, veículos, etc.) não são alteradas aqui
         Oficina updatedOficina = oficinaRepository.save(existingOficina);
-        log.info("Oficina atualizada com ID: {}", updatedOficina.getId());
+        log.info("Registro de oficina atualizado com ID: {}", updatedOficina.getId());
         return oficinaMapper.toResponseDto(updatedOficina);
     }
-
 
     @Override
     @Transactional
     public void deleteById(Long id) {
-        log.info("Deletando oficina com ID: {}", id);
+        log.warn("Tentando deletar registro de oficina ID: {}", id);
         Oficina oficina = findOficinaByIdOrElseThrow(id);
         try {
-            // Antes de deletar a oficina, é preciso remover as associações em OFP
-            // Se houver cascade configurado de Oficina para OficinaPeca, isso pode ser automático
-            // Mas é mais seguro limpar manualmente ou garantir que orphanRemoval=true esteja em Oficina.oficinaPecas
-            oficinaPecaRepository.deleteAll(oficina.getOficinaPecas()); // Exemplo, precisa de getOficinaPecas()
-            oficina.getOficinaPecas().clear(); // Limpa a coleção na entidade gerenciada
+            // IMPORTANTE: Remover associações ANTES de deletar a oficina
+            // para evitar erros de chave estrangeira.
 
+            // Exemplo: Remover associações Oficina-Peça (OFP)
+            if (oficina.getOficinaPecas() != null && !oficina.getOficinaPecas().isEmpty()) {
+                log.info("Removendo {} associações Oficina-Peça para Oficina ID: {}", oficina.getOficinaPecas().size(), id);
+                oficinaPecaRepository.deleteAllInBatch(oficina.getOficinaPecas()); // Mais eficiente
+                oficina.getOficinaPecas().clear(); // Limpa a coleção na entidade gerenciada
+            }
+            // Exemplo: Remover associações Oficina-Veiculo (OV)
+            if (oficina.getOficinaVeiculos() != null && !oficina.getOficinaVeiculos().isEmpty()) {
+                log.info("Removendo {} associações Oficina-Veículo para Oficina ID: {}", oficina.getOficinaVeiculos().size(), id);
+                oficinaVeiculoRepository.deleteAllInBatch(oficina.getOficinaVeiculos());
+                oficina.getOficinaVeiculos().clear();
+            }
+            // Adicionar remoção para OficinaOrcamento (OFO) e AgendaOficina (AO) se necessário
+
+            // Agora deleta a oficina
             oficinaRepository.delete(oficina);
-            log.info("Oficina deletada com ID: {}", id);
+            log.info("Registro de oficina deletado com ID: {}", id);
+        } catch (DataIntegrityViolationException e) {
+            log.error("Erro de integridade ao deletar oficina ID {}: {}", id, e.getMessage());
+            throw new RuntimeException("Não é possível excluir o registro de oficina pois ele possui outras associações (orçamentos, agendamentos?). Verifique e remova as dependências.", e);
         } catch (Exception e) {
-            log.error("Erro ao deletar oficina com ID {}: {}", id, e.getMessage(), e);
-            throw new RuntimeException("Falha ao deletar oficina com ID: " + id, e);
+            log.error("Erro inesperado ao deletar oficina ID {}: {}", id, e.getMessage(), e);
+            throw new RuntimeException("Falha ao deletar registro de oficina.", e);
         }
     }
 
+    // --- Implementação dos Métodos para Salvar/Atualizar com Peças ---
 
-    // NOVO MÉTODO IMPLEMENTADO
     @Override
     @Transactional
     public Oficina salvarOficinaComPecas(Oficina oficinaEntidade, List<ItemPecaServicoDto> pecasDto) {
-        log.info("Salvando Oficina e associando peças.");
-        // A entidade Oficina já deve ter os campos básicos preenchidos pelo mapper antes de chamar este método
-        // Salva a Oficina primeiro para ter um ID, se for nova
+        log.info("Salvando novo registro de Oficina e associando peças.");
+        // Garante que a lista de peças na entidade não é nula
+        if (oficinaEntidade.getOficinaPecas() == null) {
+            oficinaEntidade.setOficinaPecas(new ArrayList<>());
+        }
+        // Salva a Oficina primeiro para obter o ID, se for nova
         Oficina oficinaSalva = oficinaRepository.save(oficinaEntidade);
+        log.debug("Oficina salva com ID: {}", oficinaSalva.getId());
 
-        // Processa as peças
+        // Limpa associações antigas (se houver alguma por engano) antes de adicionar novas
+        // Isso é mais relevante no 'atualizar', mas por segurança pode ficar aqui também.
+        if (!oficinaSalva.getOficinaPecas().isEmpty()) {
+            log.warn("Limpando {} associações de peças pré-existentes inesperadas para a nova Oficina ID {}", oficinaSalva.getOficinaPecas().size(), oficinaSalva.getId());
+            oficinaPecaRepository.deleteAllInBatch(oficinaSalva.getOficinaPecas());
+            oficinaSalva.getOficinaPecas().clear();
+        }
+
+        // Processa e salva as novas peças
         if (pecasDto != null && !pecasDto.isEmpty()) {
-            // Limpa associações antigas se for uma atualização e quiser substituir todas as peças
-            // (Para uma lógica de update mais granular, seria necessário comparar com as existentes)
-            // Por simplicidade, aqui vamos assumir que para update, as peças antigas são removidas e novas são adicionadas.
-            // Se oficinaSalva.getOficinaPecas() não for nulo, limpe-o.
-            if (oficinaSalva.getOficinaPecas() != null) {
-                oficinaPecaRepository.deleteAll(oficinaSalva.getOficinaPecas()); // Remove do banco
-                oficinaSalva.getOficinaPecas().clear(); // Limpa a coleção gerenciada
-            } else {
-                oficinaSalva.setOficinaPecas(new ArrayList<>());
-            }
-
+            log.debug("Processando {} peças para Oficina ID {}", pecasDto.size(), oficinaSalva.getId());
             for (ItemPecaServicoDto itemPecaDto : pecasDto) {
                 Pecas peca = pecasRepository.findById(itemPecaDto.getPecaId())
-                        .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + itemPecaDto.getPecaId()));
+                        .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + itemPecaDto.getPecaId() + " ao salvar Oficina ID " + oficinaSalva.getId()));
 
                 OficinaPeca oficinaPeca = new OficinaPeca();
                 oficinaPeca.setOficina(oficinaSalva);
                 oficinaPeca.setPeca(peca);
                 oficinaPeca.setQuantidade(itemPecaDto.getQuantidade());
 
+                // Salva a entidade de junção e adiciona à coleção gerenciada
                 oficinaSalva.getOficinaPecas().add(oficinaPecaRepository.save(oficinaPeca));
+                log.trace("Associada Peça ID {} (Qtd: {}) à Oficina ID {}", itemPecaDto.getPecaId(), itemPecaDto.getQuantidade(), oficinaSalva.getId());
             }
         }
-        // O save final da oficinaSalva não é estritamente necessário aqui se o cascade estiver configurado
-        // e a coleção for gerenciada, mas pode ser feito para garantir.
-        return oficinaRepository.save(oficinaSalva);
+        // O save final não é estritamente necessário por causa do contexto transacional,
+        // mas pode ser útil para garantir que o objeto retornado esteja totalmente atualizado.
+        // return oficinaRepository.save(oficinaSalva); // Ou só oficinaSalva
+        return oficinaSalva;
     }
 
-    // NOVO MÉTODO IMPLEMENTADO (para o fluxo de atualização do orçamento)
+    // --- IMPLEMENTAÇÃO DO MÉTODO QUE FALTAVA ---
     @Override
     @Transactional
     public Oficina atualizarOficinaComPecas(Long oficinaId, Oficina oficinaParcialmenteMapeada, List<ItemPecaServicoDto> pecasDto) {
-        log.info("Atualizando Oficina ID {} e associando peças.", oficinaId);
+        log.info("Atualizando Oficina ID {} e associando/atualizando peças.", oficinaId);
         Oficina oficinaExistente = findOficinaByIdOrElseThrow(oficinaId);
 
-        // Atualiza campos da Oficina (ex: descricaoProblema, diagnostico, etc.)
-        // O mapper já deve ter feito isso na entidade 'oficinaParcialmenteMapeada',
-        // então transferimos os valores para 'oficinaExistente'
+        // Atualiza campos simples da Oficina vindos do DTO mapeado
         oficinaExistente.setDataOficina(oficinaParcialmenteMapeada.getDataOficina());
         oficinaExistente.setDescricaoProblema(oficinaParcialmenteMapeada.getDescricaoProblema());
         oficinaExistente.setDiagnostico(oficinaParcialmenteMapeada.getDiagnostico());
         oficinaExistente.setPartesAfetadas(oficinaParcialmenteMapeada.getPartesAfetadas());
         oficinaExistente.setHorasTrabalhadas(oficinaParcialmenteMapeada.getHorasTrabalhadas());
-        // ... outros campos da Oficina que podem ser atualizados
+        // Adicione outros campos se o 'oficinaParcialmenteMapeada' os contiver
 
-        // Gerencia as peças: remove antigas, adiciona novas/atualizadas.
-        // Uma abordagem simples é remover todas as OficinaPeca antigas e adicionar as novas.
-        // Se a lista oficinaExistente.getOficinaPecas() não for nula, limpe-a
-        if (oficinaExistente.getOficinaPecas() != null) {
-            oficinaPecaRepository.deleteAllInBatch(oficinaExistente.getOficinaPecas()); // Mais eficiente para bulk delete
+        // Gerencia as peças: remove antigas, adiciona novas.
+        // Abordagem: Limpa todas as existentes e recria com base no DTO atual.
+        log.debug("Removendo associações de peças antigas para Oficina ID {}", oficinaId);
+        if (oficinaExistente.getOficinaPecas() != null && !oficinaExistente.getOficinaPecas().isEmpty()) {
+            oficinaPecaRepository.deleteAllInBatch(oficinaExistente.getOficinaPecas());
             oficinaExistente.getOficinaPecas().clear();
         } else {
+            // Garante que a lista existe para adicionar novos itens
             oficinaExistente.setOficinaPecas(new ArrayList<>());
         }
 
+        // Adiciona as peças do DTO atualizado
         if (pecasDto != null && !pecasDto.isEmpty()) {
+            log.debug("Adicionando/Atualizando {} peças para Oficina ID {}", pecasDto.size(), oficinaId);
             for (ItemPecaServicoDto itemPecaDto : pecasDto) {
                 Pecas peca = pecasRepository.findById(itemPecaDto.getPecaId())
-                        .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + itemPecaDto.getPecaId()));
+                        .orElseThrow(() -> new PecasNotFoundException("Peça não encontrada com ID: " + itemPecaDto.getPecaId() + " ao atualizar Oficina ID " + oficinaId));
 
                 OficinaPeca novaOficinaPeca = new OficinaPeca();
                 novaOficinaPeca.setOficina(oficinaExistente);
                 novaOficinaPeca.setPeca(peca);
                 novaOficinaPeca.setQuantidade(itemPecaDto.getQuantidade());
-                oficinaExistente.getOficinaPecas().add(novaOficinaPeca); // Adiciona à coleção gerenciada
+
+                // Adiciona à coleção gerenciada (o save ocorrerá em cascata ou ao final)
+                oficinaExistente.getOficinaPecas().add(novaOficinaPeca);
+                log.trace("Associada Peça ID {} (Qtd: {}) à Oficina ID {}", itemPecaDto.getPecaId(), itemPecaDto.getQuantidade(), oficinaId);
             }
         }
-        // O save da oficinaExistente vai persistir as novas OficinaPeca devido ao cascade,
-        // e as antigas já foram removidas.
+
+        // Salva a entidade Oficina. O JPA/Hibernate gerencia o save/update das OficinaPeca
+        // adicionadas à coleção, devido ao CascadeType (assumindo CascadeType.ALL ou MERGE/PERSIST no relacionamento).
         return oficinaRepository.save(oficinaExistente);
     }
+    // --- FIM DO MÉTODO QUE FALTAVA ---
 
 
+    // --- Implementação do Histórico de Serviços ---
+    @Override
+    @Transactional(readOnly = true)
+    public List<ServicoHistoricoResponseDto> findServicosByVeiculoId(Long veiculoId) {
+        log.info("Buscando histórico de serviços para o veículo ID: {}", veiculoId);
+        if (!veiculoRepository.existsById(veiculoId)) {
+            throw new VeiculoNotFoundException("Veículo não encontrado com ID: " + veiculoId + " ao buscar histórico.");
+        }
+
+        List<OficinaVeiculo> associacoes = oficinaVeiculoRepository.findByVeiculoId(veiculoId);
+        if (associacoes.isEmpty()) {
+            log.info("Nenhum serviço encontrado para o veículo ID: {}", veiculoId);
+            return Collections.emptyList();
+        }
+
+        List<ServicoHistoricoResponseDto> historico = associacoes.stream()
+                .map(OficinaVeiculo::getOficina)
+                .map(oficina -> {
+                    List<OficinaPeca> pecasDoServico = oficinaPecaRepository.findByOficinaId(oficina.getId());
+                    List<ItemPecaServicoDto> pecasDto = pecasDoServico.stream()
+                            .map(oficinaPeca -> new ItemPecaServicoDto(
+                                    oficinaPeca.getPeca().getId(),
+                                    oficinaPeca.getPeca().getDescricao(),
+                                    oficinaPeca.getPeca().getFabricante(),
+                                    oficinaPeca.getQuantidade()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return new ServicoHistoricoResponseDto(
+                            oficina.getId(),
+                            oficina.getDataOficina(),
+                            oficina.getDescricaoProblema(),
+                            oficina.getDiagnostico(),
+                            oficina.getPartesAfetadas(),
+                            oficina.getHorasTrabalhadas(),
+                            pecasDto
+                    );
+                })
+                // Ordena pelo mais recente ANTES de coletar
+                .sorted((s1, s2) -> {
+                    if (s1.getDataOficina() == null && s2.getDataOficina() == null) return 0;
+                    if (s1.getDataOficina() == null) return 1; // Nulos por último
+                    if (s2.getDataOficina() == null) return -1; // Nulos por último
+                    return s2.getDataOficina().compareTo(s1.getDataOficina()); // DESC
+                })
+                .collect(Collectors.toList());
+
+        log.info("Encontrados {} registros de serviço para o veículo ID: {}", historico.size(), veiculoId);
+        return historico;
+    }
+    // --- Fim do Histórico ---
+
+    // --- Método Auxiliar Privado ---
     private Oficina findOficinaByIdOrElseThrow(Long id) {
         return oficinaRepository.findById(id)
                 .orElseThrow(() -> new OficinaNotFoundException("Registro de Oficina não encontrado com ID: " + id));
     }
-}
+    // --- Fim do Método Auxiliar ---
+
+} // <<< FIM DA CLASSE OficinaServiceImpl >>>
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\orcamento\OrcamentoService.java   |   package br.com.fiap.service.orcamento   |   class OrcamentoService
+// java\br\com\fiap\service\orcamento\OrcamentoService.java   |   package br.com.fiap.service.orcamento   |   class OrcamentoService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/service/orcamento/OrcamentoService.java
@@ -6144,7 +6426,7 @@ public interface OrcamentoService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\orcamento\OrcamentoServiceImpl.java   |   package br.com.fiap.service.orcamento   |   class OrcamentoServiceImpl
+// java\br\com\fiap\service\orcamento\OrcamentoServiceImpl.java   |   package br.com.fiap.service.orcamento   |   class OrcamentoServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // br/com/fiap/service/orcamento/OrcamentoServiceImpl.java
@@ -6405,7 +6687,7 @@ public class OrcamentoServiceImpl implements OrcamentoService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\pagamento\PagamentoService.java   |   package br.com.fiap.service.pagamento   |   class PagamentoService
+// java\br\com\fiap\service\pagamento\PagamentoService.java   |   package br.com.fiap.service.pagamento   |   class PagamentoService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.service.pagamento;
@@ -6442,7 +6724,7 @@ public interface PagamentoService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\pagamento\PagamentoServiceImpl.java   |   package br.com.fiap.service.pagamento   |   class PagamentoServiceImpl
+// java\br\com\fiap\service\pagamento\PagamentoServiceImpl.java   |   package br.com.fiap.service.pagamento   |   class PagamentoServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.service.pagamento; // Ou br.com.fiap.service.pagamento.impl
@@ -6632,7 +6914,7 @@ public class PagamentoServiceImpl implements PagamentoService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\pecas\PecasService.java   |   package br.com.fiap.service.pecas   |   class PecasService
+// java\br\com\fiap\service\pecas\PecasService.java   |   package br.com.fiap.service.pecas   |   class PecasService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 package br.com.fiap.service.pecas;
@@ -6650,7 +6932,7 @@ public interface PecasService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\pecas\PecasServiceImpl.java   |   package br.com.fiap.service.pecas   |   class PecasServiceImpl
+// java\br\com\fiap\service\pecas\PecasServiceImpl.java   |   package br.com.fiap.service.pecas   |   class PecasServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- src/main/java/br/com/fiap/service/pecas/PecasServiceImpl.java ---
@@ -6755,7 +7037,7 @@ public class PecasServiceImpl implements PecasService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\relatorio\RelatorioService.java   |   package br.com.fiap.service.relatorio   |   class RelatorioService
+// java\br\com\fiap\service\relatorio\RelatorioService.java   |   package br.com.fiap.service.relatorio   |   class RelatorioService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/service/relatorio/RelatorioService.java
@@ -6782,7 +7064,7 @@ public interface RelatorioService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\relatorio\RelatorioServiceImpl.java   |   package br.com.fiap.service.relatorio   |   class RelatorioServiceImpl
+// java\br\com\fiap\service\relatorio\RelatorioServiceImpl.java   |   package br.com.fiap.service.relatorio   |   class RelatorioServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/service/relatorio/RelatorioServiceImpl.java
@@ -6947,7 +7229,7 @@ public class RelatorioServiceImpl implements RelatorioService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\relatorio\cliente\RelatorioClienteService.java   |   package br.com.fiap.service.relatorio.cliente   |   class RelatorioClienteService
+// java\br\com\fiap\service\relatorio\cliente\RelatorioClienteService.java   |   package br.com.fiap.service.relatorio.cliente   |   class RelatorioClienteService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/service/relatorio/cliente/RelatorioClienteService.java ---
@@ -6975,7 +7257,7 @@ public interface RelatorioClienteService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\relatorio\cliente\RelatorioClienteServiceImpl.java   |   package br.com.fiap.service.relatorio.cliente   |   class RelatorioClienteServiceImpl
+// java\br\com\fiap\service\relatorio\cliente\RelatorioClienteServiceImpl.java   |   package br.com.fiap.service.relatorio.cliente   |   class RelatorioClienteServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // --- Arquivo: src/main/java/br/com/fiap/service/relatorio/cliente/RelatorioClienteServiceImpl.java ---
@@ -7191,7 +7473,7 @@ public class RelatorioClienteServiceImpl implements RelatorioClienteService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\veiculo\VeiculoService.java   |   package br.com.fiap.service.veiculo   |   class VeiculoService
+// java\br\com\fiap\service\veiculo\VeiculoService.java   |   package br.com.fiap.service.veiculo   |   class VeiculoService
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/service/veiculo/VeiculoService.java
@@ -7214,7 +7496,7 @@ public interface VeiculoService {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// br\com\fiap\service\veiculo\VeiculoServiceImpl.java   |   package br.com.fiap.service.veiculo   |   class VeiculoServiceImpl
+// java\br\com\fiap\service\veiculo\VeiculoServiceImpl.java   |   package br.com.fiap.service.veiculo   |   class VeiculoServiceImpl
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // src/main/java/br/com/fiap/service/veiculo/VeiculoServiceImpl.java

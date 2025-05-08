@@ -6,49 +6,29 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
 import {
-    Search, User, ScanSearch, Hash, Car, CheckSquare, CircleArrowRight, Loader2, AlertCircle, ListFilter, ListChecks, History, ShieldCheck, UserCheck
+    Search, User, ScanSearch, Hash, Car, UserCheck, CircleArrowRight, Loader2, AlertCircle, ListFilter, ListChecks, History, ShieldCheck
 } from 'lucide-react';
 import { MdErrorOutline } from 'react-icons/md';
 
 // --- Interfaces ---
-interface ClienteInfoDTO {
-    idCli: number;
-    idEndereco: number;
-    nome: string;
-    sobrenome: string;
-    numeroDocumento: string;
-    getNomeCompleto?(): string;
-}
-
-interface VeiculoResponseDto {
-    id: number;
-    tipoVeiculo?: string;
-    placa?: string;
-    modelo?: string;
-    montadora?: string;
-    cor?: string;
-    anoFabricacao?: string;
-}
-
+interface ClienteInfoDTO { idCli: number; idEndereco: number; nome: string; sobrenome: string; numeroDocumento: string; getNomeCompleto?(): string; }
+interface VeiculoResponseDto { id: number; tipoVeiculo?: string; placa?: string; modelo?: string; montadora?: string; cor?: string; anoFabricacao?: string; }
 type TipoBuscaCliente = 'nome' | 'documento' | 'idCliente';
 
+// Helper para adicionar getNomeCompleto
 const addGetNomeCompleto = (cliente: ClienteInfoDTO): ClienteInfoDTO => ({
     ...cliente,
     getNomeCompleto() { return `${this.nome || ''} ${this.sobrenome || ''}`.trim(); }
 });
-
+// Helper para tratar erro fetch
 const tratarErroFetch = (err: any, context?: string): string => {
     const prefix = context ? `${context}: ` : "";
-    if (err instanceof TypeError && err.message === 'Failed to fetch') {
-        return `${prefix}Não foi possível conectar ao servidor. Verifique a API e a rede.`;
-    }
-    if (err.message && err.message.includes("message\":")) { try { const errorJson = JSON.parse(err.message.substring(err.message.indexOf("{"))); if(errorJson.message) return `${prefix}${errorJson.message}`; } catch (e) { /* Ignora erro de parsing */ } }
-    if (err.message && (err.message.startsWith("Erro HTTP") || err.message.includes("inválido") || err.message.includes("não encontrado"))) {
-        return `${prefix}${err.message}`;
-    }
+    if (err instanceof TypeError && err.message === 'Failed to fetch') { return `${prefix}Não foi possível conectar ao servidor. Verifique a API e a rede.`; }
+    if (err.message && err.message.includes("message\":")) { try { const errorJson = JSON.parse(err.message.substring(err.message.indexOf("{"))); if(errorJson.message) return `${prefix}${errorJson.message}`; } catch (e) {} }
+    if (err.message && (err.message.startsWith("Erro HTTP") || err.message.includes("inválido") || err.message.includes("não encontrado"))) { return `${prefix}${err.message}`; }
     return `${prefix}${err.message || "Ocorreu um erro desconhecido."}`;
 };
-
+// Helper para extrair apenas o ano
 const extrairAno = (dataString: string | null | undefined): string => {
     if (!dataString) return '-';
     try {
@@ -57,10 +37,8 @@ const extrairAno = (dataString: string | null | undefined): string => {
     } catch (e) { console.error("Erro ao extrair ano:", dataString, e); return 'Inválido'; }
 };
 
-
-export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAULT
+export default function IniciarOrcamentoPage() {
     const router = useRouter();
-
     const [tipoBuscaCliente, setTipoBuscaCliente] = useState<TipoBuscaCliente>('nome');
     const [termoBuscaCliente, setTermoBuscaCliente] = useState('');
     const [clientesEncontrados, setClientesEncontrados] = useState<ClienteInfoDTO[]>([]);
@@ -81,7 +59,9 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
     };
 
     const buscarClientes = useCallback(async (e?: FormEvent) => {
+        // ... (código da função buscarClientes permanece o mesmo) ...
         if (e) e.preventDefault();
+        console.log("[buscarClientes] Iniciando busca...");
         setIsBuscandoCliente(true);
         setError(null); setClientesEncontrados([]); setClienteSelecionado(null);
         setVeiculosDoCliente([]); setVeiculoSelecionado(null);
@@ -89,6 +69,7 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
         if (!termoBuscaCliente.trim()) {
             setError("Insira um termo para busca."); setIsBuscandoCliente(false); return;
         }
+
         const params = new URLSearchParams();
         if (tipoBuscaCliente === 'idCliente') params.append('idCliente', termoBuscaCliente.trim());
         else if (tipoBuscaCliente === 'documento') params.append('documento', termoBuscaCliente.trim());
@@ -101,7 +82,9 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
             if (!resp.ok) {
                 if (resp.status === 400) throw new Error("Critério de busca inválido.");
                 if (resp.status === 404 || resp.status === 204) { setError("Nenhum cliente encontrado para este critério."); setClientesEncontrados([]); return; }
-                throw new Error(`Erro HTTP ${resp.status} ao buscar clientes.`);
+                let errorMsg = `Erro HTTP ${resp.status}`;
+                try { const errorData = await resp.json(); errorMsg = errorData.message || errorMsg; } catch (jsonError) { errorMsg = `${errorMsg}: ${resp.statusText || 'Erro desconhecido'}`; }
+                throw new Error(errorMsg);
             }
             const data: ClienteInfoDTO[] = await resp.json();
             if (data.length === 0) { setError("Nenhum cliente encontrado para este critério."); }
@@ -110,6 +93,7 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
         } finally { setIsBuscandoCliente(false); }
     }, [termoBuscaCliente, tipoBuscaCliente]);
 
+    // <<< --- FUNÇÃO fetchVeiculosDoCliente CORRIGIDA --- >>>
     const fetchVeiculosDoCliente = useCallback(async (cliente: ClienteInfoDTO | null) => {
         if (!cliente) return;
         setIsLoadingVeiculos(true);
@@ -121,18 +105,47 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
         console.info("Buscando veículos:", apiUrl);
         try {
             const resp = await fetch(apiUrl);
+
+            // --- Correção Principal ---
+            // 1. Verifica erro HTTP primeiro (4xx, 5xx)
             if (!resp.ok) {
-                if (resp.status === 404 || resp.status === 204) { setVeiculosDoCliente([]); console.info("Cliente sem veículos cadastrados."); return; }
-                throw new Error(`Erro HTTP ${resp.status} ao buscar veículos.`);
+                // Trata 404 (Not Found) separadamente se quiser uma mensagem específica
+                if (resp.status === 404) {
+                    console.info("Cliente não encontrado na API ao buscar veículos (404).");
+                    setError(`Cliente ID ${idCli}/${idEndereco} não encontrado.`);
+                    setVeiculosDoCliente([]);
+                    return; // Sai da função
+                }
+                // Para outros erros, tenta ler a mensagem ou usa o statusText
+                let errorMsg = `Erro HTTP ${resp.status}`;
+                try { const errorData = await resp.json(); errorMsg = errorData.message || errorMsg; } catch (jsonError) { errorMsg = `${errorMsg}: ${resp.statusText || 'Erro desconhecido'}`; }
+                throw new Error(errorMsg);
             }
+
+            // 2. Verifica 204 No Content (Cliente encontrado, mas SEM veículos)
+            if (resp.status === 204) {
+                console.info("Cliente encontrado, mas sem veículos cadastrados (204 No Content).");
+                setVeiculosDoCliente([]); // Define como vazio
+                // Não define erro, pois é um cenário válido
+                return; // Sai da função ANTES de tentar .json()
+            }
+
+            // 3. Se chegou aqui, a resposta é 200 OK e TEM corpo JSON
             const data: VeiculoResponseDto[] = await resp.json();
             setVeiculosDoCliente(data || []);
-        } catch (err: any) { setError(tratarErroFetch(err, "Busca Veículos")); setVeiculosDoCliente([]);
-        } finally { setIsLoadingVeiculos(false); }
-    }, []);
+
+        } catch (err: any) {
+            // Trata erros de rede (Failed to fetch) ou erros lançados acima
+            setError(tratarErroFetch(err, "Busca Veículos"));
+            setVeiculosDoCliente([]);
+        } finally {
+            setIsLoadingVeiculos(false);
+        }
+    }, []); // Fim da função corrigida
 
     const handleSelecionarCliente = useCallback((cliente: ClienteInfoDTO) => {
         console.log("[Selecionar Cliente] Cliente clicado:", cliente);
+        if (!cliente || !cliente.idCli || !cliente.idEndereco) { console.error("[Selecionar Cliente] Erro: Objeto cliente ou seus IDs são inválidos.", cliente); setError("Erro ao processar dados do cliente selecionado."); return; }
         setClienteSelecionado(cliente);
         setClientesEncontrados([]);
         fetchVeiculosDoCliente(cliente);
@@ -159,7 +172,8 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
         if (!cliIdStr || !endIdStr || !veiIdStr) { console.error("[Iniciar Orçamento] Erro: IDs inválidos.", { cliIdStr, endIdStr, veiIdStr }); setError("Erro interno: IDs inválidos no cliente ou veículo."); return; }
         const queryParams = new URLSearchParams({ cliId: cliIdStr, endId: endIdStr, veiId: veiIdStr }).toString();
         const targetUrl = `/orcamento/gerar?${queryParams}`;
-        console.log("[Iniciar Orçamento] Navegando para:", targetUrl);
+
+        console.log("[Iniciar Orçamento] EXACT URL being pushed:", targetUrl);
         router.push(targetUrl);
     }, [clienteSelecionado, veiculoSelecionado, router]);
 
@@ -171,7 +185,7 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
                     <ShieldCheck size={30} className="text-sky-400" /> Iniciar Geração de Orçamento
                 </h1>
 
-                {/* Seção 1: Busca de Cliente */}
+                {/* Seção 1: Busca/Seleção Cliente */}
                 {!clienteSelecionado && (
                     <section className="mb-8 p-4 md:p-6 bg-slate-800 rounded-lg shadow-lg max-w-4xl mx-auto border border-slate-600">
                         <h2 className='text-xl font-semibold text-sky-300 mb-4 pb-2 border-b border-slate-700'>1. Buscar Cliente</h2>
@@ -200,7 +214,7 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
                     </section>
                 )}
 
-                {/* Seção 2 e 3: Seleção de Veículo e Botão de Prosseguir */}
+                {/* Seção 2 e 3: Seleção de Veículo e Botão */}
                 {clienteSelecionado && (
                     <section className="mb-6 p-4 md:p-6 bg-slate-800 rounded-lg shadow-lg max-w-4xl mx-auto border border-slate-600">
                         <div className="mb-4 pb-3 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
@@ -227,8 +241,8 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
                                 </button>
                             </div>
                         )}
-                        {/* Opcional: Área de Histórico do Veículo */}
-                        {/* {veiculoSelecionado && ( ... )} */}
+                        {/* Área de Histórico Opcional */}
+                        {veiculoSelecionado && ( <div className="mt-6 pt-4 border-t border-slate-700"> <h3 className="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2"><History size={20} className="text-slate-400"/> Histórico do Veículo <span className='font-mono text-xs bg-slate-600 px-1 rounded'>{veiculoSelecionado.placa}</span> (Opcional)</h3> <p className="text-sm text-slate-500 italic">(Funcionalidade de histórico ainda não implementada)</p> </div> )}
                     </section>
                 )}
 
@@ -243,5 +257,3 @@ export default function IniciarOrcamentoPage() { // << ÚNICA EXPORTAÇÃO DEFAU
         </>
     );
 }
-
-// SEM Wrapper de Suspense aqui, pois esta página não usa useSearchParams
