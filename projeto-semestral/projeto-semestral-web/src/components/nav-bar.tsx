@@ -8,7 +8,6 @@ import {
     MdPayment, MdContactMail, MdList, MdAddCircleOutline, MdSearch,
     MdDescription, MdEventNote, MdTrendingUp, MdPersonSearch, MdAssessment
 } from 'react-icons/md';
-// Importando ícones Lucide para Peças e Orçamento (se não estiverem já importados)
 import { ListChecks, Package } from 'lucide-react';
 
 interface NavBarProps {
@@ -18,10 +17,8 @@ interface NavBarProps {
         | "veiculo" | "veiculo-listar" | "veiculo-cadastrar" | "veiculo-buscar" | "veiculo-alterar" | "veiculo-deletar"
         | "oficinaOnline" | "oficinaOnline-listar" | "oficinaOnline-cadastrar" | "oficinaOnline-buscar" | "oficinaOnline-alterar" | "oficinaOnline-deletar"
         | "agendamento" | "agendamento-listar" | "agendamento-cadastrar" | "agendamento-buscar" | "agendamento-alterar" | "agendamento-deletar"
-        | "orcamento" | "orcamento-listar" | "orcamento-gerar" | "orcamento-buscar" | "orcamento-alterar" | "orcamento-deletar"
-        // --- Peças Adicionado ---
+        | "orcamento" | "orcamento-listar" | "orcamento-gerar" | "orcamento-buscar" | "orcamento-alterar" | "orcamento-deletar" | "orcamento-iniciar" // Adicionado orcamento-iniciar
         | "pecas" | "pecas-listar" | "pecas-cadastrar" | "pecas-buscar" | "pecas-alterar" | "pecas-deletar"
-        // ------------------------
         | "pagamento" | "pagamento-listar" | "pagamento-cadastrar" | "pagamento-buscar" | "pagamento-alterar" | "pagamento-deletar"
         | "relatorio" | "relatorio-agendamentos-futuros" | "relatorio-contagem-mensal" | "relatorio-historico-cliente"
         | "relatorio-cliente-completo" | "relatorio-servicos-agendados"
@@ -29,7 +26,6 @@ interface NavBarProps {
         | "contato";
 }
 
-// Adicionado 'pecas' ao tipo
 type OpenMenuType = null | 'clientes' | 'veiculo' | 'oficina' | 'agendamento' | 'orcamento' | 'pecas' | 'pagamento' | 'relatorio';
 
 export default function NavBar({ active }: NavBarProps) {
@@ -43,9 +39,17 @@ export default function NavBar({ active }: NavBarProps) {
     };
 
     const getItemClass = (section: string): string => {
-        if (active === section || (active && active.startsWith(section + "-"))) {
+        // Ajusta para marcar o menu pai como ativo se uma subpágina estiver ativa
+        const baseSection = section.split('-')[0];
+        const activeBase = active.split('-')[0];
+        if (activeBase === baseSection) {
             return `${baseLinkClass} ${activeLinkClass}`;
         }
+        // Verificação específica para o link direto que queremos inativo se uma subpágina estiver ativa
+        if (section === active) {
+            return `${baseLinkClass} ${activeLinkClass}`;
+        }
+
         return `${baseLinkClass} ${inactiveLinkClass}`;
     };
 
@@ -80,10 +84,10 @@ export default function NavBar({ active }: NavBarProps) {
                     {openMenu === 'oficina' && ( <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10"> <li><Link href="/oficinaOnline/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList />Listar</Link></li> <li><Link href="/oficinaOnline/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline/>Novo Diag.</Link></li> <li><Link href="/oficinaOnline/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch/>Buscar</Link></li> </ul> )}
                 </li>
 
-                {/* Peças (NOVO MENU ADICIONADO) */}
+                {/* Peças */}
                 <li className="relative">
                     <button type="button" onClick={() => toggleMenu('pecas')} className={`${getItemClass("pecas")} cursor-pointer`}>
-                        <Package className="mr-1" /> Peças {/* Ícone Lucide */}
+                        <Package className="mr-1" /> Peças
                     </button>
                     {openMenu === 'pecas' && (
                         <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10">
@@ -100,7 +104,7 @@ export default function NavBar({ active }: NavBarProps) {
                     {openMenu === 'agendamento' && ( <ul className="absolute left-0 mt-2 w-52 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10"> <li><Link href="/agendamento/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList />Listar</Link></li> <li><Link href="/agendamento/cadastrar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdAddCircleOutline/>Novo</Link></li> <li><Link href="/agendamento/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch/>Buscar</Link></li> </ul> )}
                 </li>
 
-                {/* Orçamento (Já estava ajustado) */}
+                {/* Orçamento */}
                 <li className="relative">
                     <button type="button" onClick={() => toggleMenu('orcamento')} className={`${getItemClass("orcamento")} cursor-pointer`}>
                         <MdDescription className="mr-1" /> Orçamento
@@ -108,7 +112,9 @@ export default function NavBar({ active }: NavBarProps) {
                     {openMenu === 'orcamento' && (
                         <ul className="absolute left-0 mt-2 w-56 bg-slate-700 rounded-md shadow-lg py-1 animate-fade-in-down z-10">
                             <li><Link href="/orcamento/listar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdList /> Listar Orçamentos</Link></li>
-                            <li><Link href="/orcamento/gerar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><ListChecks /> Gerar Orçamento</Link></li>
+                            {/* ----- ALTERAÇÃO AQUI ----- */}
+                            <li><Link href="/orcamento/iniciar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><ListChecks /> Gerar Orçamento</Link></li>
+                            {/* -------------------------- */}
                             <li><Link href="/orcamento/buscar" className="flex items-center gap-2 block px-4 py-2 text-sm text-white hover:bg-sky-600 transition-colors" onClick={() => setOpenMenu(null)}><MdSearch /> Buscar Orçamento</Link></li>
                         </ul>
                     )}

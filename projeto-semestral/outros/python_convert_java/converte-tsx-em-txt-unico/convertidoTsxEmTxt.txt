@@ -1,5 +1,5 @@
 // Script: converte-arquivos-tsx-em-txt-unico
-// Data de criação do arquivo de saída: 2025-05-07 13:54:05
+// Data de criação do arquivo de saída: 2025-05-07 18:12:56
 
 // Estrutura de diretórios do projeto:
 src/
@@ -5536,15 +5536,16 @@ export default function DeletarOrcamentoPage() {
 // src/app/orcamento/gerar/page.tsx
 "use client";
 
-import React, { useState, useEffect, FormEvent, useMemo, Suspense } from 'react'; // Adicionado Suspense
+// Imports Essenciais
+import React, { useState, useEffect, FormEvent, useMemo, Suspense, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation'; // Adicionado useSearchParams
+import { useRouter, useSearchParams } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
 import TabbedForm, { AppTab } from '@/components/forms/TabbedForm';
 
-// Ícones (mantidos)
+// Ícones
 import {
-    UserCircle, Car, Wrench, PackagePlus, HardHat, FileText, DollarSign, Save, ArrowLeft,
+    UserCircle, Car, Wrench, PackagePlus, HardHat, FileText, DollarSign, Save,
     Info, Settings, Clock, Tag, MessageSquare, ScanSearch, ListChecks, Loader2, AlertCircle,
     ShieldCheck, CalendarCheck2, Trash2
 } from 'lucide-react';
@@ -5553,28 +5554,22 @@ import {
 } from 'react-icons/md';
 
 // --- Interfaces ---
-
-// DTO Peça vindo da API /rest/pecas/all (DEVE incluir os campos detalhados agora)
 interface PecaResponseDto {
     id: number;
-    tipoVeiculo: string;
-    fabricante: string;      // Marca da Peça ou Fabricante do Veículo? Assumindo Marca Peça
-    descricao: string;       // Nome/Descrição principal
-    codigoFabricantePeca?: string; // NOVO CAMPO (Exemplo)
-    marcaPeca?: string;          // NOVO CAMPO (Exemplo)
-    aplicacaoDetalhada?: string; // NOVO CAMPO (Exemplo)
+    tipoVeiculo?: string;
+    fabricante?: string;
+    descricao: string;
+    codigoFabricantePeca?: string;
+    marcaPeca?: string;
+    aplicacaoDetalhada?: string;
     preco: number;
-    // outros campos que possam vir da API...
 }
 
-// Usado no estado do formulário e na lista de peças disponíveis no dropdown
 interface PecaDisponivel {
     id: number;
-    // Campos para exibição no dropdown e uso interno
-    textoDisplay: string; // Texto formatado para o dropdown
+    textoDisplay: string;
     preco: number;
-    descricao: string; // Guardar para referência
-    // Outros campos detalhados para possível exibição
+    descricao: string;
     codigoFabricantePeca?: string;
     marcaPeca?: string;
     aplicacaoDetalhada?: string;
@@ -5582,229 +5577,167 @@ interface PecaDisponivel {
 
 interface ItemPecaForm {
     idOficinaPeca?: number;
-    pecaId: string;          // O ID da PecaResponseDto selecionada
-    descricaoPeca?: string;  // Nome da peça (para referência)
+    pecaId: string;
+    descricaoPeca?: string;
     quantidade: number;
-    precoUnitario?: number;  // Preço no momento da adição ao orçamento
+    precoUnitario?: number;
     subtotal?: number;
 }
 
-// DTOs esperados das buscas de Cliente e Veículo por ID
-interface ClienteResponseDto { /* ... campos como idCli, nome, sobrenome, numeroDocumento ... */
-    idCli: number; nome?: string; sobrenome?: string; tipoCliente?: string; numeroDocumento?: string; sexo?: string; dataNascimento?: string; atividadeProfissional?: string; endereco?: { codigo: number; } | null; contato?: { codigo: number; } | null; // Adicione todos os campos necessários
+interface ClienteResponseDto {
+    idCli: number;
+    nome?: string;
+    sobrenome?: string;
+    numeroDocumento?: string;
+    endereco?: { codigo: number; [key: string]: any; } | null;
 }
-interface VeiculoResponseDto { /* ... campos como id, placa, modelo, fabricanteVeiculo ... */
-    id: number; tipoVeiculo?: string; renavam?: string; placa?: string; modelo?: string; proprietario?: string; montadora?: string; cor?: string; motor?: string; anoFabricacao?: string;
+interface VeiculoResponseDto {
+    id: number;
+    placa?: string;
+    modelo?: string;
+    montadora?: string;
 }
-
 
 interface OrcamentoFormData {
-    // IDs recebidos e usados para salvar
     clienteId: string;
     clienteEnderecoId: string;
     veiculoId: string;
-
-    // Dados para exibição na Aba 1 (buscados via API)
     nomeCliente: string;
     documentoCliente: string;
     modeloVeiculo: string;
     placaVeiculo: string;
     fabricanteVeiculo: string;
-
-    // Aba: Serviço/Diagnóstico
     oficinaExistenteId?: number | null;
     dataOficina: string;
     descricaoProblema: string;
     diagnostico: string;
     partesAfetadas: string;
     horasTrabalhadasOficina: string;
-
-    // Aba: Peças
     pecasUtilizadas: ItemPecaForm[];
-
-    // Aba: Mão de Obra
     dataOrcamento: string;
     valorMaoDeObraAdicional: string;
     valorHoraOrcamento: string;
     quantidadeHorasOrcamento: number;
 }
 
-// --- Componente Principal ---
+const tratarErroFetch = (err: any, context?: string): string => {
+    const prefix = context ? `${context}: ` : "";
+    if (err instanceof TypeError && err.message === 'Failed to fetch') { return `${prefix}Não foi possível conectar ao servidor. Verifique a API e a rede.`; }
+    if (err.message && err.message.includes("message\":")) { try { const errorJson = JSON.parse(err.message.substring(err.message.indexOf("{"))); if(errorJson.message) return `${prefix}${errorJson.message}`; } catch (e) {} }
+    if (err.message && (err.message.startsWith("Erro HTTP") || err.message.includes("inválido") || err.message.includes("não encontrado"))) { return `${prefix}${err.message}`; }
+    return `${prefix}${err.message || "Ocorreu um erro desconhecido."}`;
+};
 
-// Adiciona Suspense Boundary para useSearchParams
 function GerarOrcamentoPageComponent() {
     const router = useRouter();
-    const searchParams = useSearchParams(); // Hook para ler query params
-
+    const searchParams = useSearchParams();
     const today = new Date().toISOString().split('T')[0];
 
-    // Estado inicial com campos de exibição vazios
-    const initialState: OrcamentoFormData = {
-        clienteId: searchParams.get('cliId') || "", // Pega da URL
-        clienteEnderecoId: searchParams.get('endId') || "", // Pega da URL
-        veiculoId: searchParams.get('veiId') || "", // Pega da URL
-        nomeCliente: "Carregando...",
-        documentoCliente: "Carregando...",
-        modeloVeiculo: "Carregando...",
-        placaVeiculo: "Carregando...",
-        fabricanteVeiculo: "Carregando...",
-        oficinaExistenteId: null, // Será preenchido se vier da seleção de histórico
-        dataOficina: today,
-        descricaoProblema: "",
-        diagnostico: "",
-        partesAfetadas: "",
-        horasTrabalhadasOficina: "0.0",
-        pecasUtilizadas: [],
-        dataOrcamento: today,
-        valorMaoDeObraAdicional: "0,00",
-        valorHoraOrcamento: "0,00",
-        quantidadeHorasOrcamento: 0,
-    };
+    const initialState = useMemo(() => ({
+        clienteId: searchParams.get('cliId') || "", clienteEnderecoId: searchParams.get('endId') || "", veiculoId: searchParams.get('veiId') || "",
+        nomeCliente: "Aguardando seleção...", documentoCliente: "Aguardando seleção...", modeloVeiculo: "Aguardando seleção...", placaVeiculo: "Aguardando seleção...", fabricanteVeiculo: "Aguardando seleção...",
+        oficinaExistenteId: null, dataOficina: today, descricaoProblema: "", diagnostico: "", partesAfetadas: "", horasTrabalhadasOficina: "0.0", pecasUtilizadas: [],
+        dataOrcamento: today, valorMaoDeObraAdicional: "0,00", valorHoraOrcamento: "0,00", quantidadeHorasOrcamento: 0,
+    }), [searchParams, today]);
 
     const [formData, setFormData] = useState<OrcamentoFormData>(initialState);
     const [pecasDisponiveis, setPecasDisponiveis] = useState<PecaDisponivel[]>([]);
     const [activeTab, setActiveTab] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isFetchingInitialData, setIsFetchingInitialData] = useState(true); // Novo estado
-    const [isPecasLoading, setIsPecasLoading] = useState(true);
+    const [isLoadingData, setIsLoadingData] = useState(true); // Estado único de loading
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    // Funções de formatação/parse (mantidas)
-    const parseInputCurrencyToNumber = (inputValue: string): number => { /* ... */  if (!inputValue) return 0; const cleaned = inputValue.replace(/\./g, '').replace(',', '.'); const num = parseFloat(cleaned); return isNaN(num) ? 0 : num; };
-    const formatNumberToDisplayCurrencyString = (value: number | undefined | null): string => { /* ... */ if (value === null || value === undefined || isNaN(value)) return 'R$ 0,00'; return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+    const parseInputCurrencyToNumber = useCallback((inputValue: string): number => { if (!inputValue) return 0; const cleaned = inputValue.replace(/\./g, '').replace(',', '.'); const num = parseFloat(cleaned); return isNaN(num) ? 0 : num; }, []);
+    const formatNumberToDisplayCurrencyString = useCallback((value: number | undefined | null): string => { if (value === null || value === undefined || isNaN(value)) return 'R$ 0,00'; return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 }); }, []);
 
-    // --- BUSCAR DADOS INICIAIS (CLIENTE, VEÍCULO, PEÇAS) ---
     useEffect(() => {
         const cliId = searchParams.get('cliId');
         const endId = searchParams.get('endId');
         const veiId = searchParams.get('veiId');
+        console.log("[GerarOrcamento useEffect] IDs lidos:", { cliId, endId, veiId });
 
-        // Valida se IDs necessários estão presentes
         if (!cliId || !endId || !veiId) {
-            setError("Erro: IDs de cliente ou veículo não foram fornecidos corretamente na URL. Volte e selecione novamente.");
-            setIsFetchingInitialData(false);
-            setIsPecasLoading(false); // Também para o loading de peças
-            // Opcional: Redirecionar de volta
-            // router.replace('/orcamento/iniciar');
+            console.error("[GerarOrcamento useEffect] Erro crítico: IDs faltando na URL.");
+            setError("Erro: IDs de cliente/endereço ou veículo não fornecidos. Por favor, retorne e selecione novamente.");
+            setIsLoadingData(false);
+            setFormData(prev => ({ ...prev, clienteId: '', clienteEnderecoId: '', veiculoId: '', nomeCliente: "INVÁLIDO", documentoCliente: "INVÁLIDO", modeloVeiculo: "INVÁLIDO", placaVeiculo: "INVÁLIDO", fabricanteVeiculo: "INVÁLIDO" }));
             return;
         }
 
-        setIsFetchingInitialData(true);
-        setIsPecasLoading(true);
+        if (!isLoadingData && formData.clienteId === cliId && formData.clienteEnderecoId === endId && formData.veiculoId === veiId) {
+            console.log("[GerarOrcamento useEffect] Dados já carregados para estes IDs. Skip fetch.");
+            return;
+        }
+
+        console.log("[GerarOrcamento useEffect] IDs válidos ou alterados, iniciando fetch...");
         setError(null);
+        setIsLoadingData(true);
+        setFormData(prev => ({
+            ...initialState, // Reseta para o estado inicial derivado dos params
+            clienteId: cliId, clienteEnderecoId: endId, veiculoId: veiId, // Garante IDs corretos
+            nomeCliente: "Carregando...", documentoCliente: "Carregando...", modeloVeiculo: "Carregando...",
+            placaVeiculo: "Carregando...", fabricanteVeiculo: "Carregando...",
+        }));
+        setPecasDisponiveis([]);
 
         const fetchInitialData = async () => {
+            console.log("[fetchInitialData] Iniciando buscas...");
             try {
-                // Busca Cliente e Veículo em paralelo
                 const [clienteRes, veiculoRes, pecasRes] = await Promise.all([
-                    fetch(`http://localhost:8080/rest/clientes/${cliId}/${endId}`).catch(e => { console.error("Fetch Cliente Falhou:", e); return null; }), // Adiciona catch
-                    fetch(`http://localhost:8080/rest/veiculo/${veiId}`).catch(e => { console.error("Fetch Veiculo Falhou:", e); return null; }), // Adiciona catch
-                    fetch('http://localhost:8080/rest/pecas/all').catch(e => { console.error("Fetch Pecas Falhou:", e); return null; }) // Adiciona catch
+                    fetch(`http://localhost:8080/rest/clientes/${cliId}/${endId}`),
+                    fetch(`http://localhost:8080/rest/veiculo/${veiId}`),
+                    fetch('http://localhost:8080/rest/pecas/all')
                 ]);
+                console.log("[fetchInitialData] Fetches concluídos (status):", { cliente: clienteRes.status, veiculo: veiculoRes.status, pecas: pecasRes.status });
 
-                let fetchedClienteData: Partial<OrcamentoFormData> = { nomeCliente: "Erro ao carregar", documentoCliente: "Erro" };
-                let fetchedVeiculoData: Partial<OrcamentoFormData> = { modeloVeiculo: "Erro ao carregar", placaVeiculo: "Erro", fabricanteVeiculo: "Erro" };
-                let fetchedPecasData: PecaDisponivel[] = [];
+                let accumulatedErrorMessages = "";
+                let tempFormDataUpdate: Partial<OrcamentoFormData> = {};
 
-                // Processa Cliente
-                if (clienteRes?.ok) {
-                    const clienteData: ClienteResponseDto = await clienteRes.json();
-                    fetchedClienteData = {
-                        nomeCliente: `${clienteData.nome || ''} ${clienteData.sobrenome || ''}`.trim(),
-                        documentoCliente: clienteData.numeroDocumento || 'N/A'
-                    };
-                } else {
-                    console.error("Erro ao buscar cliente:", clienteRes?.statusText);
-                    setError(prev => (prev ? prev + "\n" : "") + `Falha ao carregar dados do cliente (ID: ${cliId}/${endId}).`);
-                }
+                if (clienteRes.ok) { const clienteData: ClienteResponseDto = await clienteRes.json(); tempFormDataUpdate.nomeCliente = `${clienteData.nome || ''} ${clienteData.sobrenome || ''}`.trim() || 'N/A'; tempFormDataUpdate.documentoCliente = clienteData.numeroDocumento || 'N/A'; }
+                else { const errorMsg = tratarErroFetch({ message: `Cliente (IDs: ${cliId}/${endId}, Status: ${clienteRes.status})` }, "Cliente"); accumulatedErrorMessages += errorMsg + "\n"; tempFormDataUpdate.nomeCliente = "Erro"; tempFormDataUpdate.documentoCliente = "Erro"; }
 
-                // Processa Veículo
-                if (veiculoRes?.ok) {
-                    const veiculoData: VeiculoResponseDto = await veiculoRes.json();
-                    fetchedVeiculoData = {
-                        modeloVeiculo: veiculoData.modelo || 'N/A',
-                        placaVeiculo: veiculoData.placa || 'N/A',
-                        fabricanteVeiculo: veiculoData.montadora || 'N/A'
-                    };
-                } else {
-                    console.error("Erro ao buscar veículo:", veiculoRes?.statusText);
-                    setError(prev => (prev ? prev + "\n" : "") + `Falha ao carregar dados do veículo (ID: ${veiId}).`);
-                }
+                if (veiculoRes.ok) { const veiculoData: VeiculoResponseDto = await veiculoRes.json(); tempFormDataUpdate.modeloVeiculo = veiculoData.modelo || 'N/A'; tempFormDataUpdate.placaVeiculo = veiculoData.placa || 'N/A'; tempFormDataUpdate.fabricanteVeiculo = veiculoData.montadora || 'N/A'; }
+                else { const errorMsg = tratarErroFetch({ message: `Veículo (ID: ${veiId}, Status: ${veiculoRes.status})` }, "Veículo"); accumulatedErrorMessages += errorMsg + "\n"; tempFormDataUpdate.modeloVeiculo = "Erro"; tempFormDataUpdate.placaVeiculo = "Erro"; tempFormDataUpdate.fabricanteVeiculo = "Erro"; }
 
-                // Processa Peças
-                if (pecasRes?.ok) {
-                    if (pecasRes.status === 204) {
-                        fetchedPecasData = [];
-                    } else {
+                if (pecasRes.ok) {
+                    if (pecasRes.status !== 204) {
                         const dataPecasApi: PecaResponseDto[] = await pecasRes.json();
-                        fetchedPecasData = (dataPecasApi || []).map(p => ({
-                            id: p.id,
-                            preco: p.preco,
-                            descricao: p.descricao,
-                            codigoFabricantePeca: p.codigoFabricantePeca, // Assumindo que backend retorna
-                            marcaPeca: p.marcaPeca, // Assumindo que backend retorna
-                            aplicacaoDetalhada: p.aplicacaoDetalhada, // Assumindo que backend retorna
-                            // Texto formatado para o dropdown
-                            textoDisplay: `${p.descricao} ${p.marcaPeca ? `(${p.marcaPeca})` : p.fabricante ? `(${p.fabricante})` : ''} ${p.codigoFabricantePeca ? `- Cód: ${p.codigoFabricantePeca}` : ''} - ${formatNumberToDisplayCurrencyString(p.preco)}`
-                        }));
-                        setPecasDisponiveis(fetchedPecasData);
-                    }
-                } else {
-                    console.error("Erro ao buscar peças:", pecasRes?.statusText);
-                    setError(prev => (prev ? prev + "\n" : "") + `Falha ao carregar lista de peças.`);
-                }
+                        const pecasFormatadas = (dataPecasApi || []).map(p => ({ id: p.id, preco: p.preco, descricao: p.descricao, codigoFabricantePeca: p.codigoFabricantePeca || undefined, marcaPeca: p.marcaPeca || p.fabricante || undefined, aplicacaoDetalhada: p.aplicacaoDetalhada || undefined, textoDisplay: `${p.descricao} (${p.marcaPeca || p.fabricante || 'S/Marca'}) ${p.codigoFabricantePeca ? `- Cód: ${p.codigoFabricantePeca}` : ''} - ${formatNumberToDisplayCurrencyString(p.preco)}` }));
+                        setPecasDisponiveis(pecasFormatadas);
+                        console.log("[fetchInitialData] Peças carregadas:", pecasFormatadas.length);
+                    } else { setPecasDisponiveis([]); console.log("[fetchInitialData] Nenhuma peça encontrada (204)."); }
+                } else { accumulatedErrorMessages += tratarErroFetch({ message: `Peças (Status: ${pecasRes.status})` }, "Peças"); }
 
-
-                // Atualiza o estado principal com os dados buscados (ou de erro)
-                setFormData(prev => ({
-                    ...prev, // Mantém IDs e outros campos
-                    ...fetchedClienteData,
-                    ...fetchedVeiculoData,
-                }));
+                setFormData(prev => ({ ...prev, ...tempFormDataUpdate }));
+                if (accumulatedErrorMessages) { setError(accumulatedErrorMessages.trim()); }
 
             } catch (err: any) {
-                console.error("Erro geral ao buscar dados iniciais:", err);
-                setError(tratarErroFetch(err));
-                // Garante que o estado de exibição mostre erro
-                setFormData(prev => ({
-                    ...prev,
-                    nomeCliente: "Erro ao carregar", documentoCliente: "Erro",
-                    modeloVeiculo: "Erro ao carregar", placaVeiculo: "Erro", fabricanteVeiculo: "Erro",
-                }));
+                console.error("[fetchInitialData] Erro Catch Geral:", err);
+                setError(tratarErroFetch(err, "Dados Iniciais"));
+                setFormData(prev => ({ ...prev, nomeCliente: "Erro", documentoCliente: "Erro", modeloVeiculo: "Erro", placaVeiculo: "Erro", fabricanteVeiculo: "Erro" }));
             } finally {
-                setIsFetchingInitialData(false);
-                setIsPecasLoading(false); // Finaliza loading das peças aqui também
+                console.log("[fetchInitialData] Bloco finally alcançado.");
+                setIsLoadingData(false);
             }
         };
-
         fetchInitialData();
 
-    }, [searchParams]); // Depende de searchParams para re-executar se a URL mudar
+    }, [searchParams, initialState, formatNumberToDisplayCurrencyString]); // Depende de searchParams e initialState (que depende de searchParams)
 
-    // Handlers (handleChange, handleCurrencyChange, handleAddPeca, handlePecaItemChange, handleRemovePeca) (mantidos)
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { /* ... */ const { name, value } = e.target; setFormData(prev => ({ ...prev, [name]: value })); };
-    const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => { /* ... */ const { name, value } = e.target; const cleanedValue = value.replace(/[^0-9,]/g, ''); setFormData(prev => ({ ...prev, [name]: cleanedValue })); };
-    const handleAddPeca = () => { /* ... */ setFormData(prev => ({ ...prev, pecasUtilizadas: [...prev.pecasUtilizadas, { pecaId: "", quantidade: 1, descricaoPeca: "Selecione...", precoUnitario: 0, subtotal: 0 }]})); };
-    const handlePecaItemChange = (index: number, field: keyof ItemPecaForm, value: string | number) => { /* ... */
-        const novasPecas = [...formData.pecasUtilizadas];
-        const itemAtual = { ...novasPecas[index] };
-        if (field === 'pecaId' && typeof value === 'string') {
-            const pecaSelecionada = pecasDisponiveis.find(p => p.id.toString() === value);
-            itemAtual.pecaId = value;
-            itemAtual.descricaoPeca = pecaSelecionada?.descricao || "Peça inválida";
-            itemAtual.precoUnitario = pecaSelecionada?.preco || 0;
-        } else if (field === 'quantidade' && typeof value === 'string') {
-            itemAtual.quantidade = Math.max(1, parseInt(value, 10) || 1);
-        }
-        itemAtual.subtotal = (itemAtual.precoUnitario || 0) * itemAtual.quantidade;
-        novasPecas[index] = itemAtual;
-        setFormData(prev => ({ ...prev, pecasUtilizadas: novasPecas }));
-    };
-    const handleRemovePeca = (index: number) => { /* ... */ setFormData(prev => ({...prev, pecasUtilizadas: prev.pecasUtilizadas.filter((_, i) => i !== index)})); };
 
-    // useMemo para cálculos (mantido)
-    const { totalCustoPecas, totalMaoDeObraOrcamento, valorTotalOrcamento } = useMemo(() => { /* ... */
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, [name]: value })); }, []);
+    const handleCurrencyChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { const { name, value } = e.target; const cleanedValue = value.replace(/[^0-9,.]/g, ''); setFormData(prev => ({ ...prev, [name]: cleanedValue })); }, []);
+    const handleAddPeca = useCallback(() => { setFormData(prev => ({ ...prev, pecasUtilizadas: [...prev.pecasUtilizadas, { pecaId: "", quantidade: 1, descricaoPeca: "Selecione...", precoUnitario: 0, subtotal: 0 }]})); }, []);
+    const handlePecaItemChange = useCallback((index: number, field: keyof ItemPecaForm, value: string | number) => {
+        const novasPecas = [...formData.pecasUtilizadas]; const itemAtual = { ...novasPecas[index] };
+        if (field === 'pecaId' && typeof value === 'string') { const pecaSelecionada = pecasDisponiveis.find(p => p.id.toString() === value); itemAtual.pecaId = value; itemAtual.descricaoPeca = pecaSelecionada?.descricao || "Peça inválida"; itemAtual.precoUnitario = pecaSelecionada?.preco || 0; }
+        else if (field === 'quantidade' && typeof value === 'string') { itemAtual.quantidade = parseInt(value, 10) >= 1 ? parseInt(value, 10) : 1; }
+        itemAtual.subtotal = (itemAtual.precoUnitario || 0) * itemAtual.quantidade; novasPecas[index] = itemAtual; setFormData(prev => ({ ...prev, pecasUtilizadas: novasPecas }));
+    }, [formData.pecasUtilizadas, pecasDisponiveis]);
+    const handleRemovePeca = useCallback((index: number) => { setFormData(prev => ({...prev, pecasUtilizadas: prev.pecasUtilizadas.filter((_, i) => i !== index)})); }, []);
+
+    const { totalCustoPecas, totalMaoDeObraOrcamento, valorTotalOrcamento } = useMemo(() => {
         const custoPecas = formData.pecasUtilizadas.reduce((sum, item) => sum + (item.subtotal || 0), 0);
         const maoDeObraAdicional = parseInputCurrencyToNumber(formData.valorMaoDeObraAdicional);
         const valorHora = parseInputCurrencyToNumber(formData.valorHoraOrcamento);
@@ -5812,325 +5745,121 @@ function GerarOrcamentoPageComponent() {
         const custoMaoDeObraHoras = valorHora * qtdHoras;
         const totalMaoObra = maoDeObraAdicional + custoMaoDeObraHoras;
         return { totalCustoPecas: custoPecas, totalMaoDeObraOrcamento: totalMaoObra, valorTotalOrcamento: custoPecas + totalMaoObra };
-    }, [formData.pecasUtilizadas, formData.valorMaoDeObraAdicional, formData.valorHoraOrcamento, formData.quantidadeHorasOrcamento]);
+    }, [formData.pecasUtilizadas, formData.valorMaoDeObraAdicional, formData.valorHoraOrcamento, formData.quantidadeHorasOrcamento, parseInputCurrencyToNumber]);
 
-    // handleSubmit (mantido)
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => { /* ... (lógica igual anterior) ... */
+    const handleSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (isFetchingInitialData) { // Evitar submit enquanto carrega dados
-            setError("Aguarde o carregamento dos dados iniciais.");
-            return;
-        }
+        if (isLoadingData || !formData.clienteId || !formData.veiculoId || formData.nomeCliente.includes("Erro") || formData.modeloVeiculo.includes("Erro")) { setError("Aguarde o carregamento ou corrija erros de cliente/veículo."); return; }
         setIsSubmitting(true); setError(null); setSuccess(null);
-
-        const pecasParaEnvio = formData.pecasUtilizadas
-            .filter(p => p.pecaId && !isNaN(parseInt(p.pecaId, 10)))
-            .map(p => ({
-                pecaId: parseInt(p.pecaId, 10),
-                quantidade: p.quantidade
-            }));
-
+        const pecasParaEnvio = formData.pecasUtilizadas.filter(p => p.pecaId && !isNaN(parseInt(p.pecaId, 10))).map(p => ({ pecaId: parseInt(p.pecaId, 10), quantidade: p.quantidade }));
         const payload = {
-            dataOficina: formData.dataOficina,
-            descricaoProblema: formData.descricaoProblema,
-            diagnostico: formData.diagnostico,
-            partesAfetadas: formData.partesAfetadas,
-            horasTrabalhadasOficina: formData.horasTrabalhadasOficina,
-            pecasUtilizadas: pecasParaEnvio,
-            dataOrcamento: formData.dataOrcamento,
-            valorMaoDeObraAdicional: parseInputCurrencyToNumber(formData.valorMaoDeObraAdicional),
-            valorHoraOrcamento: parseInputCurrencyToNumber(formData.valorHoraOrcamento),
-            quantidadeHorasOrcamento: Number(formData.quantidadeHorasOrcamento),
-            // Garante que IDs são enviados como número ou null
-            clienteId: formData.clienteId ? parseInt(formData.clienteId, 10) : null,
-            clienteEnderecoId: formData.clienteEnderecoId ? parseInt(formData.clienteEnderecoId, 10) : null,
-            veiculoId: formData.veiculoId ? parseInt(formData.veiculoId, 10) : null,
-            oficinaExistenteId: formData.oficinaExistenteId || null,
+            dataOficina: formData.dataOficina, descricaoProblema: formData.descricaoProblema, diagnostico: formData.diagnostico,
+            partesAfetadas: formData.partesAfetadas, horasTrabalhadasOficina: formData.horasTrabalhadasOficina, pecasUtilizadas: pecasParaEnvio,
+            dataOrcamento: formData.dataOrcamento, valorMaoDeObraAdicional: parseInputCurrencyToNumber(formData.valorMaoDeObraAdicional),
+            valorHoraOrcamento: parseInputCurrencyToNumber(formData.valorHoraOrcamento), quantidadeHorasOrcamento: Number(formData.quantidadeHorasOrcamento),
+            clienteId: parseInt(formData.clienteId, 10), clienteEnderecoId: parseInt(formData.clienteEnderecoId, 10),
+            veiculoId: parseInt(formData.veiculoId, 10), oficinaExistenteId: formData.oficinaExistenteId || null,
         };
-
-        // Remover propriedades nullas ou inválidas antes de enviar
-        if (payload.clienteId === null || isNaN(payload.clienteId)) delete (payload as any).clienteId;
-        if (payload.clienteEnderecoId === null || isNaN(payload.clienteEnderecoId)) delete (payload as any).clienteEnderecoId;
-        if (payload.veiculoId === null || isNaN(payload.veiculoId)) delete (payload as any).veiculoId;
+        if (isNaN(payload.clienteId)) delete (payload as any).clienteId;
+        if (isNaN(payload.clienteEnderecoId)) delete (payload as any).clienteEnderecoId;
+        if (isNaN(payload.veiculoId)) delete (payload as any).veiculoId;
         if (payload.oficinaExistenteId === null) delete (payload as any).oficinaExistenteId;
 
-
-        console.log("Enviando payload:", JSON.stringify(payload, null, 2));
-        const targetUrl = "http://localhost:8080/rest/orcamentos/completo"; // Ajustar se for PUT
-        const method = "POST"; // Ajustar para PUT se for alteração
-
+        console.log("Enviando payload Orçamento:", JSON.stringify(payload, null, 2));
         try {
-            const response = await fetch(targetUrl, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: `Erro ${response.status}: ${response.statusText}.` }));
-                throw new Error(errorData.message || `Erro ${response.status}`);
-            }
-
+            const response = await fetch("http://localhost:8080/rest/orcamentos/completo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+            if (!response.ok) { const errorData = await response.json().catch(() => ({ message: `Erro ${response.status}: ${response.statusText}.` })); throw new Error(errorData.message || `Erro ${response.status}`); }
             const result = await response.json();
             setSuccess(`Orçamento (ID: ${result.id}) registrado com sucesso!`);
-            // Resetar campos do formulário mantendo cliente/veículo
-            setFormData(prev => ({
-                ...prev,
-                oficinaExistenteId: null, dataOficina: today, descricaoProblema: "", diagnostico: "",
-                partesAfetadas: "", horasTrabalhadasOficina: "0.0", pecasUtilizadas: [], dataOrcamento: today,
-                valorMaoDeObraAdicional: "0,00", valorHoraOrcamento: "0,00", quantidadeHorasOrcamento: 0,
-            }));
-            setActiveTab(0); // Volta para a primeira aba
+            setFormData(prev => ({ ...prev, oficinaExistenteId: null, dataOficina: today, descricaoProblema: "", diagnostico: "", partesAfetadas: "", horasTrabalhadasOficina: "0.0", pecasUtilizadas: [], dataOrcamento: today, valorMaoDeObraAdicional: "0,00", valorHoraOrcamento: "0,00", quantidadeHorasOrcamento: 0 }));
+            setActiveTab(0);
             setTimeout(() => setSuccess(null), 7000);
+        } catch (err: any) { setError(err.message || "Falha ao registrar orçamento."); console.error("Erro no fetch POST Orçamento:", err);
+        } finally { setIsSubmitting(false); }
+    }, [formData, isLoadingData, parseInputCurrencyToNumber, today, router]);
 
-        } catch (err: any) {
-            setError(err.message || "Falha ao registrar orçamento.");
-            console.error("Erro no fetch:", err);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    // --- Definição das Abas (useMemo com dependência CORRIGIDA) ---
+    const tabs: AppTab[] = useMemo(() => [
+        { // Aba 1: Cliente & Veículo
+            label: "Cliente & Veículo", icon: <UserCircle size={18} className="text-slate-400" />,
+            content: ( /* ... JSX da Aba 1 ... */ <div className="space-y-4 p-1 md:p-4 bg-slate-800/30 rounded-md min-h-[150px]"> {error && (formData.nomeCliente.includes("Erro") || formData.modeloVeiculo.includes("Erro") || formData.nomeCliente.includes("INVÁLIDO")) && ( <div className="text-sm text-red-400 p-2 mb-2 bg-red-900/20 rounded border border-red-700/50"> <p className="font-semibold flex items-center gap-1"><AlertCircle size={16}/> Falha:</p> <pre className="mt-1 text-xs whitespace-pre-wrap">{error}</pre> </div> )} <h3 className="text-lg font-semibold text-sky-400 mb-3 border-b border-slate-700 pb-2">Dados do Cliente</h3> {isLoadingData ? <p className="text-sm text-slate-400">Carregando...</p> : ( <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm"> <p><strong className="text-slate-400">Nome:</strong> <span className="text-slate-100">{formData.nomeCliente}</span></p> <p><strong className="text-slate-400">Documento:</strong> <span className="text-slate-100">{formData.documentoCliente}</span></p> </div> )} <h3 className="text-lg font-semibold text-sky-400 mt-4 mb-3 border-b border-slate-700 pb-2">Dados do Veículo</h3> {isLoadingData ? <p className="text-sm text-slate-400">Carregando...</p> : ( <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm"> <p><strong className="text-slate-400">Placa:</strong> <span className="text-slate-100">{formData.placaVeiculo}</span></p> <p><strong className="text-slate-400">Modelo:</strong> <span className="text-slate-100">{formData.modeloVeiculo}</span></p> <p><strong className="text-slate-400">Fabricante:</strong> <span className="text-slate-100">{formData.fabricanteVeiculo}</span></p> </div> )} <div className='mt-4 text-right'> <Link href="/orcamento/iniciar" className="text-xs text-sky-400 hover:text-sky-200 underline"> Trocar cliente/veículo </Link> </div> </div> ),
+            disabled: isLoadingData || !formData.clienteId || !formData.veiculoId
+        },
+        { // Aba 2: Serviço/Diagnóstico
+            label: "Serviço/Diagnóstico", icon: <Wrench size={18} className="text-slate-400" />,
+            content: ( <fieldset className="space-y-4 p-1 md:p-4"> <div> <label htmlFor="dataOficina" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><MdCalendarToday size={16}/> Data:</label> <input type="date" name="dataOficina" id="dataOficina" value={formData.dataOficina} onChange={handleChange} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 date-input-fix"/> </div> <div> <label htmlFor="horasTrabalhadasOficina" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Clock size={16}/> Horas Trab.:</label> <input type="text" name="horasTrabalhadasOficina" id="horasTrabalhadasOficina" value={formData.horasTrabalhadasOficina} onChange={handleChange} required placeholder="Ex: 2.5" className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/> </div> <div className="md:col-span-2"> <label htmlFor="descricaoProblema" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><MessageSquare size={16}/> Descrição Problema:</label> <textarea name="descricaoProblema" id="descricaoProblema" value={formData.descricaoProblema} onChange={handleChange} rows={3} required className="w-full p-2 rounded bg-slate-700 border border-slate-600"/> </div> <div className="md:col-span-2"> <label htmlFor="diagnostico" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><ScanSearch size={16}/> Diagnóstico:</label> <textarea name="diagnostico" id="diagnostico" value={formData.diagnostico} onChange={handleChange} rows={3} className="w-full p-2 rounded bg-slate-700 border border-slate-600"/> </div> <div className="md:col-span-2"> <label htmlFor="partesAfetadas" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Settings size={16}/> Partes Afetadas:</label> <input type="text" name="partesAfetadas" id="partesAfetadas" value={formData.partesAfetadas} onChange={handleChange} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/> </div> </fieldset> ),
+            disabled: isLoadingData || !formData.clienteId || !formData.veiculoId
+        },
+        { // Aba 3: Peças
+            label: "Peças", icon: <PackagePlus size={18} className="text-slate-400" />,
+            content: ( <fieldset className="space-y-4 p-1 md:p-4"> {isLoadingData && <div className="flex items-center gap-2 text-slate-400 text-sm"><Loader2 className="animate-spin"/>Carregando peças...</div>} {/* Mudou aqui para isLoadingData */} {!isLoadingData && pecasDisponiveis.length === 0 && !error?.includes("Peças") && <p className="text-slate-400 text-sm">Nenhuma peça. Cadastre-as primeiro.</p>} {error && error.includes("Peças") && <p className="text-red-400 text-sm">{error.split('\n').find(e => e.startsWith("Peças:"))}</p>} {formData.pecasUtilizadas.map((item, index) => ( <div key={index} className="grid grid-cols-1 sm:grid-cols-[2fr_80px_110px_110px_auto] gap-2 items-end border-b border-slate-700/50 py-3 last:border-b-0"> <div> <label htmlFor={`pecaId-${index}`} className="block text-xs font-medium text-slate-400 mb-1">Peça:</label> <select name={`pecaId-${index}`} id={`pecaId-${index}`} value={item.pecaId} onChange={(e) => handlePecaItemChange(index, 'pecaId', e.target.value)} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 text-sm disabled:opacity-50" disabled={isLoadingData}> <option value="" disabled>{isLoadingData ? "Carregando..." : "Selecione..."}</option> {pecasDisponiveis.map(p => (<option key={p.id} value={p.id.toString()}>{p.textoDisplay}</option>))} </select> {item.pecaId && pecasDisponiveis.find(p => p.id.toString() === item.pecaId)?.aplicacaoDetalhada && pecasDisponiveis.find(p => p.id.toString() === item.pecaId)?.aplicacaoDetalhada !== 'N/A' && ( <p className="text-xs text-slate-400 mt-1"> Aplicação: {pecasDisponiveis.find(p => p.id.toString() === item.pecaId)?.aplicacaoDetalhada} </p> )} </div> <div> <label htmlFor={`quantidade-${index}`} className="block text-xs font-medium text-slate-400 mb-1">Qtd.:</label> <input type="number" name={`quantidade-${index}`} id={`quantidade-${index}`} value={item.quantidade} onChange={(e) => handlePecaItemChange(index, 'quantidade', e.target.value)} min="1" required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 text-sm"/> </div> <div className="text-sm"> <span className="block text-xs text-slate-400 mb-1">Preço Unit.:</span> <span className="block p-2 h-10 leading-tight flex items-center bg-slate-800 rounded border border-slate-700">{formatNumberToDisplayCurrencyString(item.precoUnitario)}</span> </div> <div className="text-sm"> <span className="block text-xs text-slate-400 mb-1">Subtotal:</span> <span className="block p-2 h-10 leading-tight flex items-center bg-slate-800 rounded border border-slate-700 font-semibold">{formatNumberToDisplayCurrencyString(item.subtotal)}</span> </div> <button type="button" onClick={() => handleRemovePeca(index)} className="p-2 h-10 bg-red-600 hover:bg-red-700 rounded text-white flex items-center justify-center" title="Remover Peça"><Trash2 size={18}/></button> </div> ))} <button type="button" onClick={handleAddPeca} disabled={isLoadingData || pecasDisponiveis.length === 0} className={`mt-4 flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-md ${isLoadingData || pecasDisponiveis.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}> <MdAddCircleOutline size={18}/> Adicionar Peça </button> <div className="text-right mt-4 font-semibold text-lg">Custo Total das Peças: <span className="text-green-400">{formatNumberToDisplayCurrencyString(totalCustoPecas)}</span></div> </fieldset> ),
+            disabled: isLoadingData || !formData.clienteId || !formData.veiculoId
+        },
+        { // Aba 4: Mão de Obra
+            label: "Mão de Obra", icon: <HardHat size={18} className="text-slate-400" />,
+            content: ( <fieldset className="space-y-4 p-1 md:p-4"> <div> <label htmlFor="dataOrcamento" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><MdCalendarToday size={16}/> Data Orçam.:</label> <input type="date" name="dataOrcamento" id="dataOrcamento" value={formData.dataOrcamento} onChange={handleChange} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 date-input-fix"/> </div> <div> <label htmlFor="valorMaoDeObraAdicional" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Tag size={16}/> Taxa Adicional:</label> <input type="text" name="valorMaoDeObraAdicional" id="valorMaoDeObraAdicional" value={formData.valorMaoDeObraAdicional} onChange={handleCurrencyChange} placeholder="0,00" className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/> </div> <div> <label htmlFor="valorHoraOrcamento" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><DollarSign size={16}/> Valor/Hora:</label> <input type="text" name="valorHoraOrcamento" id="valorHoraOrcamento" value={formData.valorHoraOrcamento} onChange={handleCurrencyChange} required placeholder="0,00" className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/> </div> <div> <label htmlFor="quantidadeHorasOrcamento" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Clock size={16}/> Qtd. Horas:</label> <input type="number" name="quantidadeHorasOrcamento" id="quantidadeHorasOrcamento" value={formData.quantidadeHorasOrcamento} onChange={handleChange} min="0" step="0.1" required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/> </div> <div className="text-right mt-4 font-semibold text-lg">Custo Total M.O.: <span className="text-yellow-400">{formatNumberToDisplayCurrencyString(totalMaoDeObraOrcamento)}</span></div> </fieldset> ),
+            disabled: isLoadingData || !formData.clienteId || !formData.veiculoId
+        },
+        { // Aba 5: Resumo & Finalizar
+            label: "Resumo & Finalizar", icon: <ShieldCheck size={18} className="text-slate-400" />,
+            content: ( <div className="space-y-4 p-1 md:p-4 bg-slate-800/30 rounded-md"> <h3 className="text-xl font-semibold text-sky-300 mb-4 border-b border-slate-700 pb-2">Resumo do Orçamento</h3> <div className="text-base space-y-2"> <p className="flex justify-between"><span>Custo Peças:</span> <span className="font-semibold text-green-400">{formatNumberToDisplayCurrencyString(totalCustoPecas)}</span></p> <p className="flex justify-between"><span>Custo Mão de Obra:</span> <span className="font-semibold text-yellow-400">{formatNumberToDisplayCurrencyString(totalMaoDeObraOrcamento)}</span></p> <hr className="border-slate-600 my-3"/> <p className="flex justify-between text-2xl items-center"> <strong className="text-sky-200">VALOR TOTAL:</strong> <strong className="text-green-300 text-3xl">{formatNumberToDisplayCurrencyString(valorTotalOrcamento)}</strong> </p> </div> <p className="text-xs text-slate-500 mt-6"> Confira todos os dados antes de salvar. </p> </div> ),
+            disabled: isLoadingData || !formData.clienteId || !formData.veiculoId
+        },
+    ], [ // <<< DEPENDÊNCIAS DO useMemo CORRIGIDAS (sem isPecasLoading) >>>
+        formData, isLoadingData, pecasDisponiveis, error,
+        totalCustoPecas, totalMaoDeObraOrcamento, valorTotalOrcamento, activeTab,
+        handleChange, handleCurrencyChange, handleAddPeca, handlePecaItemChange, handleRemovePeca,
+        formatNumberToDisplayCurrencyString
+    ]); // <<< FIM DA LISTA DE DEPENDÊNCIAS >>>
 
-    // --- Definição das Abas (Aba 1 modificada para mostrar dados do estado) ---
-    const tabs: AppTab[] = [
-        {
-            label: "Cliente & Veículo",
-            icon: <UserCircle size={18} className="text-slate-400" />,
-            content: (
-                <div className="space-y-4 p-1 md:p-4 bg-slate-800/30 rounded-md min-h-[150px]">
-                    <h3 className="text-lg font-semibold text-sky-400 mb-3 border-b border-slate-700 pb-2">Dados do Cliente</h3>
-                    {isFetchingInitialData ? (
-                        <p className="text-sm text-slate-400">Carregando...</p>
-                    ) : error && formData.nomeCliente.includes("Erro") ? (
-                        <p className="text-sm text-red-400">Falha ao carregar dados do cliente.</p>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <p><strong className="text-slate-400">Nome:</strong> <span className="text-slate-100">{formData.nomeCliente}</span></p>
-                            <p><strong className="text-slate-400">Documento:</strong> <span className="text-slate-100">{formData.documentoCliente}</span></p>
-                        </div>
-                    )}
-
-                    <h3 className="text-lg font-semibold text-sky-400 mt-4 mb-3 border-b border-slate-700 pb-2">Dados do Veículo</h3>
-                    {isFetchingInitialData ? (
-                        <p className="text-sm text-slate-400">Carregando...</p>
-                    ) : error && formData.modeloVeiculo.includes("Erro") ? (
-                        <p className="text-sm text-red-400">Falha ao carregar dados do veículo.</p>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                            <p><strong className="text-slate-400">Placa:</strong> <span className="text-slate-100">{formData.placaVeiculo}</span></p>
-                            <p><strong className="text-slate-400">Modelo:</strong> <span className="text-slate-100">{formData.modeloVeiculo}</span></p>
-                            <p><strong className="text-slate-400">Fabricante:</strong> <span className="text-slate-100">{formData.fabricanteVeiculo}</span></p>
-                        </div>
-                    )}
-                    {/* Link para voltar e selecionar outro (se necessário) */}
-                    <div className='mt-4 text-right'>
-                        <Link href="/orcamento/iniciar" className="text-xs text-sky-400 hover:text-sky-200 underline">
-                            Selecionar outro cliente/veículo
-                        </Link>
-                    </div>
-                </div>
-            ),
-            disabled: !formData.clienteId || !formData.veiculoId // Desabilita se IDs não vieram
-        },
-        {
-            label: "Serviço/Diagnóstico",
-            icon: <Wrench size={18} className="text-slate-400" />,
-            content: ( /* ... JSX da aba Serviço/Diagnóstico (igual anterior) ... */
-                <fieldset className="space-y-4 p-1 md:p-4">
-                    <div>
-                        <label htmlFor="dataOficina" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><MdCalendarToday size={16}/> Data do Serviço:</label>
-                        <input type="date" name="dataOficina" id="dataOficina" value={formData.dataOficina} onChange={handleChange} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 date-input-fix"/>
-                    </div>
-                    <div>
-                        <label htmlFor="horasTrabalhadasOficina" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Clock size={16}/> Horas Trabalhadas (Serviço):</label>
-                        <input type="text" name="horasTrabalhadasOficina" id="horasTrabalhadasOficina" value={formData.horasTrabalhadasOficina} onChange={handleChange} required placeholder="Ex: 2.5" className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                    <div className="md:col-span-2">
-                        <label htmlFor="descricaoProblema" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><MessageSquare size={16}/> Descrição do Problema:</label>
-                        <textarea name="descricaoProblema" id="descricaoProblema" value={formData.descricaoProblema} onChange={handleChange} rows={3} required className="w-full p-2 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                    <div className="md:col-span-2">
-                        <label htmlFor="diagnostico" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><ScanSearch size={16}/> Diagnóstico:</label>
-                        <textarea name="diagnostico" id="diagnostico" value={formData.diagnostico} onChange={handleChange} rows={3} className="w-full p-2 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                    <div className="md:col-span-2">
-                        <label htmlFor="partesAfetadas" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Settings size={16}/> Partes Afetadas:</label>
-                        <input type="text" name="partesAfetadas" id="partesAfetadas" value={formData.partesAfetadas} onChange={handleChange} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                </fieldset>
-            ),
-            disabled: !formData.clienteId || !formData.veiculoId // Só habilita se tiver cliente/veículo
-        },
-        {
-            label: "Peças",
-            icon: <PackagePlus size={18} className="text-slate-400" />,
-            content: ( /* ... JSX da aba Peças (com dropdown usando pecasDisponiveis.textoDisplay) ... */
-                <fieldset className="space-y-4 p-1 md:p-4">
-                    {isPecasLoading && <div className="flex items-center gap-2 text-slate-400 text-sm"><Loader2 className="animate-spin"/>Carregando peças...</div>}
-                    {!isPecasLoading && pecasDisponiveis.length === 0 && !error && <p className="text-slate-400 text-sm">Nenhuma peça disponível. Cadastre peças primeiro.</p>}
-                    {!isPecasLoading && error && error.includes("peças") && <p className="text-red-400 text-sm">{error}</p>}
-
-                    {formData.pecasUtilizadas.map((item, index) => (
-                        <div key={index} className="grid grid-cols-1 sm:grid-cols-[2fr_80px_110px_110px_auto] gap-2 items-end border-b border-slate-700/50 py-3 last:border-b-0">
-                            <div>
-                                <label htmlFor={`pecaId-${index}`} className="block text-xs font-medium text-slate-400 mb-1">Peça:</label>
-                                <select name={`pecaId-${index}`} id={`pecaId-${index}`} value={item.pecaId} onChange={(e) => handlePecaItemChange(index, 'pecaId', e.target.value)} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 text-sm disabled:opacity-50" disabled={isPecasLoading}>
-                                    <option value="" disabled>{isPecasLoading ? "Carregando..." : "Selecione..."}</option>
-                                    {/* USA O TEXTO FORMATADO DO ESTADO */}
-                                    {pecasDisponiveis.map(p => (<option key={p.id} value={p.id.toString()}>{p.textoDisplay}</option>))}
-                                </select>
-                                {/* Exibe detalhes da peça selecionada */}
-                                {item.pecaId && pecasDisponiveis.find(p => p.id.toString() === item.pecaId)?.aplicacaoDetalhada && (
-                                    <p className="text-xs text-slate-400 mt-1">
-                                        Aplicação: {pecasDisponiveis.find(p => p.id.toString() === item.pecaId)?.aplicacaoDetalhada}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label htmlFor={`quantidade-${index}`} className="block text-xs font-medium text-slate-400 mb-1">Qtd.:</label>
-                                <input type="number" name={`quantidade-${index}`} id={`quantidade-${index}`} value={item.quantidade} onChange={(e) => handlePecaItemChange(index, 'quantidade', e.target.value)} min="1" required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 text-sm"/>
-                            </div>
-                            <div className="text-sm">
-                                <span className="block text-xs text-slate-400 mb-1">Preço Unit.:</span>
-                                <span className="block p-2 h-10 leading-tight flex items-center bg-slate-800 rounded border border-slate-700">{formatNumberToDisplayCurrencyString(item.precoUnitario)}</span>
-                            </div>
-                            <div className="text-sm">
-                                <span className="block text-xs text-slate-400 mb-1">Subtotal:</span>
-                                <span className="block p-2 h-10 leading-tight flex items-center bg-slate-800 rounded border border-slate-700 font-semibold">{formatNumberToDisplayCurrencyString(item.subtotal)}</span>
-                            </div>
-                            <button type="button" onClick={() => handleRemovePeca(index)} className="p-2 h-10 bg-red-600 hover:bg-red-700 rounded text-white flex items-center justify-center" title="Remover Peça"><Trash2 size={18}/></button>
-                        </div>
-                    ))}
-                    <button type="button" onClick={handleAddPeca} disabled={isPecasLoading || pecasDisponiveis.length === 0} className={`mt-4 flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-md ${isPecasLoading || pecasDisponiveis.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                        <MdAddCircleOutline size={18}/> Adicionar Peça
-                    </button>
-                    <div className="text-right mt-4 font-semibold text-lg">Custo Total das Peças: <span className="text-green-400">{formatNumberToDisplayCurrencyString(totalCustoPecas)}</span></div>
-                </fieldset>
-            ),
-            disabled: !formData.clienteId || !formData.veiculoId // Só habilita se tiver cliente/veículo
-        },
-        {
-            label: "Mão de Obra",
-            icon: <HardHat size={18} className="text-slate-400" />,
-            content: ( /* ... Conteúdo da Aba Mão de Obra ... */
-                <fieldset className="space-y-4 p-1 md:p-4">
-                    <div>
-                        <label htmlFor="dataOrcamento" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><MdCalendarToday size={16}/> Data Orçamento:</label>
-                        <input type="date" name="dataOrcamento" id="dataOrcamento" value={formData.dataOrcamento} onChange={handleChange} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 date-input-fix"/>
-                    </div>
-                    <div>
-                        <label htmlFor="valorMaoDeObraAdicional" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Tag size={16}/> Taxa M.O. Adicional (R$):</label>
-                        <input type="text" name="valorMaoDeObraAdicional" id="valorMaoDeObraAdicional" value={formData.valorMaoDeObraAdicional} onChange={handleCurrencyChange} placeholder="0,00" className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                    <div>
-                        <label htmlFor="valorHoraOrcamento" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><DollarSign size={16}/> Valor/Hora Orçam. (R$):</label>
-                        <input type="text" name="valorHoraOrcamento" id="valorHoraOrcamento" value={formData.valorHoraOrcamento} onChange={handleCurrencyChange} required placeholder="0,00" className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                    <div>
-                        <label htmlFor="quantidadeHorasOrcamento" className="flex items-center gap-1 block mb-1 text-sm font-medium text-slate-300"><Clock size={16}/> Qtd. Horas Orçam.:</label>
-                        <input type="number" name="quantidadeHorasOrcamento" id="quantidadeHorasOrcamento" value={formData.quantidadeHorasOrcamento} onChange={handleChange} min="0" step="0.1" required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600"/>
-                    </div>
-                    <div className="text-right mt-4 font-semibold text-lg">Custo Total Mão de Obra (Orç.): <span className="text-yellow-400">{formatNumberToDisplayCurrencyString(totalMaoDeObraOrcamento)}</span></div>
-                </fieldset>
-            ),
-            disabled: !formData.clienteId || !formData.veiculoId // Só habilita se tiver cliente/veículo
-        },
-        {
-            label: "Resumo & Finalizar",
-            icon: <ShieldCheck size={18} className="text-slate-400" />,
-            content: ( /* ... Conteúdo da Aba Resumo ... */
-                <div className="space-y-4 p-1 md:p-4 bg-slate-800/30 rounded-md">
-                    <h3 className="text-xl font-semibold text-sky-300 mb-4 border-b border-slate-700 pb-2">Resumo do Orçamento</h3>
-                    <div className="text-base space-y-2">
-                        <p className="flex justify-between"><span>Custo Total das Peças:</span> <span className="font-semibold text-green-400">{formatNumberToDisplayCurrencyString(totalCustoPecas)}</span></p>
-                        <p className="flex justify-between"><span>Custo Total da Mão de Obra:</span> <span className="font-semibold text-yellow-400">{formatNumberToDisplayCurrencyString(totalMaoDeObraOrcamento)}</span></p>
-                        <hr className="border-slate-600 my-3"/>
-                        <p className="flex justify-between text-2xl items-center">
-                            <strong className="text-sky-200">VALOR TOTAL DO ORÇAMENTO:</strong>
-                            <strong className="text-green-300 text-3xl">{formatNumberToDisplayCurrencyString(valorTotalOrcamento)}</strong>
-                        </p>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-6">
-                        Confira todos os dados nas abas anteriores antes de salvar.
-                    </p>
-                </div>
-            ),
-            disabled: !formData.clienteId || !formData.veiculoId // Só habilita se tiver cliente/veículo
-        },
-    ];
-
+    // --- Renderização ---
     return (
         <>
             <NavBar active="orcamento-gerar" />
             <main className="container mx-auto px-2 sm:px-4 py-10 bg-[#012A46] min-h-screen text-white">
                 <div className="bg-slate-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-xl w-full max-w-4xl mx-auto border border-slate-700">
-                    <h1 className="flex items-center justify-center gap-2 text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center">
-                        <ListChecks size={30} className="text-sky-400" />
-                        Gerar Novo Orçamento de Serviço
-                    </h1>
+                    <h1 className="flex items-center justify-center gap-2 text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center"> <ListChecks size={30} className="text-sky-400" /> Gerar Novo Orçamento de Serviço </h1>
 
-                    {/* Loading inicial */}
-                    {isFetchingInitialData && (
-                        <div className='flex justify-center items-center py-10'> <Loader2 className="h-8 w-8 animate-spin text-sky-400" /> <span className='ml-3 text-sky-300'>Carregando dados...</span> </div>
-                    )}
+                    {/* Indicador de Loading Principal */}
+                    {isLoadingData && ( <div className='flex justify-center items-center py-10'> <Loader2 className="h-8 w-8 animate-spin text-sky-400" /> <span className='ml-3 text-sky-300'>Carregando dados iniciais...</span> </div> )}
 
-                    {/* Erro Principal (antes do formulário se o carregamento inicial falhar gravemente) */}
-                    {error && !isFetchingInitialData && (!formData.clienteId || !formData.veiculoId) && (
+                    {/* Mensagem de Erro de IDs Faltando */}
+                    {!isLoadingData && (!formData.clienteId || !formData.veiculoId) && (
                         <div className="relative mb-6 text-red-400 bg-red-900/50 p-3 sm:p-4 pr-10 rounded border border-red-500 text-sm" role="alert">
-                            <div className="flex items-center gap-2"> <MdErrorOutline className="text-lg" /> <span>{error}</span> </div>
+                            <div className="flex items-center gap-2"> <MdErrorOutline className="text-lg" /> <span>{error || "Erro: IDs de cliente/veículo não carregados."}</span> </div>
                             <Link href="/orcamento/iniciar" className="text-sky-300 underline hover:text-sky-100 text-xs block mt-2">Voltar para seleção</Link>
                         </div>
                     )}
 
-                    {/* Formulário e Abas (só mostra se tiver IDs ou não estiver mais carregando) */}
-                    {!isFetchingInitialData && formData.clienteId && formData.veiculoId && (
+                    {/* Formulário e Abas */}
+                    {!isLoadingData && formData.clienteId && formData.veiculoId && (
                         <form onSubmit={handleSubmit}>
-                            {/* Mensagens de erro/sucesso do SUBMIT */}
-                            {error && isSubmitting && ( /* Mostra erro do submit */
+                            {error && !error.startsWith("Erro: IDs") && ( /* Erros de Submit ou Fetch Parcial */
                                 <div className="relative mb-6 text-red-400 bg-red-900/50 p-3 sm:p-4 pr-10 rounded border border-red-500 text-sm" role="alert">
-                                    <div className="flex items-center gap-2"> <MdErrorOutline className="text-lg" /> <span>{error}</span> </div>
+                                    <div className="flex items-center gap-2"> <MdErrorOutline className="text-lg" /> <span>Houve um problema: {error}</span> </div>
                                     <button type="button" className="absolute top-0 bottom-0 right-0 px-3 sm:px-4 py-1 sm:py-3 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-lg sm:text-xl">&times;</span></button>
                                 </div>
                             )}
-                            {success && (
-                                <div className="flex items-center justify-center gap-2 text-green-400 p-3 mb-6 rounded bg-green-900/30 border border-green-700 text-sm">
-                                    <MdCheckCircle className="text-lg" /> <span>{success}</span>
-                                </div>
-                            )}
-
+                            {success && ( <div className="flex items-center justify-center gap-2 text-green-400 p-3 mb-6 rounded bg-green-900/30 border border-green-700 text-sm"> <MdCheckCircle className="text-lg" /> <span>{success}</span> </div> )}
                             <TabbedForm tabs={tabs} selectedIndex={activeTab} onChange={setActiveTab} />
-
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 mt-6 border-t border-slate-700">
-                                <button
-                                    type="submit"
-                                    className={`flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 font-semibold text-white bg-green-600 rounded-md shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-opacity duration-300 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    disabled={isSubmitting || isFetchingInitialData /* Desabilita se estiver carregando dados tbm */}
-                                >
+                                <button type="submit" className={`flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 font-semibold text-white bg-green-600 rounded-md shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-opacity duration-300 ${isSubmitting || isLoadingData ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={isSubmitting || isLoadingData}>
                                     <Save size={18}/> {isSubmitting ? 'Salvando...' : 'Salvar Orçamento e Serviço'}
                                 </button>
-                                {/* Botão Voltar Removido */}
                             </div>
                         </form>
                     )}
                 </div>
             </main>
-            <style jsx global>{`
-                .date-input-fix::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
-                input[type='number'] { -moz-appearance: textfield; }
-                input[type='number']::-webkit-inner-spin-button,
-                input[type='number']::-webkit-outer-spin-button {
-                  -webkit-appearance: none; margin: 0;
-                }
-            `}</style>
+            <style jsx global>{`.date-input-fix::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; } input[type='number'] { -moz-appearance: textfield; } input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }`}</style>
         </>
     );
 }
 
-
-// Componente wrapper para Suspense (necessário para useSearchParams no App Router)
+// --- Componente Wrapper com Suspense ---
 export default function GerarOrcamentoPageWrapper() {
     return (
-        <Suspense fallback={<div>Carregando parâmetros...</div>}>
+        <Suspense fallback={ <div className="min-h-screen bg-[#012A46] flex flex-col"> <NavBar active="orcamento-gerar" /> <main className="container mx-auto flex-grow flex justify-center items-center"> <div className="flex flex-col items-center"> <Loader2 className="h-12 w-12 animate-spin text-sky-400" /> <p className="mt-3 text-lg text-white">Carregando Orçamento...</p> </div> </main> </div> }>
             <GerarOrcamentoPageComponent />
         </Suspense>
     );
@@ -6143,84 +5872,72 @@ export default function GerarOrcamentoPageWrapper() {
 // src/app/orcamento/iniciar/page.tsx
 "use client";
 
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
 import {
-    Search, User, ScanSearch, Hash, Car, CheckSquare, CircleArrowRight, Loader2, AlertCircle, ListFilter, ListChecks, History, ShieldCheck
+    Search, User, ScanSearch, Hash, Car, UserCheck, CircleArrowRight, Loader2, AlertCircle, ListFilter, ListChecks, History, ShieldCheck
 } from 'lucide-react';
 import { MdErrorOutline } from 'react-icons/md';
 
 // --- Interfaces ---
-// DTO que esperamos receber da busca de clientes (igual ao usado em clientes/buscar)
 interface ClienteInfoDTO {
     idCli: number;
     idEndereco: number;
     nome: string;
     sobrenome: string;
     numeroDocumento: string;
-    getNomeCompleto?(): string; // Adicionado via helper
+    getNomeCompleto?(): string;
 }
 
-// DTO que esperamos receber da busca de veículos por cliente (igual ao usado em veiculo/listar)
 interface VeiculoResponseDto {
     id: number;
-    tipoVeiculo: string;
-    renavam: string;
-    placa: string;
-    modelo: string;
-    proprietario: string;
-    montadora: string;
-    cor: string;
-    motor: string;
-    anoFabricacao: string;
+    tipoVeiculo?: string;
+    placa?: string;
+    modelo?: string;
+    montadora?: string;
+    cor?: string;
+    anoFabricacao?: string;
 }
-
-// DTO para histórico de serviço (como definido anteriormente)
-// interface ServicoHistoricoResponseDto { /* ...definição... */ }
 
 type TipoBuscaCliente = 'nome' | 'documento' | 'idCliente';
 
-// Helper para adicionar getNomeCompleto (igual ao usado em clientes/buscar)
 const addGetNomeCompleto = (cliente: ClienteInfoDTO): ClienteInfoDTO => ({
     ...cliente,
-    getNomeCompleto() { return `${this.nome} ${this.sobrenome}`.trim(); }
+    getNomeCompleto() { return `${this.nome || ''} ${this.sobrenome || ''}`.trim(); }
 });
 
-// Helper para tratar erro fetch (igual aos relatórios)
-const tratarErroFetch = (err: any): string => {
-    if (err instanceof TypeError && err.message === 'Failed to fetch') {
-        return "Não foi possível conectar ao servidor. Verifique a API e a rede.";
-    }
-    if (err.message && (err.message.startsWith("Erro HTTP") || err.message.includes("inválido") || err.message.includes("não encontrado"))) {
-        return err.message;
-    }
-    return err.message || "Ocorreu um erro desconhecido.";
+const tratarErroFetch = (err: any, context?: string): string => {
+    const prefix = context ? `${context}: ` : "";
+    if (err instanceof TypeError && err.message === 'Failed to fetch') { return `${prefix}Não foi possível conectar ao servidor. Verifique a API e a rede.`; }
+    if (err.message && err.message.includes("message\":")) { try { const errorJson = JSON.parse(err.message.substring(err.message.indexOf("{"))); if(errorJson.message) return `${prefix}${errorJson.message}`; } catch (e) {} }
+    if (err.message && (err.message.startsWith("Erro HTTP") || err.message.includes("inválido") || err.message.includes("não encontrado"))) { return `${prefix}${err.message}`; }
+    return `${prefix}${err.message || "Ocorreu um erro desconhecido."}`;
 };
 
+const extrairAno = (dataString: string | null | undefined): string => {
+    if (!dataString) return '-';
+    try {
+        if (dataString.length >= 4 && /^\d{4}/.test(dataString)) { return dataString.substring(0, 4); }
+        return new Date(dataString + 'T00:00:00Z').getFullYear().toString();
+    } catch (e) { console.error("Erro ao extrair ano:", dataString, e); return 'Inválido'; }
+};
 
-export default function IniciarOrcamentoPage() {
+// --- Componente Principal ---
+export default function IniciarOrcamentoPage() { // ESTA É A ÚNICA EXPORTAÇÃO DEFAULT
     const router = useRouter();
 
-    // Estados da Busca de Cliente
     const [tipoBuscaCliente, setTipoBuscaCliente] = useState<TipoBuscaCliente>('nome');
     const [termoBuscaCliente, setTermoBuscaCliente] = useState('');
     const [clientesEncontrados, setClientesEncontrados] = useState<ClienteInfoDTO[]>([]);
     const [isBuscandoCliente, setIsBuscandoCliente] = useState(false);
-
-    // Estados da Seleção de Veículo
     const [clienteSelecionado, setClienteSelecionado] = useState<ClienteInfoDTO | null>(null);
     const [veiculosDoCliente, setVeiculosDoCliente] = useState<VeiculoResponseDto[]>([]);
     const [isLoadingVeiculos, setIsLoadingVeiculos] = useState(false);
-
-    // Estado do Veículo Selecionado para Orçamento
     const [veiculoSelecionado, setVeiculoSelecionado] = useState<VeiculoResponseDto | null>(null);
-
-    // Estados Gerais
     const [error, setError] = useState<string | null>(null);
 
-    // Placeholder da busca de cliente
     const getPlaceholderCliente = (): string => {
         switch (tipoBuscaCliente) {
             case 'nome': return 'Digite nome ou sobrenome…';
@@ -6230,22 +5947,16 @@ export default function IniciarOrcamentoPage() {
         }
     };
 
-    // Função para buscar clientes
-    const buscarClientes = async (e?: FormEvent) => {
+    const buscarClientes = useCallback(async (e?: FormEvent) => {
         if (e) e.preventDefault();
+        console.log("[buscarClientes] Iniciando busca...");
         setIsBuscandoCliente(true);
-        setError(null);
-        setClientesEncontrados([]);
-        setClienteSelecionado(null); // Reseta seleção anterior
-        setVeiculosDoCliente([]);
-        setVeiculoSelecionado(null);
+        setError(null); setClientesEncontrados([]); setClienteSelecionado(null);
+        setVeiculosDoCliente([]); setVeiculoSelecionado(null);
 
         if (!termoBuscaCliente.trim()) {
-            setError("Insira um termo para busca.");
-            setIsBuscandoCliente(false);
-            return;
+            setError("Insira um termo para busca."); setIsBuscandoCliente(false); return;
         }
-
         const params = new URLSearchParams();
         if (tipoBuscaCliente === 'idCliente') params.append('idCliente', termoBuscaCliente.trim());
         else if (tipoBuscaCliente === 'documento') params.append('documento', termoBuscaCliente.trim());
@@ -6257,248 +5968,136 @@ export default function IniciarOrcamentoPage() {
             const resp = await fetch(apiUrl);
             if (!resp.ok) {
                 if (resp.status === 400) throw new Error("Critério de busca inválido.");
-                if (resp.status === 404 || resp.status === 204) {
-                    // Nenhum cliente encontrado, informa o usuário mas não define como erro crítico
-                    setClientesEncontrados([]);
-                    return;
-                }
+                if (resp.status === 404 || resp.status === 204) { setError("Nenhum cliente encontrado para este critério."); setClientesEncontrados([]); return; }
                 throw new Error(`Erro HTTP ${resp.status} ao buscar clientes.`);
             }
             const data: ClienteInfoDTO[] = await resp.json();
+            if (data.length === 0) { setError("Nenhum cliente encontrado para este critério."); }
             setClientesEncontrados(data.map(addGetNomeCompleto));
-        } catch (err: any) {
-            setError(tratarErroFetch(err));
-            setClientesEncontrados([]);
-        } finally {
-            setIsBuscandoCliente(false);
-        }
-    };
+        } catch (err: any) { setError(tratarErroFetch(err, "Busca Cliente")); setClientesEncontrados([]);
+        } finally { setIsBuscandoCliente(false); }
+    }, [termoBuscaCliente, tipoBuscaCliente]);
 
-    // Função para buscar veículos do cliente selecionado
-    const fetchVeiculosDoCliente = async (cliente: ClienteInfoDTO) => {
+    const fetchVeiculosDoCliente = useCallback(async (cliente: ClienteInfoDTO | null) => {
+        if (!cliente) return;
         setIsLoadingVeiculos(true);
-        setError(null);
-        setVeiculosDoCliente([]);
-        setVeiculoSelecionado(null);
+        setError(null); setVeiculosDoCliente([]); setVeiculoSelecionado(null);
         const { idCli, idEndereco } = cliente;
+        if (!idCli || !idEndereco) { setError("Erro interno: ID do cliente ou endereço inválido."); setIsLoadingVeiculos(false); return; }
 
-        // !!! LEMBRETE: Este endpoint precisa ser criado no backend !!!
         const apiUrl = `http://localhost:8080/rest/clientes/${idCli}/${idEndereco}/veiculos`;
         console.info("Buscando veículos:", apiUrl);
-
         try {
             const resp = await fetch(apiUrl);
             if (!resp.ok) {
-                if (resp.status === 404 || resp.status === 204) {
-                    setVeiculosDoCliente([]); // Cliente sem veículos, não é um erro
-                    return;
-                }
+                if (resp.status === 404 || resp.status === 204) { setVeiculosDoCliente([]); console.info("Cliente sem veículos cadastrados."); return; }
                 throw new Error(`Erro HTTP ${resp.status} ao buscar veículos.`);
             }
             const data: VeiculoResponseDto[] = await resp.json();
             setVeiculosDoCliente(data || []);
-        } catch (err: any) {
-            setError(tratarErroFetch(err));
-            setVeiculosDoCliente([]);
-        } finally {
-            setIsLoadingVeiculos(false);
-        }
-    };
+        } catch (err: any) { setError(tratarErroFetch(err, "Busca Veículos")); setVeiculosDoCliente([]);
+        } finally { setIsLoadingVeiculos(false); }
+    }, []);
 
-    // Função chamada ao selecionar um cliente
-    const handleSelecionarCliente = (cliente: ClienteInfoDTO) => {
+    const handleSelecionarCliente = useCallback((cliente: ClienteInfoDTO) => {
+        console.log("[Selecionar Cliente] Cliente clicado:", cliente);
+        if (!cliente || !cliente.idCli || !cliente.idEndereco) { console.error("[Selecionar Cliente] Erro: Objeto cliente ou seus IDs são inválidos.", cliente); setError("Erro ao processar dados do cliente selecionado."); return; }
         setClienteSelecionado(cliente);
-        setClientesEncontrados([]); // Esconde a lista de busca
-        fetchVeiculosDoCliente(cliente); // Busca os veículos deste cliente
-    };
+        setClientesEncontrados([]);
+        fetchVeiculosDoCliente(cliente);
+    }, [fetchVeiculosDoCliente]);
 
-    // Função para voltar para a busca de cliente
-    const resetSelecaoCliente = () => {
-        setClienteSelecionado(null);
-        setVeiculosDoCliente([]);
-        setVeiculoSelecionado(null);
-        setTermoBuscaCliente(''); // Opcional: limpar termo de busca
-        setError(null);
-    }
+    const resetSelecaoCliente = useCallback(() => {
+        console.log("[Reset Cliente] Voltando para busca de cliente.");
+        setClienteSelecionado(null); setVeiculosDoCliente([]); setVeiculoSelecionado(null);
+        setTermoBuscaCliente(''); setError(null); setClientesEncontrados([]);
+    }, []);
 
-    // Função para selecionar o veículo e habilitar botão de orçamento
-    const handleSelecionarVeiculo = (veiculo: VeiculoResponseDto) => {
+    const handleSelecionarVeiculo = useCallback((veiculo: VeiculoResponseDto) => {
+        console.log("[Selecionar Veículo] Veículo selecionado:", veiculo);
         setVeiculoSelecionado(veiculo);
-        // Aqui você poderia opcionalmente buscar o histórico de serviços
-        // fetchHistoricoServicos(veiculo.id);
-    };
+    }, []);
 
-    // Função para navegar para a geração de orçamento
-    const iniciarGeracaoOrcamento = () => {
-        if (!clienteSelecionado || !veiculoSelecionado) {
-            setError("Erro interno: Cliente ou veículo não selecionado.");
-            return;
-        }
-        // Navega para a tela de gerar orçamento, passando os IDs via query params
-        const queryParams = new URLSearchParams({
-            cliId: clienteSelecionado.idCli.toString(),
-            endId: clienteSelecionado.idEndereco.toString(),
-            veiId: veiculoSelecionado.id.toString()
-        }).toString();
-
-        router.push(`/orcamento/gerar?${queryParams}`);
-    };
-
+    const iniciarGeracaoOrcamento = useCallback(() => {
+        console.log("[Iniciar Orçamento] Botão clicado.");
+        console.log("[Iniciar Orçamento] Estado atual:", { clienteSelecionado, veiculoSelecionado });
+        if (!clienteSelecionado || !veiculoSelecionado) { console.error("[Iniciar Orçamento] Erro: Cliente ou veículo não está selecionado no estado."); setError("Erro interno: Selecione um cliente e um veículo primeiro."); return; }
+        const cliIdStr = clienteSelecionado.idCli?.toString();
+        const endIdStr = clienteSelecionado.idEndereco?.toString();
+        const veiIdStr = veiculoSelecionado.id?.toString();
+        if (!cliIdStr || !endIdStr || !veiIdStr) { console.error("[Iniciar Orçamento] Erro: IDs inválidos.", { cliIdStr, endIdStr, veiIdStr }); setError("Erro interno: IDs inválidos no cliente ou veículo."); return; }
+        const queryParams = new URLSearchParams({ cliId: cliIdStr, endId: endIdStr, veiId: veiIdStr }).toString();
+        const targetUrl = `/orcamento/gerar?${queryParams}`;
+        console.log("[Iniciar Orçamento] Navegando para:", targetUrl);
+        router.push(targetUrl); // <<< NAVEGAÇÃO OCORRE AQUI >>>
+    }, [clienteSelecionado, veiculoSelecionado, router]);
 
     return (
         <>
-            {/* Atualize a prop 'active' conforme sua NavBar */}
             <NavBar active="orcamento-gerar" />
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
                 <h1 className="flex items-center justify-center text-2xl md:text-3xl font-bold mb-6 text-center gap-2">
-                    <ShieldCheck size={30} className="text-sky-400" />
-                    Iniciar Geração de Orçamento
+                    <ShieldCheck size={30} className="text-sky-400" /> Iniciar Geração de Orçamento
                 </h1>
 
-                {/* -- Etapa 1: Busca de Cliente -- */}
+                {/* Seção 1: Busca/Seleção Cliente */}
                 {!clienteSelecionado && (
                     <section className="mb-8 p-4 md:p-6 bg-slate-800 rounded-lg shadow-lg max-w-4xl mx-auto border border-slate-600">
                         <h2 className='text-xl font-semibold text-sky-300 mb-4 pb-2 border-b border-slate-700'>1. Buscar Cliente</h2>
                         <form onSubmit={buscarClientes} className="flex flex-col sm:flex-row gap-4 items-end">
-                            {/* Select Tipo Busca */}
                             <div className="flex-shrink-0 w-full sm:w-auto">
-                                <label htmlFor="tipoBuscaCliente" className="block text-sm font-medium mb-1 text-slate-300 flex items-center gap-1">
-                                    <ListFilter size={16} /> Buscar por:
-                                </label>
-                                <select
-                                    id="tipoBuscaCliente" value={tipoBuscaCliente}
-                                    onChange={e => setTipoBuscaCliente(e.target.value as TipoBuscaCliente)}
-                                    className="w-full sm:w-40 p-2 h-10 rounded bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-sky-500"
-                                >
-                                    <option value="nome">Nome</option>
-                                    <option value="documento">Documento</option>
-                                    <option value="idCliente">Código</option>
-                                </select>
+                                <label htmlFor="tipoBuscaCliente" className="block text-sm font-medium mb-1 text-slate-300 flex items-center gap-1"> <ListFilter size={16} /> Buscar por: </label>
+                                <select id="tipoBuscaCliente" value={tipoBuscaCliente} onChange={e => setTipoBuscaCliente(e.target.value as TipoBuscaCliente)} className="w-full sm:w-40 p-2 h-10 rounded bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-sky-500"> <option value="nome">Nome</option> <option value="documento">Documento</option> <option value="idCliente">Código</option> </select>
                             </div>
-                            {/* Input Termo */}
                             <div className="flex-grow w-full">
-                                <label htmlFor="termoBuscaCliente" className="block text-sm font-medium mb-1 text-slate-300 flex items-center gap-1">
-                                    {tipoBuscaCliente === 'nome' ? <User size={16} /> : tipoBuscaCliente === 'documento' ? <ScanSearch size={16} /> : <Hash size={16} />}
-                                    Termo:
-                                </label>
-                                <input
-                                    id="termoBuscaCliente" type={tipoBuscaCliente === 'idCliente' ? 'number' : 'text'}
-                                    value={termoBuscaCliente} onChange={e => setTermoBuscaCliente(e.target.value)}
-                                    placeholder={getPlaceholderCliente()} required
-                                    className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-sky-500"
-                                />
+                                <label htmlFor="termoBuscaCliente" className="block text-sm font-medium mb-1 text-slate-300 flex items-center gap-1"> {tipoBuscaCliente === 'nome' ? <User size={16} /> : tipoBuscaCliente === 'documento' ? <ScanSearch size={16} /> : <Hash size={16} />} Termo: </label>
+                                <input id="termoBuscaCliente" type={tipoBuscaCliente === 'idCliente' ? 'number' : 'text'} value={termoBuscaCliente} onChange={e => setTermoBuscaCliente(e.target.value)} placeholder={getPlaceholderCliente()} required className="w-full p-2 h-10 rounded bg-slate-700 border border-slate-600 focus:ring-2 focus:ring-sky-500" />
                             </div>
-                            {/* Botão Buscar */}
                             <button type="submit" disabled={isBuscandoCliente} className={`flex-shrink-0 w-full sm:w-auto h-10 px-5 py-2 rounded text-white font-semibold flex items-center justify-center gap-2 transition-opacity ${isBuscandoCliente ? 'bg-sky-800 cursor-not-allowed opacity-70' : 'bg-sky-600 hover:bg-sky-700'}`}>
-                                <Search size={18} />
-                                {isBuscandoCliente ? 'Buscando...' : 'Buscar Cliente'}
+                                <Search size={18} /> {isBuscandoCliente ? 'Buscando...' : 'Buscar Cliente'}
                             </button>
                         </form>
-
-                        {/* Erro da Busca de Cliente */}
-                        {error && !isBuscandoCliente && clientesEncontrados.length === 0 && (
-                            <p className="mt-4 text-sm text-red-400 flex items-center gap-1"><MdErrorOutline/>{error}</p>
-                        )}
-
-                        {/* Resultados da Busca de Cliente */}
+                        {error && !isBuscandoCliente && (<p className="mt-4 text-sm text-red-400 flex items-center gap-1"><MdErrorOutline/>{error}</p>)}
                         {!isBuscandoCliente && clientesEncontrados.length > 0 && (
                             <div className="mt-6">
                                 <h3 className="text-md mb-2 font-semibold text-slate-200">Clientes encontrados:</h3>
                                 <ul className="space-y-2 max-h-48 overflow-y-auto pr-2">
-                                    {clientesEncontrados.map(c => (
-                                        <li
-                                            key={`${c.idCli}-${c.idEndereco}`}
-                                            onClick={() => handleSelecionarCliente(c)}
-                                            className="p-3 bg-slate-700 hover:bg-sky-700 cursor-pointer rounded flex justify-between items-center text-sm transition-colors duration-150 shadow-sm"
-                                            title={`Selecionar Cliente (ID: ${c.idCli})`}
-                                        >
-                                            <span className='flex items-center gap-2 text-slate-100'>
-                                                <User size={16} className='text-slate-400'/> {c.getNomeCompleto?.()}
-                                            </span>
-                                            <span className="text-xs text-slate-400 flex items-center gap-1">
-                                                <Hash size={14}/>{c.idCli} | <ScanSearch size={14}/> {c.numeroDocumento}
-                                            </span>
-                                        </li>
-                                    ))}
+                                    {clientesEncontrados.map(c => ( <li key={`${c.idCli}-${c.idEndereco}`} onClick={() => handleSelecionarCliente(c)} className="p-3 bg-slate-700 hover:bg-sky-700 cursor-pointer rounded flex justify-between items-center text-sm transition-colors duration-150 shadow-sm" title={`Selecionar Cliente (ID: ${c.idCli})`}> <span className='flex items-center gap-2 text-slate-100'> <User size={16} className='text-slate-400'/> {c.getNomeCompleto?.()} </span> <span className="text-xs text-slate-400 flex items-center gap-1"> <Hash size={14}/>{c.idCli} | <ScanSearch size={14}/> {c.numeroDocumento} </span> </li> ))}
                                 </ul>
                             </div>
-                        )}
-                        {!isBuscandoCliente && !error && termoBuscaCliente && clientesEncontrados.length === 0 && (
-                            <p className="mt-4 text-sm text-slate-400">Nenhum cliente encontrado com o termo "{termoBuscaCliente}".</p>
                         )}
                     </section>
                 )}
 
-                {/* -- Etapa 2 e 3: Seleção de Veículo e Histórico -- */}
+                {/* Seção 2 e 3: Seleção de Veículo e Botão */}
                 {clienteSelecionado && (
                     <section className="mb-6 p-4 md:p-6 bg-slate-800 rounded-lg shadow-lg max-w-4xl mx-auto border border-slate-600">
-                        {/* Informações do Cliente Selecionado */}
                         <div className="mb-4 pb-3 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
-                            <h2 className='text-xl font-semibold text-sky-300 flex items-center gap-2'>
-                                <UserCheck size={22}/> Cliente Selecionado: <span className='text-white font-bold'>{clienteSelecionado.getNomeCompleto?.()}</span>
-                            </h2>
+                            <h2 className='text-xl font-semibold text-sky-300 flex items-center gap-2'> <UserCheck size={22}/> Cliente: <span className='text-white font-bold'>{clienteSelecionado.getNomeCompleto?.()}</span> </h2>
                             <button onClick={resetSelecaoCliente} className="text-xs text-sky-400 hover:text-sky-200 underline">Trocar Cliente</button>
                         </div>
-
-                        {/* Erro ao buscar Veículos */}
-                        {error && isLoadingVeiculos && (
-                            <p className="mt-4 text-sm text-red-400 flex items-center gap-1"><MdErrorOutline/>{error}</p>
-                        )}
-
-                        {/* Loading Veículos */}
-                        {isLoadingVeiculos && (
-                            <div className='flex justify-center items-center py-6'>
-                                <Loader2 className="h-6 w-6 animate-spin text-sky-400" />
-                                <span className='ml-3 text-sky-300'>Carregando veículos...</span>
-                            </div>
-                        )}
-
-                        {/* Lista de Veículos */}
+                        {error && (<p className="mb-4 text-sm text-red-400 flex items-center gap-1"><MdErrorOutline/>{error}</p>)}
+                        {isLoadingVeiculos && ( <div className='flex justify-center items-center py-6'><Loader2 className="h-6 w-6 animate-spin text-sky-400" /><span className='ml-3 text-sky-300'>Carregando veículos...</span></div> )}
                         {!isLoadingVeiculos && !error && (
                             <>
                                 <h3 className="text-lg font-semibold text-slate-200 mb-3">2. Selecione o Veículo</h3>
-                                {veiculosDoCliente.length === 0 ? (
-                                    <p className="text-slate-400 text-sm">Nenhum veículo encontrado para este cliente.</p>
-                                ) : (
+                                {veiculosDoCliente.length === 0 ? ( <p className="text-slate-400 text-sm">Nenhum veículo encontrado para este cliente.</p> ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                                        {veiculosDoCliente.map(v => (
-                                            <button
-                                                key={v.id}
-                                                onClick={() => handleSelecionarVeiculo(v)}
-                                                className={`p-3 rounded text-left w-full transition-colors duration-150 border ${veiculoSelecionado?.id === v.id ? 'bg-sky-700 border-sky-500 ring-2 ring-sky-400' : 'bg-slate-700 hover:bg-slate-600 border-slate-600'}`}
-                                            >
-                                                <p className="font-semibold text-slate-100 flex items-center gap-1"><Car size={16} /> {v.placa} - {v.modelo}</p>
-                                                <p className="text-xs text-slate-400">{v.montadora} - {v.cor} - Ano: {v.anoFabricacao ? new Date(v.anoFabricacao + 'T00:00:00Z').getFullYear() : '-'}</p>
-                                            </button>
-                                        ))}
+                                        {veiculosDoCliente.map(v => ( <button key={v.id} onClick={() => handleSelecionarVeiculo(v)} className={`p-3 rounded text-left w-full transition-colors duration-150 border ${veiculoSelecionado?.id === v.id ? 'bg-sky-700 border-sky-500 ring-2 ring-sky-400' : 'bg-slate-700 hover:bg-slate-600 border-slate-600'}`}> <p className="font-semibold text-slate-100 flex items-center gap-1"><Car size={16} /> {v.placa} - {v.modelo}</p> <p className="text-xs text-slate-400">{v.montadora} - {v.cor} - Ano: {extrairAno(v.anoFabricacao)}</p> </button> ))}
                                     </div>
                                 )}
                             </>
                         )}
-
-                        {/* Botão para Iniciar Orçamento (só aparece se cliente E veículo estiverem selecionados) */}
                         {clienteSelecionado && veiculoSelecionado && (
                             <div className="mt-6 pt-4 border-t border-slate-700 text-center">
                                 <h3 className="text-lg font-semibold text-slate-200 mb-3">3. Prosseguir para Orçamento</h3>
-                                <button
-                                    onClick={iniciarGeracaoOrcamento}
-                                    className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md shadow-lg flex items-center justify-center gap-2 mx-auto"
-                                >
+                                <button onClick={iniciarGeracaoOrcamento} className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md shadow-lg flex items-center justify-center gap-2 mx-auto">
                                     Gerar Orçamento para {veiculoSelecionado.placa} <CircleArrowRight size={20}/>
                                 </button>
                             </div>
                         )}
-
-                        {/* Área para Histórico (a implementar a busca e exibição) */}
-                        {veiculoSelecionado && (
-                            <div className="mt-6 pt-4 border-t border-slate-700">
-                                <h3 className="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2"><History size={20} className="text-slate-400"/> Histórico do Veículo <span className='font-mono text-xs bg-slate-600 px-1 rounded'>{veiculoSelecionado.placa}</span> (Opcional)</h3>
-                                {/* Aqui entraria a chamada para fetchHistoricoServicos(veiculoSelecionado.id) */}
-                                {/* E a exibição da lista/cards do histórico */}
-                                <p className="text-sm text-slate-500 italic">(Funcionalidade de histórico ainda não implementada nesta tela)</p>
-                            </div>
-                        )}
-
+                        {/* Área de Histórico Opcional */}
+                        {veiculoSelecionado && ( <div className="mt-6 pt-4 border-t border-slate-700"> <h3 className="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2"><History size={20} className="text-slate-400"/> Histórico do Veículo <span className='font-mono text-xs bg-slate-600 px-1 rounded'>{veiculoSelecionado.placa}</span> (Opcional)</h3> <p className="text-sm text-slate-500 italic">(Funcionalidade de histórico ainda não implementada)</p> </div> )}
                     </section>
                 )}
 
@@ -6509,11 +6108,12 @@ export default function IniciarOrcamentoPage() {
                         <p>Comece buscando um cliente para iniciar o processo de orçamento.</p>
                     </div>
                 )}
-
             </main>
         </>
     );
 }
+
+// --- FIM DO ARQUIVO src/app/orcamento/iniciar/page.tsx ---
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // app\orcamento\listar\page.tsx   |   componente ListarOrcamentosPage
