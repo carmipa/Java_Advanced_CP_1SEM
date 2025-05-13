@@ -6,6 +6,7 @@ import br.com.fiap.dto.cliente.ClienteRequestDto;
 import br.com.fiap.dto.cliente.ClienteResponseDto;
 import br.com.fiap.dto.veiculo.VeiculoResponseDto;
 import br.com.fiap.exception.ClientesNotFoundException;
+import br.com.fiap.exception.AutenticarNotFoundException; // Importe esta exceção
 import br.com.fiap.mapper.ClienteMapper;
 import br.com.fiap.mapper.ContatoMapper;
 import br.com.fiap.mapper.EnderecoMapper;
@@ -13,6 +14,7 @@ import br.com.fiap.mapper.VeiculoMapper;
 import br.com.fiap.model.Clientes;
 import br.com.fiap.model.Contato;
 import br.com.fiap.model.Endereco;
+import br.com.fiap.model.autenticar.Autenticar; // Importe a entidade Autenticar
 // Remova o import de Veiculo se não for usado diretamente aqui
 // import br.com.fiap.model.Veiculo;
 import br.com.fiap.model.relacionamentos.ClienteId;
@@ -67,6 +69,7 @@ public class ClienteServiceImpl implements ClienteService {
         this.contatoMapper = contatoMapper;
         this.clienteVeiculoRepository = clienteVeiculoRepository;
         this.veiculoMapper = veiculoMapper;
+        // Não precisamos injetar PasswordEncoder aqui para a lógica de vincular Autenticar
     }
 
     @Override
@@ -88,10 +91,12 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteMapper.toResponseDto(cliente);
     }
 
+    // --- Método CREATE Modificado para receber autenticarId ---
+    // IMPORTANTE: Você precisará atualizar a interface ClienteService para incluir esta assinatura de método
     @Override
     @Transactional
-    public ClienteResponseDto create(ClienteRequestDto clienteDto) {
-        log.info("Criando novo cliente: {}", clienteDto.getNome());
+    public ClienteResponseDto create(ClienteRequestDto clienteDto, Long autenticarId) {
+        log.info("Criando novo cliente: {} (possivelmente associado a autenticarId: {})", clienteDto.getNome(), autenticarId);
         try {
             // Salvar Endereço
             Endereco enderecoEntity = enderecoMapper.toEntity(clienteDto.getEndereco());
@@ -103,26 +108,48 @@ public class ClienteServiceImpl implements ClienteService {
             Contato savedContato = contatoRepository.save(contatoEntity);
             log.info("Contato criado/salvo com ID: {}", savedContato.getCodigo());
 
-            // Mapear Cliente e Associar
+            // --- Lógica para Associar com Autenticar Existente ---
+            Autenticar autenticarEntity = null;
+            if (autenticarId != null) {
+                log.debug("Buscando entidade Autenticar com ID: {}", autenticarId);
+                autenticarEntity = autenticarRepository.findById(autenticarId)
+                        .orElseThrow(() -> new AutenticarNotFoundException("Credencial de autenticação não encontrada com ID: " + autenticarId));
+                log.info("Credencial de autenticação ID {} encontrada.", autenticarId);
+            }
+            // ==================================================
+
+
+            // Mapear Cliente e Associar Endereço, Contato e Autenticar
             Clientes clienteEntity = clienteMapper.toEntity(clienteDto);
             clienteEntity.setEndereco(savedEndereco);
             clienteEntity.setContato(savedContato);
+            clienteEntity.setAutenticar(autenticarEntity); // Associa a entidade Autenticar (será null se autenticarId for null)
 
-            // Inicializar ID se necessário (geralmente @MapsId cuida disso)
+            // Inicializar ID composto se necessário (@MapsId cuida do enderecoId)
             if (clienteEntity.getId() == null) {
                 clienteEntity.setId(new ClienteId());
             }
-            // O ID do cliente (ID_CLI) será gerado pela trigger/sequence do banco
+            // O ID do cliente (ID_CLI) será gerado pela trigger/sequence do banco após o save
 
             Clientes savedCliente = clienteRepository.save(clienteEntity);
-            log.info("Cliente criado com ID_CLI: {}, ID_ENDERECO: {}", savedCliente.getId().getIdCli(), savedCliente.getId().getEnderecoId());
+            log.info("Cliente criado com ID_CLI: {}, ID_ENDERECO: {}{}",
+                    savedCliente.getId().getIdCli(),
+                    savedCliente.getId().getEnderecoId(),
+                    autenticarId != null ? " e associado ao Autenticar ID: " + autenticarId : "");
+
 
             return clienteMapper.toResponseDto(savedCliente);
-        } catch (Exception e) {
+        } catch (AutenticarNotFoundException e) {
+            // Relança a exceção específica para ser tratada no Controller/GlobalExceptionHandler
+            log.warn("Erro ao criar cliente: Credencial de autenticação não encontrada. {}", e.getMessage());
+            throw e;
+        }
+        catch (Exception e) {
             log.error("Erro ao criar cliente: {}", e.getMessage(), e);
             throw new RuntimeException("Falha ao criar cliente: " + e.getMessage(), e);
         }
     }
+    // --- Fim do Método CREATE Modificado ---
 
 
     @Override
@@ -137,7 +164,7 @@ public class ClienteServiceImpl implements ClienteService {
             log.info("Atualizando endereço ID {} para cliente ID {}", existingCliente.getEndereco().getCodigo(), id);
             enderecoMapper.updateEntityFromDto(clienteDto.getEndereco(), existingCliente.getEndereco());
         } else if (clienteDto.getEndereco() != null && existingCliente.getEndereco() == null) {
-            log.warn("Tentando atualizar endereço para cliente ID {}, mas o cliente não possui endereço associado.", id);
+            log.warn("Tentando atualizar endereço para cliente ID {}, mas o cliente não possui endereço associado. Ignorando.", id);
             // Você pode optar por criar um novo endereço aqui ou lançar um erro/aviso.
             // Por segurança, vamos ignorar por enquanto.
         }
@@ -147,11 +174,11 @@ public class ClienteServiceImpl implements ClienteService {
             log.info("Atualizando contato ID {} para cliente ID {}", existingCliente.getContato().getCodigo(), id);
             contatoMapper.updateEntityFromDto(clienteDto.getContato(), existingCliente.getContato());
         } else if (clienteDto.getContato() != null && existingCliente.getContato() == null) {
-            log.warn("Tentando atualizar contato para cliente ID {}, mas o cliente não possui contato associado.", id);
+            log.warn("Tentando atualizar contato para cliente ID {}, mas o cliente não possui contato associado. Ignorando.", id);
             // Mesma lógica do endereço. Ignorando por segurança.
         }
 
-        // Atualiza dados do cliente
+        // Atualiza dados do cliente (não de Autenticar via este DTO)
         clienteMapper.updateEntityFromDto(clienteDto, existingCliente);
 
         // Salva o cliente (JPA/Hibernate gerencia as atualizações em cascata se configurado)
@@ -167,20 +194,56 @@ public class ClienteServiceImpl implements ClienteService {
         // Chama o método auxiliar privado
         Clientes cliente = findClienteByIdOrElseThrow(id);
 
-        // Lógica de verificação de dependências (IMPORTANTE)
-        // Exemplo:
-        if (!clienteVeiculoRepository.findByCliente_Id(id).isEmpty()) {
-            throw new DataIntegrityViolationException("Não é possível excluir cliente pois ele possui veículos associados.");
+        // --- Lógica de verificação e remoção de dependências ---
+        // É CRUCIAL remover associações em tabelas de junção ou entidades filhas
+        // ANTES de tentar deletar a entidade pai (Clientes), para evitar
+        // DataIntegrityViolationException.
+
+        // Exemplo: Remover associações Cliente-Veículo (tabela CV)
+        List<ClienteVeiculo> clienteVeiculos = clienteVeiculoRepository.findByCliente_Id(id);
+        if (!clienteVeiculos.isEmpty()) {
+            log.info("Removendo {} associações Cliente-Veículo para Cliente ID: {}", clienteVeiculos.size(), id);
+            clienteVeiculoRepository.deleteAllInBatch(clienteVeiculos); // Mais eficiente para listas
+            // Ou loop e delete individual: clienteVeiculos.forEach(clienteVeiculoRepository::delete);
         }
-        // Adicionar verificações para ClienteOrcamento, ClientePagamento, etc.
+
+        // TODO: Adicionar lógica similar para outras tabelas de junção que referenciam CLIENTES:
+        // - ClienteOrcamento (tabela CO) -> use clienteOrcamentoRepository.findByCliente_Id(id)
+        // - ClientePagamento (tabela CP) -> use clientePagamentoRepository.findByCliente_Id(id)
+        // Certifique-se de ter os métodos findByCliente_Id(...) nos respectivos repositórios de relacionamento.
+
+        // TODO: Decidir o que fazer com Endereco e Contato associados.
+        // Eles se tornam "órfãos" se o Cliente for deletado e não houver outros Clientes
+        // usando o mesmo Endereco/Contato. A exclusão em cascata no relacionamento
+        // @ManyToOne ou @OneToOne pode ser perigosa se outras entidades referenciam
+        // o mesmo Endereco/Contato. A abordagem atual (não deletar automaticamente)
+        // é mais segura, mas pode deixar dados não utilizados no BD.
+        // Se Endereco/Contato só existem por causa deste Cliente, considere deletar
+        // manualmente AQUI ou configurar CascadeType.ALL/REMOVE no relacionamento
+        // E usar orphanRemoval = true SE TIVER CERTEZA que só este Cliente referencia.
+
+        // TODO: Decidir o que fazer com o registro em AUTENTICAR associado.
+        // Se o usuário de autenticação só serve para este cliente, você pode querer
+        // deletar o registro em AUTENTICAR. Mas se o mesmo usuário puder ser
+        // associado a múltiplos Clientes (menos comum, mas possível), ou se
+        // você quiser manter o histórico de logins, NÃO delete o registro em AUTENTICAR.
+        // Se for para deletar:
+        // if (cliente.getAutenticar() != null) {
+        //     log.info("Removendo registro de autenticação associado (ID: {})", cliente.getAutenticar().getId());
+        //     autenticarRepository.delete(cliente.getAutenticar());
+        // }
+
+        // --- Fim da lógica de verificação/remoção de dependências ---
+
 
         try {
+            // Agora, e somente agora, delete o cliente
             clienteRepository.delete(cliente);
             log.info("Cliente ID {} deletado com sucesso.", id);
-            // Não deletar endereço/contato órfãos automaticamente por segurança
         } catch (DataIntegrityViolationException e) {
             log.error("Erro de integridade ao deletar cliente ID {}: {}", id, e.getMessage());
-            throw new RuntimeException("Não é possível excluir o cliente pois ele possui registros associados (veículos, orçamentos, etc.). Verifique e remova as associações primeiro.", e);
+            // Relança com uma mensagem mais amigável indicando o problema de dependência
+            throw new RuntimeException("Não é possível excluir o cliente pois ele possui registros associados (veículos, orçamentos, pagamentos etc.). Verifique e remova as associações primeiro.", e);
         } catch (Exception e) {
             log.error("Erro inesperado ao deletar cliente ID {}: {}", id, e.getMessage(), e);
             throw new RuntimeException("Falha ao deletar cliente.", e);

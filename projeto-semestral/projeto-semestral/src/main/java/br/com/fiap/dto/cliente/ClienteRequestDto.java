@@ -56,5 +56,7 @@ public class ClienteRequestDto implements Serializable {
     @Valid // Valida o DTO aninhado
     private ContatoRequestDto contato; // <-- Tipo Corrigido
 
-    // Não incluir Autenticar aqui
+    // === Campos para Autenticação (Opcional) ===
+    private String usuarioAutenticacao; // Nome de usuário para login
+    private String senhaAutenticacao;   // Senha para login
 }

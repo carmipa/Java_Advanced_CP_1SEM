@@ -1,12 +1,14 @@
 // --- Arquivo: src/app/clientes/buscar/page.tsx (Refatorado com Cards e Ordenação por ID) ---
 "use client";
-
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Adicionado import
 import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import NavBar from '@/components/nav-bar';
 // Importando Ícones
-import { User, Mail, MapPin, Edit3, Trash2, Hash, Search as SearchIcon, Filter } from 'lucide-react'; // Usando mais Lucide
-import { MdSearch, MdFilterList, MdPerson, MdBadge, MdLocationOn, MdEdit, MdDelete, MdErrorOutline } from 'react-icons/md'; // Mantendo alguns Md
+import { User, Mail, MapPin, Edit3, Trash2, Hash, Search as SearchIcon, Filter } from 'lucide-react';
+// Usando mais Lucide
+import { MdSearch, MdFilterList, MdPerson, MdBadge, MdLocationOn, MdEdit, MdDelete, MdErrorOutline } from 'react-icons/md';
+// Mantendo alguns Md
 
 // --- Interfaces ---
 interface ClienteParaLista {
@@ -31,17 +33,18 @@ interface ClienteApiResponseDto {
 
 // Tipos de busca
 type TipoBusca = 'nome' | 'id' | 'doc';
-
 export default function BuscarClientesPage() {
     const [todosClientes, setTodosClientes] = useState<ClienteParaLista[]>([]);
     const [resultadosBusca, setResultadosBusca] = useState<ClienteParaLista[]>([]);
     const [tipoBusca, setTipoBusca] = useState<TipoBusca>('nome');
     const [termoBusca, setTermoBusca] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Loading inicial
-    const [isSearching, setIsSearching] = useState(false); // Loading da busca
+    const [isLoading, setIsLoading] = useState(false);
+    // Loading inicial
+    const [isSearching, setIsSearching] = useState(false);
+    // Loading da busca
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [buscaRealizada, setBuscaRealizada] = useState(false);
-
     // Carrega todos os clientes uma única vez
     useEffect(() => {
         const fetchTodosClientes = async () => {
@@ -49,7 +52,7 @@ export default function BuscarClientesPage() {
             if (todosClientes.length > 0 && !isLoading) return;
             setIsLoading(true); setError(null);
             try {
-                const resp = await fetch("http://localhost:8080/rest/clientes/all");
+                const resp = await fetchAuthenticated("/rest/clientes/all"); // <<< Alterado call
                 if (!resp.ok) { let errorMsg = `Erro HTTP ${resp.status}: ${resp.statusText}`; try { const errorData = await resp.json(); errorMsg = errorData.message || errorMsg; } catch (e) {} throw new Error(errorMsg); }
                 if (resp.status === 204) { setTodosClientes([]); return; } // Trata No Content
                 const data: ClienteApiResponseDto[] = await resp.json();
@@ -64,7 +67,8 @@ export default function BuscarClientesPage() {
                 setTodosClientes(formatados);
                 console.log(`Carregados ${formatados.length} clientes para busca local.`);
             } catch (err: any) { setError(err.message || "Falha ao carregar dados base de clientes."); console.error("Erro:", err); setTodosClientes([]);
-            } finally { setIsLoading(false); }
+            } finally { setIsLoading(false);
+            }
         };
         fetchTodosClientes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,7 +83,6 @@ export default function BuscarClientesPage() {
             default:     return '';
         }
     };
-
     // Executa a busca client-side com ordenação
     const handleSearch = (e?: FormEvent) => {
         if (e) e.preventDefault();
@@ -107,12 +110,15 @@ export default function BuscarClientesPage() {
                     resultados = todosClientes.filter(c => c.nomeCompleto.toLowerCase().includes(q));
                     break;
                 case 'id':
-                    const idNum = parseInt(q.replace(/\D/g, ''), 10); // Pega só números
+                    const idNum = parseInt(q.replace(/\D/g, ''), 10);
+                    // Pega só números
                     resultados = isNaN(idNum) ? [] : todosClientes.filter(c => c.idCli === idNum);
                     break;
                 case 'doc':
-                    const docQ = q.replace(/\D/g, ''); // Pega só números do termo
-                    resultados = todosClientes.filter(c => c.documento?.replace(/\D/g, '').includes(docQ)); // Compara só números
+                    const docQ = q.replace(/\D/g, '');
+                    // Pega só números do termo
+                    resultados = todosClientes.filter(c => c.documento?.replace(/\D/g, '').includes(docQ));
+                    // Compara só números
                     break;
                 default:
                     resultados = [];
@@ -120,7 +126,6 @@ export default function BuscarClientesPage() {
 
             // <<< ORDENAÇÃO POR ID_CLI DOS RESULTADOS >>>
             resultados.sort((a, b) => a.idCli - b.idCli);
-
         } catch(err) {
             console.error("Erro durante o filtro:", err);
             setError("Ocorreu um erro ao filtrar os dados.");
@@ -137,17 +142,19 @@ export default function BuscarClientesPage() {
             return;
         }
         if (!window.confirm(`Excluir cliente ID ${idCli} (End. ID ${idEnd})?`)) return;
-
         // Idealmente, teria um estado de loading específico para este item
         setError(null);
         try {
-            const resp = await fetch(`http://localhost:8080/rest/clientes/${idCli}/${idEnd}`, { method: 'DELETE' });
-            if (!resp.ok) { const errorText = await resp.text().catch(() => `Erro ${resp.status}`); throw new Error(`Falha: ${errorText}`); }
+            const resp = await fetchAuthenticated(`/rest/clientes/${idCli}/${idEnd}`, { method: 'DELETE' }); // <<< Alterado call
+            if (!resp.ok) { const errorText = await resp.text().catch(() => `Erro ${resp.status}`); throw new Error(`Falha: ${errorText}`);
+            }
             // Remove das duas listas para consistência imediata
             setTodosClientes(prev => prev.filter(c => !(c.idCli === idCli && c.idEndereco === idEnd)));
             setResultadosBusca(prev => prev.filter(c => !(c.idCli === idCli && c.idEndereco === idEnd)));
-            alert('Cliente excluído com sucesso!'); // Trocar por um Toast/Snackbar seria melhor
-        } catch (err: any) { setError(err.message); }
+            alert('Cliente excluído com sucesso!');
+            // Trocar por um Toast/Snackbar seria melhor
+        } catch (err: any) { setError(err.message);
+        }
     };
 
     return (
@@ -202,7 +209,7 @@ export default function BuscarClientesPage() {
 
 
                 {/* <<< Área de Resultados com Cards >>> */}
-                {!isLoading && buscaRealizada && !error && (
+                {!isLoading && hasSearched && !error && (
                     <div className="mt-8">
                         <h2 className="text-xl font-semibold mb-4 text-center text-sky-300">Resultados da Busca</h2>
                         {isSearching ? (
@@ -225,10 +232,10 @@ export default function BuscarClientesPage() {
                                             </div>
                                             {/* Corpo do Card */}
                                             <div className="p-4 space-y-2 flex-grow text-sm">
-                                                <p title={cliente.nomeCompleto}><strong><User size={16} className="inline -mt-1 mr-1"/> Nome:</strong> {cliente.nomeCompleto || '-'}</p>
-                                                <p><strong><MdBadge className="inline -mt-1 mr-1"/> Documento:</strong> {cliente.documento || '-'}</p>
-                                                <p title={cliente.email}><strong><Mail size={16} className="inline -mt-1 mr-1"/> Email:</strong> {cliente.email || '-'}</p>
-                                                <p><strong><MapPin size={16} className="inline -mt-1 mr-1"/> Local:</strong> {cliente.cidadeEstado || '-'}</p>
+                                                <p title={cliente.nomeCompleto}><strong><User size={16} className="inline -mt-1 mr-1"/> Nome:</strong> {cliente.nomeCompleto || '-'} </p>
+                                                <p><strong><MdBadge className="inline -mt-1 mr-1"/> Documento:</strong> {cliente.documento || '-'} </p>
+                                                <p title={cliente.email}><strong><Mail size={16} className="inline -mt-1 mr-1"/> Email:</strong> {cliente.email || '-'} </p>
+                                                <p><strong><MapPin size={16} className="inline -mt-1 mr-1"/> Local:</strong> {cliente.cidadeEstado || '-'} </p>
                                             </div>
                                             {/* Footer do Card (Ações) */}
                                             <div className="bg-slate-900 p-3 mt-auto border-t border-slate-700 flex justify-end gap-2">
@@ -237,7 +244,7 @@ export default function BuscarClientesPage() {
                                                         <Link href={`/clientes/alterar/${cliente.idCli}/${cliente.idEndereco}`}>
                                                             <button className="inline-flex items-center px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-black rounded-md text-xs font-medium gap-1"> <Edit3 size={14} /> Alterar </button>
                                                         </Link>
-                                                        <button onClick={() => handleDelete(cliente.idCli, cliente.idEndereco)} className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium gap-1"> <MdDelete size={16} /> Deletar </button>
+                                                        <button onClick={() => handleDelete(cliente.idCli, cliente.idEndereco)} className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium gap-1" disabled={isLoading}> <MdDelete size={16} /> Deletar </button>
                                                     </>
                                                 ) : ( <span className="text-xs text-red-400 italic">IDs Inválidos</span> )}
                                             </div>

@@ -1,18 +1,21 @@
 // --- Arquivo: src/app/clientes/listar/page.tsx (VERSÃO COM CARDS E ORDENAÇÃO POR ID) ---
 'use client';
-
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Adicionado import
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Importar se precisar de navegação programática no futuro
+// import { useRouter } from 'next/navigation';
+// Removido se não usar
 import NavBar from '@/components/nav-bar';
 // Importando Ícones
 import { User, Mail, MapPin, Edit3, Trash2, Hash } from 'lucide-react';
-import { MdPersonAdd, MdEdit, MdDelete, MdPeopleAlt, MdBadge, MdErrorOutline } from 'react-icons/md'; // Usar MdBadge para documento
+import { MdPersonAdd, MdEdit, MdDelete, MdPeopleAlt, MdBadge, MdErrorOutline } from 'react-icons/md';
+// Usar MdBadge para documento
 
 // --- Interfaces ---
 interface ClienteParaLista {
     idCli: number;
-    idEndereco: number; // Necessário para as ações (editar/deletar)
+    idEndereco: number;
+    // Necessário para as ações (editar/deletar)
     nomeCompleto: string;
     documento: string;
     email: string;
@@ -33,7 +36,8 @@ interface ClienteApiResponseDto {
         estado: string;
     } | null;
     contato: {
-        celular: string; // Celular não está na ClienteParaLista atual, adicionar se necessário
+        celular: string;
+        // Celular não está na ClienteParaLista atual, adicionar se necessário
         email: string;
     } | null;
 }
@@ -43,16 +47,18 @@ export default function ListarClientesPage() {
     const [clientes, setClientes] = useState<ClienteParaLista[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    // const router = useRouter(); // Descomentar se usar router.push
+    // const router = useRouter();
+    // Descomentar se usar router.push
 
     const fetchClientes = async () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch("http://localhost:8080/rest/clientes/all");
+            const response = await fetchAuthenticated("/rest/clientes/all"); // <<< Alterado call
             if (!response.ok) {
                 let errorMsg = `Erro HTTP ${response.status}: ${response.statusText}`;
-                try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch (e) {}
+                try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg;
+                } catch (e) {}
                 throw new Error(errorMsg);
             }
             if (response.status === 204) { // Sem conteúdo
@@ -61,17 +67,15 @@ export default function ListarClientesPage() {
             }
 
             const data: ClienteApiResponseDto[] = await response.json();
-
             // <<< ORDENAÇÃO POR ID_CLI ANTES DE MAPEAR >>>
             const sortedData = (data || []).sort((a, b) => a.idCli - b.idCli);
-
             const clientesFormatados: ClienteParaLista[] = sortedData.map(dto => ({
                 idCli: dto.idCli,
                 idEndereco: dto.endereco?.codigo || 0, // Pega idEndereco para a chave composta
                 nomeCompleto: `${dto.nome || ''} ${dto.sobrenome || ''}`.trim(),
                 documento: dto.numeroDocumento || 'N/A',
                 email: dto.contato?.email || 'N/A',
-                cidadeEstado: dto.endereco ? `${dto.endereco.cidade || 'N/A'} / ${dto.endereco.estado || 'N/A'}` : 'N/A', // Ajustado separador
+                cidadeEstado: dto.endereco ? `${dto.endereco.cidade || 'N/A'} / ${dto.endereco.estado || 'N/A'}` : 'N/A',
                 // tipoCliente: dto.tipoCliente // Descomentar se quiser usar no card
             }));
             setClientes(clientesFormatados);
@@ -87,7 +91,6 @@ export default function ListarClientesPage() {
     useEffect(() => {
         fetchClientes();
     }, []);
-
     // --- Função de Delete (sem alterações na lógica interna) ---
     const handleDelete = async (idCliente: number, idEndereco: number) => {
         // Validação simples de ID (pode melhorar)
@@ -102,19 +105,18 @@ export default function ListarClientesPage() {
         // Aqui poderia setar um estado de loading específico para o botão clicado
         setError(null);
         try {
-            const response = await fetch(`http://localhost:8080/rest/clientes/${idCliente}/${idEndereco}`, {
+            const response = await fetchAuthenticated(`/rest/clientes/${idCliente}/${idEndereco}`, {
                 method: 'DELETE',
             });
-
             if (!response.ok) {
                 const errorText = await response.text().catch(() => `Erro ${response.status}`);
                 throw new Error(`Falha ao deletar cliente: ${errorText}`);
             }
 
-            alert("Cliente excluído com sucesso!"); // Usar um modal/toast seria melhor UX
+            alert("Cliente excluído com sucesso!");
+            // Usar um modal/toast seria melhor UX
             // Remove o cliente da lista local
             setClientes(prev => prev.filter(c => !(c.idCli === idCliente && c.idEndereco === idEndereco)));
-
         } catch (err: any) {
             console.error("Erro ao deletar cliente:", err);
             setError(err.message || "Falha ao excluir cliente.");
@@ -122,7 +124,6 @@ export default function ListarClientesPage() {
             // Resetar loading específico do botão se implementado
         }
     };
-
     return (
         <>
             <NavBar active="clientes" /> {/* Ajuste 'active' se o link na NavBar for diferente */}
@@ -176,10 +177,10 @@ export default function ListarClientesPage() {
 
                                             {/* Corpo do Card */}
                                             <div className="p-4 space-y-2 flex-grow text-sm">
-                                                <p title={cliente.nomeCompleto}><strong><User size={16} className="inline -mt-1 mr-1"/> Nome:</strong> {cliente.nomeCompleto || '-'}</p>
-                                                <p><strong><MdBadge className="inline -mt-1 mr-1"/> Documento:</strong> {cliente.documento || '-'}</p>
-                                                <p title={cliente.email}><strong><Mail size={16} className="inline -mt-1 mr-1"/> Email:</strong> {cliente.email || '-'}</p>
-                                                <p><strong><MapPin size={16} className="inline -mt-1 mr-1"/> Local:</strong> {cliente.cidadeEstado || '-'}</p>
+                                                <p title={cliente.nomeCompleto}><strong><User size={16} className="inline -mt-1 mr-1"/> Nome:</strong> {cliente.nomeCompleto || '-'} </p>
+                                                <p><strong><MdBadge className="inline -mt-1 mr-1"/> Documento:</strong> {cliente.documento || '-'} </p>
+                                                <p title={cliente.email}><strong><Mail size={16} className="inline -mt-1 mr-1"/> Email:</strong> {cliente.email || '-'} </p>
+                                                <p><strong><MapPin size={16} className="inline -mt-1 mr-1"/> Local:</strong> {cliente.cidadeEstado || '-'} </p>
                                             </div>
 
                                             {/* Footer do Card (Ações) */}

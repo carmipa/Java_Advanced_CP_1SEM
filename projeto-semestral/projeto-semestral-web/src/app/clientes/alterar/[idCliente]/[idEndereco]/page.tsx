@@ -1,5 +1,7 @@
+// app/clientes/alterar/[idCliente]/[idEndereco]/page.tsx
 "use client";
 
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Adicionado import
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -16,11 +18,9 @@ import {
     MdLocationOn,
     MdHome
 } from 'react-icons/md';
-
 // Função auxiliar para limpar máscaras
 const cleanMaskedValue = (value: string): string =>
     value.replace(/\D/g, '');
-
 // Interface para a resposta da API
 interface ClienteApiResponseDto {
     idCli: number;
@@ -52,14 +52,12 @@ interface ClienteApiResponseDto {
 export default function AlterarClientePage() {
     const params = useParams();
     const router = useRouter();
-
     const idCliente = typeof params?.idCliente === 'string'
         ? parseInt(params.idCliente, 10)
         : null;
     const idEndereco = typeof params?.idEndereco === 'string'
         ? parseInt(params.idEndereco, 10)
         : null;
-
     // Estados do Formulário
     const [tipoCliente, setTipoCliente] = useState("PF");
     const [nome, setNome] = useState("");
@@ -79,13 +77,11 @@ export default function AlterarClientePage() {
     const [cidade, setCidade] = useState("");
     const [estado, setEstado] = useState("");
     const [complemento, setComplemento] = useState("");
-
     // Controle de UI
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-
     // Busca inicial dos dados
     useEffect(() => {
         if (idCliente && idEndereco) {
@@ -93,7 +89,7 @@ export default function AlterarClientePage() {
             setError(null);
             const fetchData = async () => {
                 try {
-                    const resp = await fetch(`http://localhost:8080/rest/clientes/${idCliente}/${idEndereco}`);
+                    const resp = await fetchAuthenticated(`/rest/clientes/${idCliente}/${idEndereco}`); // <<< Alterado call
                     if (resp.status === 404) throw new Error("Cliente não encontrado.");
                     if (!resp.ok) throw new Error(`Erro: ${resp.statusText}`);
                     const data: ClienteApiResponseDto = await resp.json();
@@ -165,9 +161,8 @@ export default function AlterarClientePage() {
             },
             contato: { celular: cleanedCel, email, contato }
         };
-
         try {
-            const resp = await fetch(`http://localhost:8080/rest/clientes/${idCliente}/${idEndereco}`, {
+            const resp = await fetchAuthenticated(`/rest/clientes/${idCliente}/${idEndereco}`, { // <<< Alterado call
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -184,7 +179,6 @@ export default function AlterarClientePage() {
             setIsSaving(false);
         }
     };
-
     // Busca de CEP
     const handleCepChange = async (value: string) => {
         const mask = cleanMaskedValue(value);
@@ -318,7 +312,7 @@ export default function AlterarClientePage() {
                                 {/* Sobrenome */}
                                 <div>
                                     <label htmlFor="sobrenome" className="block mb-1 flex items-center">
-                                        <MdPerson className="mr-2" /> Sobrenome:
+                                        <MdBadge className="mr-2" /> Sobrenome:
                                     </label>
                                     <input
                                         id="sobrenome"
@@ -515,7 +509,7 @@ export default function AlterarClientePage() {
                                         id="complemento"
                                         type="text"
                                         maxLength={100}
-                                        className="w-full p-2 rounded bg-slate-800 border border-slate-700 focus:ring-sky-500"
+                                        className="w-full p-2 rounded bg-slate-800 border border-slate-700 focus:ring-2 focus:ring-sky-500"
                                         value={complemento}
                                         onChange={e => setComplemento(e.target.value)}
                                     />
@@ -583,9 +577,9 @@ export default function AlterarClientePage() {
                                     'Salvando...'
                                 ) : (
                                     <span className="flex items-center">
-                    <MdEdit className="mr-2" />
-                    Salvar Alterações
-                  </span>
+                                        <MdEdit className="mr-2" />
+                                        Salvar Alterações
+                                    </span>
                                 )}
                             </button>
                             <Link

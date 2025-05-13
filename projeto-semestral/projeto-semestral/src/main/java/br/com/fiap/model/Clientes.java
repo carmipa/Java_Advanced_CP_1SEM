@@ -1,4 +1,5 @@
 package br.com.fiap.model;
+import br.com.fiap.model.autenticar.Autenticar;
 import br.com.fiap.model.relacionamentos.ClienteId;
 import jakarta.persistence.*;
 import lombok.*;

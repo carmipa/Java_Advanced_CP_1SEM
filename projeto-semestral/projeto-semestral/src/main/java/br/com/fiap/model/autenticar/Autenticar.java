@@ -1,4 +1,4 @@
-package br.com.fiap.model;
+package br.com.fiap.model.autenticar;
 
 import jakarta.persistence.*;   // Importações JPA
 import lombok.*;                // Importações Lombok

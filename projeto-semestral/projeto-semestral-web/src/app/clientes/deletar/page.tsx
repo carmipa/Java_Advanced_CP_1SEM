@@ -1,6 +1,7 @@
 // app/clientes/listar/page.tsx
 "use client";
 
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Adicionado import
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import NavBar from '@/components/nav-bar';
@@ -14,7 +15,6 @@ import {
     MdDelete,
     MdPersonAdd
 } from 'react-icons/md';
-
 // Interfaces
 interface ClienteParaLista {
     idCli: number;
@@ -39,7 +39,6 @@ export default function ListarClientesPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-
     // Modal de delete
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [clienteParaDeletar, setClienteParaDeletar] = useState<ClienteParaLista | null>(null);
@@ -51,7 +50,7 @@ export default function ListarClientesPage() {
         setError(null);
         setSuccess(null);
         try {
-            const resp = await fetch("http://localhost:8080/rest/clientes/all");
+            const resp = await fetchAuthenticated("/rest/clientes/all"); // <<< Alterado call
             if (!resp.ok) throw new Error(`Erro HTTP ${resp.status}: ${resp.statusText}`);
             const data: ClienteApiResponseDto[] = await resp.json();
             const formatados = data.map(dto => ({
@@ -71,11 +70,9 @@ export default function ListarClientesPage() {
             setIsLoading(false);
         }
     };
-
     useEffect(() => {
         fetchClientes();
     }, []);
-
     // Abre modal
     const handleDeleteClick = (cliente: ClienteParaLista) => {
         setClienteParaDeletar(cliente);
@@ -98,8 +95,8 @@ export default function ListarClientesPage() {
         setSuccess(null);
         const { idCli, idEndereco } = clienteParaDeletar;
         try {
-            const resp = await fetch(
-                `http://localhost:8080/rest/clientes/${idCli}/${idEndereco}`,
+            const resp = await fetchAuthenticated(
+                `/rest/clientes/${idCli}/${idEndereco}`, // <<< Alterado URL
                 { method: 'DELETE' }
             );
             if (!resp.ok) {

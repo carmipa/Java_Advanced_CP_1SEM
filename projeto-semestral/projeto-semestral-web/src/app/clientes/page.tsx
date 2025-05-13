@@ -1,6 +1,8 @@
 // app/clientes/page.tsx
 "use client";
 
+// Importe fetchAuthenticated se houver chamadas de API nesta página (atualmente não há)
+// import { fetchAuthenticated } from '@/utils/apiService';
 import Link from 'next/link';
 import NavBar from '@/components/nav-bar';
 

@@ -7,6 +7,7 @@ import br.com.fiap.dto.cliente.ClienteInfoDTO;
 import br.com.fiap.dto.cliente.ClienteRequestDto;
 import br.com.fiap.dto.cliente.ClienteResponseDto;
 import br.com.fiap.exception.ClientesNotFoundException;
+import br.com.fiap.exception.AutenticarNotFoundException; // Importe esta exceção
 import br.com.fiap.model.relacionamentos.ClienteId;
 import br.com.fiap.service.clientes.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -115,26 +116,51 @@ public class ClientesController {
         }
     }
 
+    // --- Método CREATE CORRIGIDO ---
     @PostMapping
     @CacheEvict(value = "clientes", allEntries = true)
-    @Operation(summary = "Criar Novo Cliente", description = "Cria um novo registro de cliente, incluindo seu endereço e contato inicial.")
-    @ApiResponses(value = { /* ... */ })
+    @Operation(summary = "Criar Novo Cliente", description = "Cria um novo registro de cliente, incluindo seu endereço e contato inicial, opcionalmente associado a um usuário de autenticação existente.") // Descrição atualizada
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos ou ID de autenticação inválido"),
+            @ApiResponse(responseCode = "404", description = "Credencial de autenticação não encontrada com o ID fornecido"), // Adicionado 404
+            @ApiResponse(responseCode = "500", description = "Erro interno ao tentar criar o cliente")
+    })
     public ResponseEntity<ClienteResponseDto> create(
-            @Parameter(description = "Dados completos do cliente para criação") @RequestBody @Valid ClienteRequestDto clienteDto
+            @Parameter(description = "Dados completos do cliente para criação")
+            @RequestBody @Valid ClienteRequestDto clienteDto,
+            // --- ADICIONE ESTE PARÂMETRO ---
+            @Parameter(description = "ID opcional da credencial de autenticação existente para associar a este cliente")
+            @RequestParam(required = false) Long autenticarId // Recebe o ID da autenticação como parâmetro de requisição opcional
+            // -----------------------------
     ) {
-        log.info("Requisição para criar novo cliente recebida: {}", clienteDto.getNome());
+        log.info("Requisição para criar novo cliente recebida: {}{}",
+                clienteDto.getNome(),
+                autenticarId != null ? " com autenticarId: " + autenticarId : "");
         try {
-            ClienteResponseDto savedCliente = clienteService.create(clienteDto);
-            log.info("Cliente criado com sucesso com ID_CLI: {}", savedCliente.getIdCli());
+            // --- Chame o serviço com o novo parâmetro ---
+            ClienteResponseDto savedCliente = clienteService.create(clienteDto, autenticarId); // Passe o autenticarId para o serviço
+            // -------------------------------------------
+            log.info("Cliente criado com sucesso com ID_CLI: {}{}",
+                    savedCliente.getIdCli(),
+                    autenticarId != null ? " associado ao Autenticar ID: " + autenticarId : "");
+
             return ResponseEntity.status(HttpStatus.CREATED).body(savedCliente); // 201
-        } catch (Exception e) {
+        } catch (AutenticarNotFoundException e) {
+            // Captura a exceção específica do serviço e retorna 404
+            log.warn("Erro ao criar cliente: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Retorna 404 Not Found
+        }
+        catch (Exception e) {
             log.error("Erro ao criar cliente: {}", e.getMessage(), e);
             // Retorna uma resposta de erro mais informativa se possível
-            //String message = "Erro interno ao criar cliente. Detalhes: " + e.getMessage();
+            // String message = "Erro interno ao criar cliente. Detalhes: " + e.getMessage();
             // Evita expor stack trace completo, mas dá uma pista
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Ou retornar um objeto de erro { "error": message }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 500 Internal Server Error
+            // Ou retornar um objeto de erro { "error": message }
         }
     }
+    // --- Fim do Método CREATE CORRIGIDO ---
 
 
     @PutMapping("/{idCliente}/{idEndereco}")
@@ -149,6 +175,8 @@ public class ClientesController {
         ClienteId id = new ClienteId(idCliente, idEndereco);
         log.info("Requisição para atualizar cliente ID: {}", id);
         try {
+            // Note: Este método update no Controller NÃO recebe autenticarId,
+            // pois a associação de autenticação não é atualizada via este endpoint.
             ClienteResponseDto updatedCliente = clienteService.update(id, clienteDto);
             log.info("Cliente ID {} atualizado com sucesso.", id);
             return ResponseEntity.ok(updatedCliente); // 200
@@ -226,8 +254,5 @@ public class ClientesController {
     }
     // --- Fim do Novo Endpoint ---
 
-
-
-    // <<< O ENDPOINT /relatorio-completo FOI REMOVIDO DAQUI >>>
 
 } // Fim da classe ClientesController

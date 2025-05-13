@@ -1,6 +1,6 @@
 // app/agendamento/alterar/[id]/page.tsx
 "use client";
-
+import { fetchAuthenticated } from '@/utils/apiService';
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
