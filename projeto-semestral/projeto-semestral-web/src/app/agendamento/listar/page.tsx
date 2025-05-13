@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
+import { fetchAuthenticated } from '@/utils/apiService'; // Import adicionado
 // Importando Ícones (Lucide e Material Design)
 import { Calendar, Hash, ClipboardList, Edit3, Trash2, CirclePlus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MdEventNote, MdAdd, MdErrorOutline } from 'react-icons/md';
@@ -27,7 +28,7 @@ interface PaginatedAgendaResponse {
 
 interface AgendamentoApiResponseDto {
     id: number;
-    dataAgendamento: string; // Esperado formato YYYY-MM-DD
+    dataAgendamento: string; // Esperado formato<ctrl3348>-MM-DD
     observacao: string | null;
     // Adicionar aqui os DTOs de cliente/veículo se o backend os retornar
 }
@@ -60,11 +61,11 @@ export default function ListarAgendamentosPage() {
             size: pageSize.toString(),
             sort: 'id,asc' // <<< ORDENAÇÃO ALTERADA PARA ID ASCENDENTE >>>
         });
-        const apiUrl = `http://localhost:8080/rest/agenda?${params.toString()}`;
+        const apiUrl = `/rest/agenda?${params.toString()}`;
         console.log("Buscando agendamentos:", apiUrl);
 
         try {
-            const response = await fetch(apiUrl);
+            const response = await fetchAuthenticated(apiUrl);
             if (!response.ok) {
                 let errorMsg = `Erro HTTP ${response.status}: ${response.statusText}`;
                 try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch (e) {}

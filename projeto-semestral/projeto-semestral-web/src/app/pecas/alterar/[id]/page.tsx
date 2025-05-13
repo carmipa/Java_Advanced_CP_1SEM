@@ -1,297 +1,450 @@
-// src/app/pecas/alterar/[id]/page.tsx
+// src/app/pagamento/listar/page.tsx
 "use client";
 
-import React, { useState, useEffect, FormEvent, useMemo } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
-import NavBar from '@/components/nav-bar';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import NavBar from "@/components/nav-bar";
 import {
-    Edit3 as EditIcon, Package, Car, Building, Tag, Calendar, DollarSign, Percent, Calculator, Save, ArrowLeft,
-    Info, AlertCircle, CheckCircle, Loader2
-} from 'lucide-react';
-import { MdErrorOutline, MdCheckCircle } from 'react-icons/md';
+    MdPayment,
+    MdAdd,
+    MdErrorOutline,
+    MdFilterList,
+    MdChevronLeft,
+    MdChevronRight,
+    MdAttachMoney,
+    MdCancel,
+} from "react-icons/md";
+import {
+    Hash,
+    Edit3,
+    Trash2,
+    CalendarDays,
+    CreditCard,
+    Tag,
+    ListOrdered,
+    Info,
+    Delete,
+} from "lucide-react";
 
-// Interfaces
-interface PecaResponseDto { // Para buscar dados
+// <<< import da função autenticada >>>
+import { fetchAuthenticated } from "@/utils/apiService";
+
+// -----------------------------------------------------------------------------
+// Tipos
+// -----------------------------------------------------------------------------
+interface Pagamento {
     id: number;
-    tipoVeiculo: string;
-    fabricante: string;
-    descricao: string;
-    dataCompra: string;
-    preco: number;
+    dataPagamento: string;
+    tipoPagamento: string;
     desconto: number;
-    totalDesconto: number;
+    totalParcelas: string;
+    valorParcelas: number;
+    totalComDesconto: number;
+    clienteId?: number | null;
+    orcamentoId?: number | null;
 }
-interface PecaFormData { // Para o formulário
-    tipoVeiculo: string;
-    fabricante: string;
-    descricaoPeca: string;
-    dataCompra: string;
-    preco: string;
-    desconto: string;
+interface PaginatedPagamentosResponse {
+    content: Pagamento[];
+    totalPages: number;
+    totalElements: number;
+    number: number;
+    size: number;
 }
 
-// Tipos de veículo (igual ao cadastro)
-const tiposVeiculo = ["Carro", "Moto", "Caminhão", "Ônibus", "Utilitário", "Outro"];
-
-export default function AlterarPecaPage() {
-    const router = useRouter();
-    const params = useParams();
-    const id = params.id as string;
-
-    const [formData, setFormData] = useState<PecaFormData>({
-        tipoVeiculo: "", fabricante: "", descricaoPeca: "", dataCompra: "", preco: "0,00", desconto: "0,00",
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isFetching, setIsFetching] = useState(true);
+// -----------------------------------------------------------------------------
+// Componente
+// -----------------------------------------------------------------------------
+export default function ListarPagamentosPage() {
+    const [pagamentos, setPagamentos] = useState<Pagamento[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
-    const [originalDataLoaded, setOriginalDataLoaded] = useState(false);
 
-    // Funções de formatação/parse (iguais ao cadastro)
-    const parseInputCurrencyToNumber = (inputValue: string): number => {
-        if (!inputValue) return 0;
-        const cleaned = inputValue.replace(/\./g, '').replace(',', '.');
-        const num = parseFloat(cleaned);
-        return isNaN(num) ? 0 : num;
-    };
-    const formatNumberToInputCurrencyString = (value: number): string => {
-        if (value === null || value === undefined || isNaN(value)) return '0,00';
-        return value.toFixed(2).replace('.', ',');
-    };
-    const formatNumberToDisplayCurrencyString = (value: number): string => {
-        if (value === null || value === undefined || isNaN(value)) return 'R$ 0,00';
-        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    };
+    // filtros / paginação
+    const [filtroTipo, setFiltroTipo] = useState("");
+    const [filtroDataInicio, setFiltroDataInicio] = useState("");
+    const [filtroDataFim, setFiltroDataFim] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(12);
 
-    // Buscar dados da peça ao carregar
-    useEffect(() => {
-        if (!id) {
-            setError("ID da peça não fornecido na URL.");
-            setIsFetching(false);
-            return;
-        }
-        const fetchPeca = async () => {
-            setIsFetching(true);
-            setError(null);
-            setOriginalDataLoaded(false);
-            try {
-                const response = await fetch(`http://localhost:8080/rest/pecas/${id}`);
-                if (response.status === 404) throw new Error(`Peça com ID ${id} não encontrada.`);
-                if (!response.ok) throw new Error(`Erro HTTP ${response.status}: Falha ao buscar dados da peça.`);
+    // modal deleção
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [pagamentoParaDeletar, setPagamentoParaDeletar] =
+        useState<Pagamento | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-                const data: PecaResponseDto = await response.json();
-                setFormData({
-                    tipoVeiculo: data.tipoVeiculo || "",
-                    fabricante: data.fabricante || "",
-                    descricaoPeca: data.descricao || "",
-                    dataCompra: data.dataCompra ? data.dataCompra.split('T')[0] : "", // Formata YYYY-MM-DD
-                    preco: formatNumberToInputCurrencyString(data.preco),
-                    desconto: formatNumberToInputCurrencyString(data.desconto),
-                });
-                setOriginalDataLoaded(true);
+    // ---------------------------------------------------------------------------
+    // helpers
+    // ---------------------------------------------------------------------------
+    const formatCurrency = (val?: number | null) =>
+        (val ?? 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
 
-            } catch (err: any) {
-                setError(err.message || "Erro desconhecido ao carregar peça.");
-            } finally {
-                setIsFetching(false);
-            }
-        };
-        fetchPeca();
-    }, [id]);
+    const formatDate = (d?: string | null) =>
+        d
+            ? new Date(`${d}T00:00:00Z`).toLocaleDateString("pt-BR", {
+                timeZone: "UTC",
+            })
+            : "N/A";
 
-    // Cálculo do total (igual ao cadastro)
-    const totalComDesconto = useMemo(() => {
-        const precoNum = parseInputCurrencyToNumber(formData.preco);
-        const descontoNum = parseInputCurrencyToNumber(formData.desconto);
-        if (precoNum <= 0) return 0;
-        const total = precoNum - descontoNum;
-        return Math.max(0, total);
-    }, [formData.preco, formData.desconto]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-    const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        const cleanedValue = value.replace(/[^0-9,]/g, '');
-        setFormData(prev => ({ ...prev, [name]: cleanedValue }));
-    };
-
-
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!originalDataLoaded) { // Não submeter se dados originais não carregaram
-            setError("Dados originais não carregados. Não é possível salvar.");
-            return;
-        }
-        setIsSubmitting(true); setError(null); setSuccess(null);
-
-        const precoNum = parseInputCurrencyToNumber(formData.preco);
-        const descontoNum = parseInputCurrencyToNumber(formData.desconto);
-        const totalDescNum = totalComDesconto;
-
-        if (precoNum <= 0 || descontoNum < 0 || descontoNum > precoNum) {
-            setError("Verifique os valores de Preço e Desconto.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        const payload = {
-            tipoVeiculo: formData.tipoVeiculo,
-            fabricante: formData.fabricante,
-            descricao: formData.descricaoPeca,
-            dataCompra: formData.dataCompra,
-            preco: precoNum,
-            desconto: descontoNum,
-            totalDesconto: totalDescNum
-        };
-
-        console.log("Enviando payload para UPDATE Peça:", JSON.stringify(payload, null, 2));
-
+    // ---------------------------------------------------------------------------
+    // carregar lista
+    // ---------------------------------------------------------------------------
+    const fetchPagamentos = async (page = currentPage) => {
+        setIsLoading(true);
+        setError(null);
         try {
-            const response = await fetch(`http://localhost:8080/rest/pecas/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+            const qs = new URLSearchParams({
+                page: page.toString(),
+                size: pageSize.toString(),
+                sort: "id,asc",
             });
+            if (filtroTipo) qs.append("tipoPagamento", filtroTipo);
+            if (filtroDataInicio) qs.append("dataInicio", filtroDataInicio);
+            if (filtroDataFim) qs.append("dataFim", filtroDataFim);
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: `Erro HTTP ${response.status}` }));
-                throw new Error(errorData.message || `Erro ao atualizar peça`);
+            const resp = await fetchAuthenticated(`/rest/pagamentos?${qs}`);
+            if (!resp.ok) {
+                if (resp.status === 204) {
+                    setPagamentos([]);
+                    setTotalPages(0);
+                    setCurrentPage(0);
+                    return;
+                }
+                const msg =
+                    (await resp.json().catch(() => null))?.message ||
+                    `Erro HTTP ${resp.status}`;
+                throw new Error(msg);
             }
-
-            setSuccess(`Peça (ID: ${id}) atualizada com sucesso!`);
-            setTimeout(() => {
-                setSuccess(null);
-                router.push('/pecas/listar'); // Volta para a lista após sucesso
-            }, 3000);
-
-        } catch (err: any) {
-            setError(err.message || "Falha ao atualizar peça.");
-            console.error("Erro no fetch PUT Peça:", err);
+            const data: PaginatedPagamentosResponse = await resp.json();
+            setPagamentos(data.content || []);
+            setTotalPages(data.totalPages || 0);
+            setCurrentPage(data.number || 0);
+        } catch (e: any) {
+            setError(e.message);
+            setPagamentos([]);
+            setTotalPages(0);
+            setCurrentPage(0);
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
-    // Renderização condicional para loading e erro inicial
-    if (isFetching) {
-        return (
-            <>
-                <NavBar active="pecas" />
-                <main className="container mx-auto p-8 flex justify-center items-center min-h-screen bg-[#012A46]">
-                    <div className="flex flex-col items-center">
-                        <Loader2 className="h-12 w-12 animate-spin text-sky-400" />
-                        <p className="mt-3 text-sky-300 text-lg">Carregando dados da peça...</p>
-                    </div>
-                </main>
-            </>
-        );
-    }
+    useEffect(() => {
+        fetchPagamentos(0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    if (error && !originalDataLoaded) { // Erro grave ao carregar dados
-        return (
-            <>
-                <NavBar active="pecas" />
-                <main className="container mx-auto p-8 flex justify-center items-center min-h-screen bg-[#012A46]">
-                    <div className="bg-slate-800 p-6 rounded-lg shadow-xl text-center w-full max-w-lg">
-                        <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4"/>
-                        <h2 className="text-xl font-semibold text-red-400 mb-3">Erro ao Carregar Dados</h2>
-                        <p className="text-slate-300 mb-6">{error}</p>
-                        <Link href="/pecas/listar">
-                            <button className="px-6 py-2 bg-sky-600 hover:bg-sky-700 rounded-md text-white font-semibold">Voltar para Lista</button>
-                        </Link>
-                    </div>
-                </main>
-            </>
-        );
-    }
+    const handleFilterSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        fetchPagamentos(0);
+    };
 
+    // ---------------------------------------------------------------------------
+    // deleção
+    // ---------------------------------------------------------------------------
+    const openDeleteModal = (p: Pagamento) => {
+        setPagamentoParaDeletar(p);
+        setShowDeleteModal(true);
+        setError(null);
+    };
+    const closeDeleteModal = () => {
+        setPagamentoParaDeletar(null);
+        setShowDeleteModal(false);
+    };
+    const confirmDelete = async () => {
+        if (!pagamentoParaDeletar) return;
+        setIsDeleting(true);
+        setError(null);
+        try {
+            const resp = await fetchAuthenticated(
+                `/rest/pagamentos/${pagamentoParaDeletar.id}`,
+                { method: "DELETE" }
+            );
+            if (!resp.ok && resp.status !== 204) {
+                const msg =
+                    (await resp.json().catch(() => null))?.message ||
+                    `Erro HTTP ${resp.status}`;
+                throw new Error(msg);
+            }
+            fetchPagamentos(currentPage);
+            closeDeleteModal();
+        } catch (e: any) {
+            setError(`Falha ao excluir: ${e.message}`);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
+    // ---------------------------------------------------------------------------
+    // render
+    // ---------------------------------------------------------------------------
     return (
         <>
-            {/* Use a chave correta para 'active' na NavBar */}
-            <NavBar active="pecas-alterar" />
-            <main className="container mx-auto px-4 py-10 bg-[#012A46] min-h-screen text-white">
-                <div className="bg-slate-900 p-6 md:p-8 rounded-lg shadow-xl w-full max-w-3xl mx-auto border border-slate-700">
-                    <h1 className="flex items-center justify-center gap-2 text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center">
-                        <EditIcon size={30} className="text-sky-400" />
-                        Alterar Peça (ID: {id})
+            <NavBar active="pagamento-listar" />
+
+            <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
+                {/* cabeçalho */}
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                    <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+                        <MdPayment className="text-3xl text-sky-400" />
+                        Registros de Pagamento
                     </h1>
-
-                    {/* Mensagens de Erro/Sucesso do Submit */}
-                    {error && !isFetching && (
-                        <div className="relative mb-6 text-red-400 bg-red-900/50 p-3 sm:p-4 pr-10 rounded border border-red-500 text-sm" role="alert">
-                            <div className="flex items-center gap-2"> <MdErrorOutline className="text-lg" /> <span>{error}</span> </div>
-                            <button type="button" className="absolute top-0 bottom-0 right-0 px-3 sm:px-4 py-1 sm:py-3 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-lg sm:text-xl">&times;</span></button>
-                        </div>
-                    )}
-                    {success && (
-                        <div className="flex items-center justify-center gap-2 text-green-400 p-3 mb-6 rounded bg-green-900/30 border border-green-700 text-sm">
-                            <MdCheckCircle className="text-lg" /> <span>{success}</span>
-                        </div>
-                    )}
-
-                    {/* Formulário similar ao de cadastro */}
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                            {/* Campos do formulário (iguais ao de cadastro) */}
-                            <div>
-                                <label htmlFor="tipoVeiculo" className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-300"><Car size={16}/> Tipo Veículo (Aplicação):</label>
-                                <select id="tipoVeiculo" name="tipoVeiculo" value={formData.tipoVeiculo} onChange={handleChange} required className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md h-10 focus:ring-2 focus:ring-sky-500">
-                                    <option value="" disabled>Selecione...</option>
-                                    {tiposVeiculo.map(tv => (<option key={tv} value={tv}>{tv}</option>))}
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="fabricante" className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-300"><Building size={16}/> Fabricante/Marca da Peça:</label>
-                                <input type="text" id="fabricante" name="fabricante" value={formData.fabricante} onChange={handleChange} required maxLength={50} className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md h-10 focus:ring-2 focus:ring-sky-500"/>
-                            </div>
-                            <div className="md:col-span-2">
-                                <label htmlFor="descricaoPeca" className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-300"><Tag size={16}/> Descrição da Peça:</label>
-                                <input type="text" id="descricaoPeca" name="descricaoPeca" value={formData.descricaoPeca} onChange={handleChange} required maxLength={50} className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md h-10 focus:ring-2 focus:ring-sky-500"/>
-                            </div>
-                            <div>
-                                <label htmlFor="dataCompra" className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-300"><Calendar size={16}/> Data da Compra:</label>
-                                <input type="date" id="dataCompra" name="dataCompra" value={formData.dataCompra} onChange={handleChange} required className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md h-10 focus:ring-2 focus:ring-sky-500 date-input-fix"/>
-                            </div>
-                            <div>
-                                <label htmlFor="preco" className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-300"><DollarSign size={16}/> Preço (R$):</label>
-                                <input type="text" id="preco" name="preco" value={formData.preco} onChange={handleCurrencyChange} required placeholder="0,00" className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md h-10 focus:ring-2 focus:ring-sky-500"/>
-                            </div>
-                            <div>
-                                <label htmlFor="desconto" className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-300"><Percent size={16}/> Desconto (Valor R$):</label>
-                                <input type="text" id="desconto" name="desconto" value={formData.desconto} onChange={handleCurrencyChange} required placeholder="0,00" className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-md h-10 focus:ring-2 focus:ring-sky-500"/>
-                            </div>
-                            <div>
-                                <label className="flex items-center gap-1 mb-1 text-sm font-medium text-slate-400"><Calculator size={16}/> Preço Final (R$):</label>
-                                <input type="text" value={formatNumberToDisplayCurrencyString(totalComDesconto)} readOnly className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md h-10 cursor-not-allowed font-semibold text-green-400"/>
-                            </div>
-                        </div>
-
-                        {/* Botões */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 mt-6 border-t border-slate-700">
-                            <button
-                                type="submit"
-                                className={`flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 font-semibold text-white bg-green-600 rounded-md shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-opacity duration-300 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                disabled={isSubmitting || isFetching}
-                            >
-                                <Save size={18}/> {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
-                            </button>
-                            <Link href="/pecas/listar" className="w-full sm:w-auto">
-                                <button type="button" className="flex items-center justify-center gap-2 w-full px-6 sm:px-8 py-2.5 sm:py-3 font-semibold text-white bg-slate-600 rounded-md shadow hover:bg-slate-700 text-center">
-                                    <ArrowLeft size={18}/> Voltar para Lista
-                                </button>
-                            </Link>
-                        </div>
-                    </form>
+                    <Link href="/pagamento/cadastrar">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md shadow">
+                            <MdAdd size={20} /> Novo Registro
+                        </button>
+                    </Link>
                 </div>
+
+                {/* filtros */}
+                <form
+                    onSubmit={handleFilterSubmit}
+                    className="mb-6 p-4 bg-slate-800 rounded-lg shadow-md flex flex-wrap gap-4 items-end"
+                >
+                    <div>
+                        <label className="text-sm text-slate-300 block mb-1">De:</label>
+                        <input
+                            type="date"
+                            value={filtroDataInicio}
+                            onChange={(e) => setFiltroDataInicio(e.target.value)}
+                            className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white date-input-fix"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-slate-300 block mb-1">Até:</label>
+                        <input
+                            type="date"
+                            value={filtroDataFim}
+                            onChange={(e) => setFiltroDataFim(e.target.value)}
+                            className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white date-input-fix"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-sm text-slate-300 block mb-1">
+                            Tipo Pag.:
+                        </label>
+                        <select
+                            value={filtroTipo}
+                            onChange={(e) => setFiltroTipo(e.target.value)}
+                            className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white min-w-[150px]"
+                        >
+                            <option value="">Todos</option>
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="pix">PIX</option>
+                            <option value="debito">Débito</option>
+                            <option value="credito a vista">Crédito à Vista</option>
+                            <option value="credito parcelado">Crédito Parcelado</option>
+                        </select>
+                    </div>
+                    <button
+                        type="submit"
+                        className="p-2 h-10 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md flex items-center gap-2 px-4"
+                    >
+                        <MdFilterList size={20} /> Filtrar
+                    </button>
+                </form>
+
+                {/* mensagens */}
+                {isLoading && (
+                    <p className="text-center text-sky-300 py-10">Carregando...</p>
+                )}
+                {error && !showDeleteModal && (
+                    <div className="text-center text-red-400 py-4 bg-red-900/30 border border-red-700 rounded-md">
+                        <p className="flex items-center justify-center gap-2">
+                            <MdErrorOutline size={22} /> {error}
+                        </p>
+                        <button
+                            onClick={() => fetchPagamentos(0)}
+                            className="mt-2 px-3 py-1 bg-sky-600 hover:bg-sky-700 rounded text-white"
+                        >
+                            Tentar novamente
+                        </button>
+                    </div>
+                )}
+                {!isLoading && !error && pagamentos.length === 0 && (
+                    <p className="text-center text-slate-400 py-10 bg-slate-900 rounded-lg shadow">
+                        Nenhum registro encontrado.
+                    </p>
+                )}
+
+                {/* lista */}
+                {!isLoading && pagamentos.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {pagamentos.map((p) => (
+                            <div
+                                key={p.id}
+                                className="bg-slate-800 rounded-lg shadow-lg border border-slate-700 flex flex-col overflow-hidden hover:shadow-sky-700/20 transition-shadow"
+                            >
+                                <div className="bg-slate-700 p-3 flex justify-between text-sm">
+                  <span className="flex items-center gap-1 font-semibold text-sky-300">
+                    <Hash size={16} /> ID: {p.id}
+                  </span>
+                                    <span className="flex items-center gap-1 text-slate-400">
+                    <CalendarDays size={16} /> {formatDate(p.dataPagamento)}
+                  </span>
+                                </div>
+
+                                <div className="p-4 space-y-3 flex-grow">
+                                    <h3 className="flex items-center text-lg font-semibold gap-1 text-sky-200">
+                                        <MdAttachMoney size={22} className="text-green-400" />
+                                        {formatCurrency(p.totalComDesconto)}
+                                    </h3>
+                                    <div className="text-sm space-y-1 text-slate-300 pt-1">
+                                        <p className="flex items-center gap-1.5">
+                                            <CreditCard size={15} className="text-slate-500" />
+                                            Tipo: <span className="font-medium">{p.tipoPagamento}</span>
+                                        </p>
+                                        <p className="flex items-center gap-1.5">
+                                            <ListOrdered size={15} className="text-slate-500" />
+                                            Parcelas:&nbsp;
+                                            <span className="font-medium">
+                        {p.totalParcelas}x de {formatCurrency(p.valorParcelas)}
+                      </span>
+                                        </p>
+                                        <p className="flex items-center gap-1.5">
+                                            <Tag size={15} className="text-slate-500" />
+                                            Desconto:{" "}
+                                            <span className="font-medium">
+                        {p.desconto.toFixed(1)}%
+                      </span>
+                                        </p>
+                                        {p.clienteId && (
+                                            <p className="flex items-center gap-1.5">
+                                                <Info size={15} className="text-slate-500" />
+                                                Cliente ID: <span className="font-medium">{p.clienteId}</span>
+                                            </p>
+                                        )}
+                                        {p.orcamentoId && (
+                                            <p className="flex items-center gap-1.5">
+                                                <Info size={15} className="text-slate-500" />
+                                                Orçamento ID:{" "}
+                                                <span className="font-medium">{p.orcamentoId}</span>
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="bg-slate-900 p-3 mt-auto border-t border-slate-700 flex justify-end gap-2">
+                                    <Link href={`/pagamento/alterar/${p.id}`}>
+                                        <button className="inline-flex items-center px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-black rounded-md text-xs font-medium gap-1 shadow-sm">
+                                            <Edit3 size={14} /> Editar
+                                        </button>
+                                    </Link>
+                                    <button
+                                        onClick={() => openDeleteModal(p)}
+                                        className="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium gap-1 shadow-sm"
+                                    >
+                                        <Trash2 size={14} /> Deletar
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* paginação */}
+                {!isLoading && totalPages > 1 && (
+                    <div className="flex justify-center items-center mt-8 gap-3">
+                        <button
+                            onClick={() => fetchPagamentos(currentPage - 1)}
+                            disabled={currentPage === 0}
+                            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 flex items-center gap-1"
+                        >
+                            <MdChevronLeft size={20} /> Anterior
+                        </button>
+                        <span className="text-slate-300 text-sm">
+              Página {currentPage + 1} de {totalPages}
+            </span>
+                        <button
+                            onClick={() => fetchPagamentos(currentPage + 1)}
+                            disabled={currentPage >= totalPages - 1}
+                            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 flex items-center gap-1"
+                        >
+                            Próxima <MdChevronRight size={20} />
+                        </button>
+                    </div>
+                )}
             </main>
+
+            {/* modal exclusão */}
+            {showDeleteModal && pagamentoParaDeletar && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-75 z-40 flex items-center justify-center p-4"
+                    onClick={closeDeleteModal}
+                >
+                    <div
+                        className="bg-slate-800 p-6 rounded-lg shadow-xl max-w-md w-full border border-red-500"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-xl font-semibold text-red-400 mb-4 flex items-center gap-2">
+                            <Trash2 size={22} /> Confirmar Exclusão
+                        </h3>
+                        <p className="text-white mb-3">
+                            Tem certeza que deseja excluir este registro?
+                        </p>
+
+                        <div className="text-slate-300 text-sm mb-6 border-l-2 border-red-500 pl-3 bg-slate-700/30 p-3 rounded">
+                            <p>
+                                <strong>ID:</strong> {pagamentoParaDeletar.id}
+                            </p>
+                            <p>
+                                <strong>Data:</strong> {formatDate(pagamentoParaDeletar.dataPagamento)}
+                            </p>
+                            <p>
+                                <strong>Tipo:</strong> {pagamentoParaDeletar.tipoPagamento}
+                            </p>
+                            <p>
+                                <strong>Valor Total:</strong> {formatCurrency(pagamentoParaDeletar.totalComDesconto)}
+                            </p>
+                        </div>
+
+                        {error && isDeleting && (
+                            <p className="text-red-400 text-sm mb-3 text-center bg-red-900/50 p-2 rounded">
+                                {error}
+                            </p>
+                        )}
+
+                        <div className="flex justify-end gap-4">
+                            <button
+                                onClick={closeDeleteModal}
+                                disabled={isDeleting}
+                                className="flex items-center gap-2 px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md"
+                            >
+                                <MdCancel /> Cancelar
+                            </button>
+                            <button
+                                onClick={confirmDelete}
+                                disabled={isDeleting}
+                                className={`flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md ${
+                                    isDeleting && "opacity-50 cursor-not-allowed"
+                                }`}
+                            >
+                                {isDeleting ? "Excluindo..." : <><Delete /> Sim, Excluir</>}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* estilo global date */}
             <style jsx global>{`
-                .date-input-fix::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
-            `}</style>
+        .date-input-fix::-webkit-calendar-picker-indicator {
+          filter: invert(0.8);
+          cursor: pointer;
+        }
+        input[type="date"]:required:invalid::-webkit-datetime-edit {
+          color: transparent;
+        }
+        input[type="date"]:focus::-webkit-datetime-edit {
+          color: white !important;
+        }
+        input[type="date"]::-webkit-datetime-edit {
+          color: white;
+        }
+      `}</style>
         </>
     );
 }

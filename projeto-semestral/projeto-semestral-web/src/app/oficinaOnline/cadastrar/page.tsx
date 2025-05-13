@@ -14,6 +14,7 @@ import {
     Save,
     Wrench
 } from 'lucide-react';
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Import adicionado
 
 // Auxiliar para limpar máscaras
 const cleanMaskedValue = (value: string): string =>
@@ -62,8 +63,9 @@ export default function CadastrarOficinaPage() {
         setSuccess(null);
 
         try {
-            const apiUrl = `http://localhost:8080/rest/ia/diagnostico?descricao=${encodeURIComponent(descricaoProblema)}`;
-            const response = await fetch(apiUrl);
+            const query = encodeURIComponent(descricaoProblema);
+            // <<< chamada substituída
+            const response = await fetchAuthenticated(`/rest/ia/diagnostico?descricao=${query}`);
             if (!response.ok) {
                 const errorText = await response.text().catch(() => `Erro ${response.status}`);
                 throw new Error(`IA: ${errorText}`);
@@ -86,10 +88,10 @@ export default function CadastrarOficinaPage() {
         setSuccess(null);
 
         const oficinaData = { dataOficina, descricaoProblema, diagnostico, partesAfetadas, horasTrabalhadas };
-        const apiUrl = "http://localhost:8080/rest/oficina";
 
         try {
-            const resp = await fetch(apiUrl, {
+            // <<< chamada substituída
+            const resp = await fetchAuthenticated(`/rest/oficina`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(oficinaData),
@@ -119,7 +121,7 @@ export default function CadastrarOficinaPage() {
                 <div className="bg-slate-900 p-6 md:p-8 m-4 rounded-lg shadow-xl w-full max-w-2xl">
                     <h2 className="flex items-center text-3xl font-bold mb-6 justify-center">
                         <Wrench className="mr-2 text-4xl text-sky-400" />
-                        Diaganóstico do veículo!
+                        Diagnóstico do veículo!
                     </h2>
                     <form onSubmit={handleSubmit}>
                         {error && (
@@ -166,9 +168,7 @@ export default function CadastrarOficinaPage() {
                                 type="button"
                                 onClick={handleBuscaIa}
                                 disabled={isIaLoading}
-                                className={`inline-flex items-center px-5 py-2 bg-indigo-600 rounded-md shadow hover:bg-indigo-700 transition ${
-                                    isIaLoading ? 'opacity-50' : ''
-                                }`}
+                                className={`inline-flex items-center px-5 py-2 bg-indigo-600 rounded-md shadow hover:bg-indigo-700 transition ${isIaLoading ? 'opacity-50' : ''}`}
                             >
                                 <Cpu className="mr-2" />
                                 {isIaLoading ? 'Buscando na IA...' : 'Buscar Diagnóstico IA'}
@@ -239,9 +239,7 @@ export default function CadastrarOficinaPage() {
                             <button
                                 type="submit"
                                 disabled={isSaving}
-                                className={`inline-flex items-center px-6 py-3 bg-sky-600 rounded-md shadow hover:bg-sky-700 transition ${
-                                    isSaving ? 'opacity-50' : ''
-                                }`}
+                                className={`inline-flex items-center px-6 py-3 bg-sky-600 rounded-md shadow hover:bg-sky-700 transition ${isSaving ? 'opacity-50' : ''}`}
                             >
                                 <Save className="mr-2" />
                                 {isSaving ? 'Salvando...' : 'Salvar Registro'}

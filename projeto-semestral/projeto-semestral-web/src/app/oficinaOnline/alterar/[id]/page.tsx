@@ -7,6 +7,7 @@ import Link from 'next/link';
 import NavBar from '@/components/nav-bar';
 import { IMaskInput } from 'react-imask';
 import { Calendar, AlertCircle, CheckCircle, Box, Clock, Save, ArrowLeft, FileText } from 'lucide-react';
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Import adicionado
 
 // Função auxiliar para limpar máscaras (se usar alguma)
 const cleanMaskedValue = (value: string): string => value.replace(/\D/g, '');
@@ -47,7 +48,8 @@ export default function AlterarOficinaPage() {
             setIsLoading(true);
             setError(null);
             try {
-                const res = await fetch(`http://localhost:8080/rest/oficina/${id}`);
+                // <<< chamada substituída
+                const res = await fetchAuthenticated(`/rest/oficina/${id}`);
                 if (res.status === 404) throw new Error('Registro não encontrado.');
                 if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
                 const data: OficinaApiResponseDto = await res.json();
@@ -72,7 +74,8 @@ export default function AlterarOficinaPage() {
         setSuccess(null);
         const payload = { dataOficina, descricaoProblema, diagnostico, partesAfetadas, horasTrabalhadas };
         try {
-            const res = await fetch(`http://localhost:8080/rest/oficina/${id}`, {
+            // <<< chamada substituída
+            const res = await fetchAuthenticated(`/rest/oficina/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
+import { fetchAuthenticated } from '@/utils/apiService'; // Import adicionado
 // Ícones que adicionamos:
 import { MdDeleteForever, MdCancel, MdErrorOutline, MdWarningAmber } from 'react-icons/md';
 
@@ -29,8 +30,8 @@ export default function DeletarAgendamentoPage() {
             setError(null);
             const fetchAgendamentoData = async () => {
                 try {
-                    const apiUrl = `http://localhost:8080/rest/agenda/${id}`;
-                    const response = await fetch(apiUrl);
+                    const apiUrl = `/rest/agenda/${id}`;
+                    const response = await fetchAuthenticated(apiUrl);
                     if (response.status === 404) throw new Error("Agendamento não encontrado para confirmar exclusão.");
                     if (!response.ok) throw new Error(`Erro ao buscar dados: ${response.statusText}`);
                     const data: AgendamentoInfo = await response.json();
@@ -58,8 +59,8 @@ export default function DeletarAgendamentoPage() {
         setError(null);
 
         try {
-            const apiUrl = `http://localhost:8080/rest/agenda/${id}`;
-            const response = await fetch(apiUrl, { method: 'DELETE' });
+            const apiUrl = `/rest/agenda/${id}`;
+            const response = await fetchAuthenticated(apiUrl, { method: 'DELETE' });
 
             if (!response.ok) {
                 const errorText = await response.text().catch(() => `Erro ${response.status}`);

@@ -33,8 +33,8 @@ export default function AlterarAgendamentoPage() {
             setIsLoading(true); setError(null); setSuccess(null);
             const fetchAgendamentoData = async () => {
                 try {
-                    const apiUrl = `http://localhost:8080/rest/agenda/${id}`;
-                    const response = await fetch(apiUrl);
+                    const apiUrl = `/rest/agenda/${id}`;
+                    const response = await fetchAuthenticated(apiUrl);
                     if (response.status === 404) throw new Error("Agendamento não encontrado.");
                     if (!response.ok) throw new Error(`Erro ao buscar dados: ${response.statusText}`);
                     const data: AgendamentoApiResponseDto = await response.json();
@@ -61,10 +61,10 @@ export default function AlterarAgendamentoPage() {
         setIsSaving(true); setError(null); setSuccess(null);
 
         const agendamentoData = { dataAgendamento, observacao };
-        const apiUrl = `http://localhost:8080/rest/agenda/${id}`;
+        const apiUrl = `/rest/agenda/${id}`;
 
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetchAuthenticated(apiUrl, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(agendamentoData),

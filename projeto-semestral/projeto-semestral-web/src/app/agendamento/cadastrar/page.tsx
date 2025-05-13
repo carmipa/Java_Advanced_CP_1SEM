@@ -4,12 +4,13 @@
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import NavBar from '@/components/nav-bar';
+import { fetchAuthenticated } from '@/utils/apiService'; // Import adicionado
 // Importando Ícones (Md e Lucide)
 import { MdEventAvailable, MdSave, MdArrowBack, MdErrorOutline, MdCheckCircle } from 'react-icons/md';
 import { Calendar, ClipboardList } from 'lucide-react'; // Ícones para labels
 
 export default function CadastrarAgendamentoPage() {
-    const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0]; // Formato<ctrl3348>-MM-DD
     const initialState = {
         dataAgendamento: today, // Inicia com hoje
         observacao: ""
@@ -40,10 +41,10 @@ export default function CadastrarAgendamentoPage() {
         const agendamentoData = { dataAgendamento, observacao };
 
         console.log('Salvando agendamento:', JSON.stringify(agendamentoData, null, 2));
-        const apiUrl = "http://localhost:8080/rest/agenda";
+        const apiUrl = "/rest/agenda";
 
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetchAuthenticated(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(agendamentoData),
