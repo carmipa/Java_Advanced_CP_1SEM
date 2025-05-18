@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'; // Importar useRouter
 import Link from 'next/link'; // Importar Link
 import NavBar from '@/components/nav-bar'; // <<< 1. IMPORTAR A NAVBAR
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< ADICIONADO PARA CHAMADAS AUTENTICADAS
 import {
     Car,
     Hash,
@@ -135,7 +136,7 @@ export default function CadastrarVeiculoPage() {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch('http://localhost:8080/rest/veiculo', {
+            const res = await fetchAuthenticated('/rest/veiculo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

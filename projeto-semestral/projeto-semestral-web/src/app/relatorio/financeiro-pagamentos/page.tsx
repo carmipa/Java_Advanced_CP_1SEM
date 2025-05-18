@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import NavBar from '@/components/nav-bar';
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Import adicionado
 import { Bar, Pie } from 'react-chartjs-2'; // Pie adicionado
 import {
     Chart as ChartJS,
@@ -13,7 +14,7 @@ import {
     LineController,
     LineElement,
     PointElement,
-    ArcElement,     // Necessário para Pie/Doughnut
+    ArcElement,
     Title as ChartTitle,
     Tooltip,
     Legend,
@@ -51,7 +52,7 @@ const chartBackgroundColors = [
     'rgba(153, 102, 255, 0.8)', 'rgba(255, 159, 64, 0.8)', 'rgba(255, 99, 132, 0.8)',
     'rgba(100, 116, 139, 0.8)', 'rgba(239, 68, 68, 0.8)', 'rgba(59, 130, 246, 0.8)',
     'rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(139, 92, 246, 0.8)'
-]; // Alpha aumentado para melhor visualização em Pie
+];
 const chartBorderColors = chartBackgroundColors.map(color => color.replace(/0\.8/, '1'));
 
 export default function RelatorioFinanceiroPagamentosPage() {
@@ -71,13 +72,14 @@ export default function RelatorioFinanceiroPagamentosPage() {
         setError(null);
         try {
             const queryParams = new URLSearchParams({ dataInicio, dataFim }).toString();
-            let fetchError = null;
+            let fetchError: string | null = null;
 
+            // Estatísticas
             try {
-                const statsRes = await fetch(`http://localhost:8080/rest/relatorios/pagamentos/estatisticas?${queryParams}`);
+                const statsRes = await fetchAuthenticated(`/rest/relatorios/pagamentos/estatisticas?${queryParams}`);
                 if (!statsRes.ok) {
-                    const errorData = await statsRes.json().catch(() => ({ message: `Estatísticas: ${statsRes.statusText} (status ${statsRes.status})` }));
-                    throw new Error(errorData.message);
+                    const errData = await statsRes.json().catch(() => ({ message: `Estatísticas: ${statsRes.statusText} (status ${statsRes.status})` }));
+                    throw new Error(errData.message);
                 }
                 const statsData = await statsRes.json();
                 setEstatisticas(statsData);
@@ -87,35 +89,44 @@ export default function RelatorioFinanceiroPagamentosPage() {
                 setEstatisticas(null);
             }
 
+            // Pagamentos por Tipo
             try {
-                const tipoRes = await fetch(`http://localhost:8080/rest/relatorios/pagamentos/por-tipo?${queryParams}`);
+                const tipoRes = await fetchAuthenticated(`/rest/relatorios/pagamentos/por-tipo?${queryParams}`);
                 if (!tipoRes.ok) {
-                    const errorData = await tipoRes.json().catch(() => ({ message: `Pagamentos por Tipo: ${tipoRes.statusText} (status ${tipoRes.status})` }));
-                    throw new Error(errorData.message);
+                    const errData = await tipoRes.json().catch(() => ({ message: `Pagamentos por Tipo: ${tipoRes.statusText} (status ${tipoRes.status})` }));
+                    throw new Error(errData.message);
                 }
                 const tipoData = await tipoRes.json();
                 setPagamentosPorTipo(tipoData || []);
             } catch (e: any) {
                 console.error("Erro ao buscar pagamentos por tipo:", e);
-                fetchError = fetchError ? `${fetchError}\n${e.message}` : (e.message || "Erro ao buscar pagamentos por tipo.");
+                fetchError = fetchError
+                    ? `${fetchError}\n${e.message}`
+                    : (e.message || "Erro ao buscar pagamentos por tipo.");
                 setPagamentosPorTipo([]);
             }
 
+            // Evolução Mensal de Valor
             try {
-                const evolucaoRes = await fetch(`http://localhost:8080/rest/relatorios/pagamentos/evolucao-mensal-valor?${queryParams}`);
+                const evolucaoRes = await fetchAuthenticated(`/rest/relatorios/pagamentos/evolucao-mensal-valor?${queryParams}`);
                 if (!evolucaoRes.ok) {
-                    const errorData = await evolucaoRes.json().catch(() => ({ message: `Evolução Mensal: ${evolucaoRes.statusText} (status ${evolucaoRes.status})` }));
-                    throw new Error(errorData.message);
+                    const errData = await evolucaoRes.json().catch(() => ({ message: `Evolução Mensal: ${evolucaoRes.statusText} (status ${evolucaoRes.status})` }));
+                    throw new Error(errData.message);
                 }
                 const evolucaoData = await evolucaoRes.json();
-                const sortedEvolucaoData = (evolucaoData || []).sort((a: EvolucaoMensalValorDto, b: EvolucaoMensalValorDto) => a.mesAno.localeCompare(b.mesAno));
-                setEvolucaoValor(sortedEvolucaoData);
+                const sorted = (evolucaoData || []).sort((a: EvolucaoMensalValorDto, b: EvolucaoMensalValorDto) =>
+                    a.mesAno.localeCompare(b.mesAno)
+                );
+                setEvolucaoValor(sorted);
             } catch (e: any) {
                 console.error("Erro ao buscar evolução mensal:", e);
-                fetchError = fetchError ? `${fetchError}\n${e.message}` : (e.message || "Erro ao buscar evolução mensal.");
+                fetchError = fetchError
+                    ? `${fetchError}\n${e.message}`
+                    : (e.message || "Erro ao buscar evolução mensal.");
                 setEvolucaoValor([]);
             }
-            if (fetchError) { setError(fetchError); }
+
+            if (fetchError) setError(fetchError);
         } catch (err: any) {
             console.error("Falha geral ao buscar dados do relatório:", err);
             setError(err.message || "Erro desconhecido ao buscar dados.");
@@ -134,22 +145,20 @@ export default function RelatorioFinanceiroPagamentosPage() {
         fetchData();
     };
 
-    const formatCurrency = (value: number | undefined | null): string => {
-        if (value === null || value === undefined) return 'R$ 0,00';
-        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    };
+    const formatCurrency = (value: number | undefined | null): string =>
+        (value ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     const pagamentosPorTipoChartData = useMemo(() => {
         const labels = pagamentosPorTipo.map(p => p.tipoPagamento);
-        const dataValues = pagamentosPorTipo.map(p => p.valorTotal);
-        const dataQuantidades = pagamentosPorTipo.map(p => p.quantidade);
+        const valores = pagamentosPorTipo.map(p => p.valorTotal);
+        const quantidades = pagamentosPorTipo.map(p => p.quantidade);
         return {
             labels,
             datasets: [
                 {
                     type: 'bar' as const,
                     label: 'Valor Total (R$)',
-                    data: dataValues,
+                    data: valores,
                     backgroundColor: labels.map((_, i) => chartBackgroundColors[i % chartBackgroundColors.length]),
                     borderColor: labels.map((_, i) => chartBorderColors[i % chartBorderColors.length]),
                     borderWidth: 1,
@@ -159,9 +168,9 @@ export default function RelatorioFinanceiroPagamentosPage() {
                 {
                     type: 'bar' as const,
                     label: 'Quantidade',
-                    data: dataQuantidades,
-                    backgroundColor: labels.map((_, i) => chartBackgroundColors[(i + Math.floor(chartBackgroundColors.length / 2)) % chartBackgroundColors.length].replace('0.8', '0.6')),
-                    borderColor: labels.map((_, i) => chartBorderColors[(i + Math.floor(chartBorderColors.length / 2)) % chartBorderColors.length]),
+                    data: quantidades,
+                    backgroundColor: labels.map((_, i) => chartBackgroundColors[(i + 6) % chartBackgroundColors.length].replace('0.8', '0.6')),
+                    borderColor: labels.map((_, i) => chartBorderColors[(i + 6) % chartBorderColors.length]),
                     borderWidth: 1,
                     yAxisID: 'yQuantidade',
                     order: 2
@@ -170,15 +179,14 @@ export default function RelatorioFinanceiroPagamentosPage() {
         };
     }, [pagamentosPorTipo]);
 
-    // NOVO: Dados para o Gráfico de Pizza (Distribuição por Quantidade)
     const pagamentosPorTipoPizzaChartData = useMemo(() => {
         const labels = pagamentosPorTipo.map(p => p.tipoPagamento);
-        const dataQuantidades = pagamentosPorTipo.map(p => p.quantidade);
+        const quantidades = pagamentosPorTipo.map(p => p.quantidade);
         return {
             labels,
             datasets: [{
                 label: 'Quantidade por Forma de Pagamento',
-                data: dataQuantidades,
+                data: quantidades,
                 backgroundColor: labels.map((_, i) => chartBackgroundColors[i % chartBackgroundColors.length]),
                 borderColor: labels.map((_, i) => chartBorderColors[i % chartBorderColors.length]),
                 borderWidth: 1,
@@ -188,13 +196,13 @@ export default function RelatorioFinanceiroPagamentosPage() {
 
     const evolucaoValorChartData = useMemo(() => {
         const labels = evolucaoValor.map(e => e.mesAno);
-        const dataValues = evolucaoValor.map(e => e.valorTotal);
+        const valores = evolucaoValor.map(e => e.valorTotal);
         return {
             labels,
             datasets: [{
                 type: 'bar' as const,
                 label: 'Valor Total Arrecadado (R$)',
-                data: dataValues,
+                data: valores,
                 backgroundColor: labels.map((_, i) => chartBackgroundColors[i % chartBackgroundColors.length]),
                 borderColor: labels.map((_, i) => chartBorderColors[i % chartBorderColors.length]),
                 borderWidth: 1
@@ -208,7 +216,7 @@ export default function RelatorioFinanceiroPagamentosPage() {
         plugins: {
             legend: {
                 position: 'top' as const,
-                labels: { color: '#e2e8f0', boxWidth: 15, padding:15 }
+                labels: { color: '#e2e8f0', boxWidth: 15, padding: 15 }
             },
             tooltip: {
                 mode: 'index' as const,
@@ -220,14 +228,22 @@ export default function RelatorioFinanceiroPagamentosPage() {
                 cornerRadius: 4
             }
         },
-        scales: { x: { ticks: { color: '#94a3b8' }, grid: { display: false } } }
+        scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        }
     };
 
     const pagamentosPorTipoChartOptions = {
         ...chartOptionsBase,
         plugins: {
             ...chartOptionsBase.plugins,
-            title: { display: true, text: 'Pagamentos por Forma (Valor e Quantidade)', color: '#e2e8f0', font: { size: 16 as number, weight: 'bold' as 'bold' }, padding: {bottom: 15} }
+            title: {
+                display: true,
+                text: 'Pagamentos por Forma (Valor e Quantidade)',
+                color: '#e2e8f0',
+                font: { size: 16 as number, weight: 'bold' as 'bold' },
+                padding: { bottom: 15 }
+            }
         },
         scales: {
             ...chartOptionsBase.scales,
@@ -236,53 +252,50 @@ export default function RelatorioFinanceiroPagamentosPage() {
                 type: 'linear' as const,
                 display: true,
                 position: 'left' as const,
-                title: { display: true, text: 'Valor Total (R$)', color: '#94a3b8', font: {size: 12 as number, weight: 'bold' as 'bold'}},
-                ticks: { color: '#94a3b8', callback: function(value: any) { return 'R$ ' + Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2 }); } },
-                grid: { color: 'rgba(100, 116, 139, 0.2)' },
-                stacked: false
+                title: { display: true, text: 'Valor Total (R$)', color: '#94a3b8', font: { size: 12 as number, weight: 'bold' as 'bold' } },
+                ticks: {
+                    color: '#94a3b8',
+                    callback: (v: any) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                },
+                grid: { color: 'rgba(100, 116, 139, 0.2)' }
             },
             yQuantidade: {
                 type: 'linear' as const,
                 display: true,
                 position: 'right' as const,
-                title: { display: true, text: 'Quantidade de Pagamentos', color: '#94a3b8', font: {size: 12 as number, weight: 'bold' as 'bold'}},
-                ticks: { color: '#94a3b8', stepSize: pagamentosPorTipo.length > 0 ? Math.max(1, Math.ceil(Math.max(...(pagamentosPorTipo.map(p => p.quantidade)), 1) / 5)) : 1 },
-                grid: { drawOnChartArea: false },
-                stacked: false
-            },
+                title: { display: true, text: 'Quantidade de Pagamentos', color: '#94a3b8', font: { size: 12 as number, weight: 'bold' as 'bold' } },
+                ticks: {
+                    color: '#94a3b8',
+                    stepSize: pagamentosPorTipo.length > 0
+                        ? Math.max(1, Math.ceil(Math.max(...pagamentosPorTipo.map(p => p.quantidade), 1) / 5))
+                        : 1
+                },
+                grid: { drawOnChartArea: false }
+            }
         }
     };
 
-    // NOVO: Opções para o Gráfico de Pizza
     const pizzaChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'bottom' as const,
-                labels: {
-                    color: '#e2e8f0',
-                    boxWidth: 12,
-                    padding: 20,
-                    font: { size: 11 as number}
-                }
+                labels: { color: '#e2e8f0', boxWidth: 12, padding: 20, font: { size: 11 as number } }
             },
             title: {
                 display: true,
-                text: 'Distribuição por Quantidade', // Título mais simples para o espaço
-                color: '#cbd5e1', // Cor mais suave para subtítulo
+                text: 'Distribuição por Quantidade',
+                color: '#cbd5e1',
                 font: { size: 14 as number, weight: 'normal' as 'normal' },
                 padding: { top: 0, bottom: 10 }
             },
             tooltip: {
                 callbacks: {
-                    label: function(context: any) {
-                        let label = context.label || '';
-                        if (context.parsed !== null) {
-                            if (label) { label += ': '; }
-                            label += context.parsed;
-                        }
-                        return label;
+                    label: (ctx: any) => {
+                        const label = ctx.label || '';
+                        const val = ctx.parsed ?? 0;
+                        return `${label}: ${val}`;
                     }
                 }
             }
@@ -294,39 +307,67 @@ export default function RelatorioFinanceiroPagamentosPage() {
         plugins: {
             ...chartOptionsBase.plugins,
             legend: { display: false },
-            title: { display: true, text: 'Evolução Mensal do Valor Arrecadado', color: '#e2e8f0', font: { size: 16 as number, weight: 'bold' as 'bold'}, padding: {bottom: 15} }
+            title: {
+                display: true,
+                text: 'Evolução Mensal do Valor Arrecadado',
+                color: '#e2e8f0',
+                font: { size: 16 as number, weight: 'bold' as 'bold' },
+                padding: { bottom: 15 }
+            }
         },
         scales: {
             ...chartOptionsBase.scales,
             y: {
                 beginAtZero: true,
-                ticks: { color: '#94a3b8', callback: function(value: any) { return 'R$ ' + Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2 }); } },
+                ticks: {
+                    color: '#94a3b8',
+                    callback: (v: any) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                },
                 grid: { color: 'rgba(100, 116, 139, 0.2)' }
             }
         }
     };
 
-
     return (
         <>
             <NavBar active="relatorio-financeiro-pagamentos" />
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
-                <h1 className="flex items-center justify-center text-2xl md:text-3xl font-bold mb-6 text-center gap-2">
+                <h1 className="flex items-center justify-center text-2xl md:text-3xl font-bold mb-6 gap-2">
                     <MdAssessment className="text-4xl text-sky-400" />
                     Relatório Financeiro de Pagamentos
                 </h1>
 
                 <form onSubmit={handleFilterSubmit} className="mb-6 p-4 bg-slate-800 rounded-lg shadow-md flex flex-wrap items-end gap-4 justify-center">
                     <div className="flex items-center gap-2">
-                        <label htmlFor="dataInicio" className="text-sm text-slate-300 whitespace-nowrap"><MdCalendarToday className="inline mr-1"/>De:</label>
-                        <input type="date" id="dataInicio" value={dataInicio} onChange={e => setDataInicio(e.target.value)} className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white date-input-fix"/>
+                        <label htmlFor="dataInicio" className="text-sm text-slate-300 whitespace-nowrap">
+                            <MdCalendarToday className="inline mr-1" />De:
+                        </label>
+                        <input
+                            type="date"
+                            id="dataInicio"
+                            value={dataInicio}
+                            onChange={e => setDataInicio(e.target.value)}
+                            className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white date-input-fix"
+                        />
                     </div>
                     <div className="flex items-center gap-2">
-                        <label htmlFor="dataFim" className="text-sm text-slate-300 whitespace-nowrap"><MdCalendarToday className="inline mr-1"/>Até:</label>
-                        <input type="date" id="dataFim" value={dataFim} onChange={e => setDataFim(e.target.value)} className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white date-input-fix"/>
+                        <label htmlFor="dataFim" className="text-sm text-slate-300 whitespace-nowrap">
+                            <MdCalendarToday className="inline mr-1" />Até:
+                        </label>
+                        <input
+                            type="date"
+                            id="dataFim"
+                            value={dataFim}
+                            onChange={e => setDataFim(e.target.value)}
+                            className="p-2 h-10 rounded bg-slate-700 border border-slate-600 text-white date-input-fix"
+                        />
                     </div>
-                    <button type="submit" disabled={isLoading} className={`p-2 h-10 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md flex items-center gap-2 px-4 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                        <MdFilterList size={20}/> Aplicar Filtros
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className={`p-2 h-10 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md flex items-center gap-2 px-4 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        <MdFilterList size={20} /> Aplicar Filtros
                     </button>
                 </form>
 
@@ -335,24 +376,31 @@ export default function RelatorioFinanceiroPagamentosPage() {
                         <button
                             key={mode}
                             onClick={() => setViewMode(mode)}
-                            className={`flex items-center px-4 py-2 text-sm rounded-md transition-colors shadow-sm ${ viewMode === mode ? 'bg-sky-500 text-white font-semibold' : 'bg-slate-700 text-slate-200 hover:bg-slate-600' }`}
+                            className={`flex items-center px-4 py-2 text-sm rounded-md shadow-sm transition-colors ${
+                                viewMode === mode
+                                    ? 'bg-sky-500 text-white font-semibold'
+                                    : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
+                            }`}
                         >
-                            {mode === 'resumo' && <><MdSummarize className="mr-2"/>Resumo Geral</>}
-                            {mode === 'porTipo' && <><MdPieChart className="mr-2"/>Formas de Pagamento</>}
-                            {mode === 'evolucaoValor' && <><MdTrendingUp className="mr-2"/>Evolução Mensal (Valor)</>}
+                            {mode === 'resumo' && <><MdSummarize className="mr-2" />Resumo Geral</>}
+                            {mode === 'porTipo' && <><MdPieChart className="mr-2" />Formas de Pagamento</>}
+                            {mode === 'evolucaoValor' && <><MdTrendingUp className="mr-2" />Evolução Mensal (Valor)</>}
                         </button>
                     ))}
                 </div>
 
                 {isLoading && (
-                    <div className='flex justify-center items-center py-10'>
+                    <div className="flex justify-center items-center py-10">
                         <Loader2 className="h-8 w-8 animate-spin text-sky-400" />
-                        <span className='ml-3 text-sky-300 text-lg'>Carregando dados do relatório...</span>
+                        <span className="ml-3 text-sky-300 text-lg">Carregando dados do relatório...</span>
                     </div>
                 )}
+
                 {error && !isLoading && (
                     <div className="text-center text-red-400 py-4 bg-red-900/30 border border-red-700 rounded-md p-4 max-w-2xl mx-auto">
-                        <p className="flex items-center justify-center gap-2"><MdErrorOutline size={22}/> Erro ao carregar relatório: {error}</p>
+                        <p className="flex items-center justify-center gap-2">
+                            <MdErrorOutline size={22} /> Erro ao carregar relatório: {error}
+                        </p>
                         <button onClick={fetchData} className="mt-3 px-4 py-1.5 bg-sky-600 hover:bg-sky-700 rounded text-white text-sm">
                             Tentar Novamente
                         </button>
@@ -364,7 +412,7 @@ export default function RelatorioFinanceiroPagamentosPage() {
                         {viewMode === 'resumo' && (
                             <section>
                                 <h2 className="flex items-center text-xl font-semibold mb-6 text-sky-300 border-b border-slate-700 pb-3 gap-2">
-                                    <MdSummarize size={24}/> Resumo Geral de Pagamentos
+                                    <MdSummarize size={24} /> Resumo Geral de Pagamentos
                                 </h2>
                                 {estatisticas && pagamentosPorTipo.length > 0 && (
                                     <div className="mb-8 p-4 bg-slate-800/50 rounded-lg shadow-inner">
@@ -373,7 +421,7 @@ export default function RelatorioFinanceiroPagamentosPage() {
                                         </div>
                                     </div>
                                 )}
-                                {estatisticas && pagamentosPorTipo.length === 0 && !isLoading && (
+                                {estatisticas && pagamentosPorTipo.length === 0 && (
                                     <p className="text-center text-slate-400 py-3 my-4 text-sm bg-slate-800/30 rounded-md">
                                         (Dados insuficientes para o gráfico de distribuição por forma de pagamento no período)
                                     </p>
@@ -402,7 +450,7 @@ export default function RelatorioFinanceiroPagamentosPage() {
                         {viewMode === 'porTipo' && pagamentosPorTipo.length > 0 && (
                             <section>
                                 <h2 className="flex items-center text-xl font-semibold mb-4 text-sky-300 border-b border-slate-700 pb-2 gap-2">
-                                    <BarChartHorizontalBig size={24}/> Detalhamento por Forma de Pagamento
+                                    <BarChartHorizontalBig size={24} /> Detalhamento por Forma de Pagamento
                                 </h2>
                                 <div className="relative h-[450px] md:h-[500px]">
                                     <Bar options={pagamentosPorTipoChartOptions} data={pagamentosPorTipoChartData} />
@@ -416,7 +464,7 @@ export default function RelatorioFinanceiroPagamentosPage() {
                         {viewMode === 'evolucaoValor' && evolucaoValor.length > 0 && (
                             <section>
                                 <h2 className="flex items-center text-xl font-semibold mb-4 text-sky-300 border-b border-slate-700 pb-2 gap-2">
-                                    <Activity size={24}/> Evolução Mensal do Valor Arrecadado
+                                    <Activity size={24} /> Evolução Mensal do Valor Arrecadado
                                 </h2>
                                 <div className="relative h-80 md:h-96">
                                     <Bar options={evolucaoValorChartOptions} data={evolucaoValorChartData} />
@@ -430,7 +478,10 @@ export default function RelatorioFinanceiroPagamentosPage() {
                 )}
             </main>
             <style jsx global>{`
-                .date-input-fix::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+                .date-input-fix::-webkit-calendar-picker-indicator {
+                    filter: invert(0.8);
+                    cursor: pointer;
+                }
             `}</style>
         </>
     );

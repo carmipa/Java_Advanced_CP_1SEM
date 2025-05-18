@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import NavBar from '@/components/nav-bar'; // Ajuste o path
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< ADICIONADO
 
 // Defina ou importe a interface aqui
 interface VeiculoResponse {
@@ -40,12 +41,16 @@ export default function DeletarVeiculoPage() {
         const fetchVeiculo = async () => {
             setIsFetching(true);
             setError(null);
-            const apiUrl = `http://localhost:8080/rest/veiculo/${id}`; // Endpoint GET por ID
             try {
-                const response = await fetch(apiUrl);
+                const response = await fetchAuthenticated(`/rest/veiculo/${id}`);
                 if (!response.ok) {
                     let errorMsg = `Erro ao buscar veículo ${id}: ${response.status}`;
-                    try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch (e) {}
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.message || errorMsg;
+                    } catch {
+                        // sem JSON de erro
+                    }
                     throw new Error(errorMsg);
                 }
                 const data: VeiculoResponse = await response.json();
@@ -63,25 +68,35 @@ export default function DeletarVeiculoPage() {
 
     // Executa a exclusão
     const handleDelete = async () => {
-        if (!id) { setError("ID inválido para exclusão."); return; }
+        if (!id) {
+            setError("ID inválido para exclusão.");
+            return;
+        }
         setIsLoading(true);
         setError(null);
-        const apiUrl = `http://localhost:8080/rest/veiculo/${id}`; // Endpoint DELETE
         try {
-            const response = await fetch(apiUrl, { method: 'DELETE' });
+            const response = await fetchAuthenticated(`/rest/veiculo/${id}`, {
+                method: 'DELETE'
+            });
             if (!response.ok) {
                 let errorMsg = `Erro ${response.status} ao deletar veículo.`;
-                if(response.status === 404) errorMsg = "Veículo não encontrado para exclusão.";
-                try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg; } catch (e) {}
+                if (response.status === 404) {
+                    errorMsg = "Veículo não encontrado para exclusão.";
+                }
+                try {
+                    const errorData = await response.json();
+                    errorMsg = errorData.message || errorMsg;
+                } catch {
+                    // sem JSON de erro
+                }
                 throw new Error(errorMsg);
             }
-            if (response.status === 204) { // No Content = Sucesso
+            if (response.status === 204) {
                 console.log('Veículo deletado com sucesso!');
-                router.push('/veiculo/listar');
             } else {
                 console.warn("Resposta inesperada após DELETE:", response.status);
-                router.push('/veiculo/listar');
             }
+            router.push('/veiculo/listar');
         } catch (err: any) {
             setError(err.message || "Falha ao deletar veículo.");
             console.error("Erro ao deletar veículo:", err);
@@ -110,7 +125,9 @@ export default function DeletarVeiculoPage() {
                         <h1 className="text-xl font-bold mb-4 text-red-400">Erro</h1>
                         <p className="mb-4 text-red-300">{error || "Não foi possível carregar os dados do veículo."}</p>
                         <Link href="/veiculo/listar">
-                            <button className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md shadow">Voltar para Lista</button>
+                            <button className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-md shadow">
+                                Voltar para Lista
+                            </button>
                         </Link>
                     </div>
                 </main>
@@ -124,8 +141,12 @@ export default function DeletarVeiculoPage() {
             <NavBar active="veiculo" />
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
                 <div className="bg-slate-900 p-6 md:p-8 rounded-lg shadow-lg max-w-lg mx-auto">
-                    <h1 className="text-2xl md:text-3xl font-bold mb-4 text-center text-red-400">Confirmar Exclusão</h1>
-                    <p className="text-center mb-6 text-slate-300">Tem certeza que deseja excluir o veículo abaixo? Esta ação não pode ser desfeita.</p>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-4 text-center text-red-400">
+                        Confirmar Exclusão
+                    </h1>
+                    <p className="text-center mb-6 text-slate-300">
+                        Tem certeza que deseja excluir o veículo abaixo? Esta ação não pode ser desfeita.
+                    </p>
                     <div className="mb-6 p-4 bg-slate-800 rounded border border-slate-700 text-sm">
                         <p><strong>ID:</strong> {veiculo.id}</p>
                         <p><strong>Placa:</strong> {veiculo.placa}</p>
@@ -133,16 +154,26 @@ export default function DeletarVeiculoPage() {
                         <p><strong>Proprietário:</strong> {veiculo.proprietario}</p>
                     </div>
                     {error && (
-                        <div className="mb-4 text-red-400 bg-red-900/50 p-3 rounded border border-red-500 text-sm">{error}</div>
+                        <div className="mb-4 text-red-400 bg-red-900/50 p-3 rounded border border-red-500 text-sm">
+                            {error}
+                        </div>
                     )}
                     <div className="flex justify-center gap-4">
                         <Link href="/veiculo/listar">
-                            <button type="button" className="px-5 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md shadow" disabled={isLoading}>Cancelar</button>
+                            <button
+                                type="button"
+                                className="px-5 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md shadow"
+                                disabled={isLoading}
+                            >
+                                Cancelar
+                            </button>
                         </Link>
                         <button
                             onClick={handleDelete}
                             disabled={isLoading}
-                            className={`px-5 py-2 font-semibold rounded-md shadow ${isLoading ? 'bg-red-800 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
+                            className={`px-5 py-2 font-semibold rounded-md shadow ${
+                                isLoading ? 'bg-red-800 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
+                            }`}
                         >
                             {isLoading ? 'Excluindo...' : 'Excluir Veículo'}
                         </button>
@@ -151,4 +182,4 @@ export default function DeletarVeiculoPage() {
             </main>
         </>
     );
-} // <<< FIM DO ARQUIVO - Sem chaves extras
+} // <<< FIM DO ARQUIVO

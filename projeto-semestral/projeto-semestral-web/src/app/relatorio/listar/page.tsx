@@ -2,8 +2,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link'; // Link pode não ser necessário aqui, a menos que link para detalhes
 import NavBar from '@/components/nav-bar';
+import { fetchAuthenticated } from '@/utils/apiService'; // <<< Import adicionado
 
 // --- Interfaces (podem ser as mesmas da listagem) ---
 interface AgendamentoParaLista { id: number; dataAgendamento: string; observacao: string; }
@@ -24,29 +24,30 @@ export default function RelatorioAgendamentosFuturosPage() {
         setIsLoading(true);
         setError(null);
 
-        const today = new Date().toISOString().split('T')[0]; // Pega data de hoje no formato AAAA-MM-DD
+        const today = new Date().toISOString().split('T')[0]; // Formato AAAA-MM-DD
 
         const params = new URLSearchParams({
             page: page.toString(),
             size: pageSize.toString(),
-            sort: 'dataAgendamento,asc', // Ordenar por data ascendente
-            dataInicio: today // <<< FILTRO PRINCIPAL DESTE RELATÓRIO
+            sort: 'dataAgendamento,asc',
+            dataInicio: today
         });
-        const apiUrl = `http://localhost:8080/rest/agenda?${params.toString()}`;
-        console.info("Buscando agendamentos futuros:", apiUrl);
+        console.info("Buscando agendamentos futuros:", `/rest/agenda?${params.toString()}`);
 
         try {
-            const response = await fetch(apiUrl);
+            const response = await fetchAuthenticated(`/rest/agenda?${params.toString()}`);
             if (!response.ok) {
                 if (response.status === 400) {
-                    const errorData = await response.json().catch(() => ({ message: "Requisição inválida (400)." }));
-                    throw new Error(errorData.message || `Erro HTTP ${response.status}`);
+                    const errData = await response.json().catch(() => ({ message: "Requisição inválida (400)." }));
+                    throw new Error(errData.message || `Erro HTTP ${response.status}`);
                 }
                 throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
             }
 
-            if (response.status === 204) { // No Content
-                setAgendamentos([]); setTotalPages(0); setCurrentPage(0);
+            if (response.status === 204) {
+                setAgendamentos([]);
+                setTotalPages(0);
+                setCurrentPage(0);
                 console.info("Nenhum agendamento futuro encontrado.");
                 return;
             }
@@ -54,7 +55,9 @@ export default function RelatorioAgendamentosFuturosPage() {
             const data: PaginatedAgendaResponse = await response.json();
             const agendamentosFormatados: AgendamentoParaLista[] = data.content.map(dto => ({
                 id: dto.id,
-                dataAgendamento: dto.dataAgendamento ? new Date(dto.dataAgendamento + 'T00:00:00').toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A',
+                dataAgendamento: dto.dataAgendamento
+                    ? new Date(dto.dataAgendamento + 'T00:00:00Z').toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+                    : 'N/A',
                 observacao: dto.observacao || '',
             }));
 
@@ -64,7 +67,8 @@ export default function RelatorioAgendamentosFuturosPage() {
 
         } catch (err: any) {
             setError(err.message || "Falha ao carregar relatório de agendamentos futuros.");
-            setAgendamentos([]); setTotalPages(0);
+            setAgendamentos([]);
+            setTotalPages(0);
         } finally {
             setIsLoading(false);
         }
@@ -75,19 +79,37 @@ export default function RelatorioAgendamentosFuturosPage() {
     }, [currentPage, pageSize]);
 
     // Funções de Paginação
-    const handlePreviousPage = () => { if (currentPage > 0) { fetchAgendamentosFuturos(currentPage - 1); } };
-    const handleNextPage = () => { if (currentPage < totalPages - 1) { fetchAgendamentosFuturos(currentPage + 1); } };
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            fetchAgendamentosFuturos(currentPage - 1);
+        }
+    };
+    const handleNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            fetchAgendamentosFuturos(currentPage + 1);
+        }
+    };
 
     return (
         <>
-            <NavBar active="relatorio"/>
+            <NavBar active="relatorio-agendamentos-futuros" />
             <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
                 <h1 className="text-3xl font-bold mb-6 text-center">Relatório: Agendamentos Futuros</h1>
 
-                {/* Mensagens */}
-                {error && ( <div className="relative mb-4 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500" role="alert"><span className="block sm:inline">{error}</span><button type="button" className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-400 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-2xl" aria-hidden="true">&times;</span></button></div> )}
+                {error && (
+                    <div className="relative mb-4 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500" role="alert">
+                        <span className="block sm:inline">{error}</span>
+                        <button
+                            type="button"
+                            className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-400 hover:text-red-200"
+                            onClick={() => setError(null)}
+                            aria-label="Fechar"
+                        >
+                            <span className="text-2xl" aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                )}
 
-                {/* Tabela de Agendamentos */}
                 {isLoading ? (
                     <p className="text-center text-sky-300 py-10">Carregando relatório...</p>
                 ) : (
@@ -98,19 +120,23 @@ export default function RelatorioAgendamentosFuturosPage() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">ID</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Data Agendada</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Observação</th>
-                                {/* Adicionar colunas de Cliente/Veículo se implementar no backend */}
                             </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-700">
                             {agendamentos.length === 0 ? (
-                                <tr><td colSpan={3} className="px-6 py-4 text-center text-slate-400">Nenhum agendamento futuro encontrado.</td></tr> // Ajustar colSpan se adicionar colunas
+                                <tr>
+                                    <td colSpan={3} className="px-6 py-4 text-center text-slate-400">
+                                        Nenhum agendamento futuro encontrado.
+                                    </td>
+                                </tr>
                             ) : (
-                                agendamentos.map((agendamento) => (
+                                agendamentos.map(agendamento => (
                                     <tr key={agendamento.id} className="hover:bg-slate-800/50">
                                         <td className="px-6 py-4 whitespace-nowrap">{agendamento.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{agendamento.dataAgendamento}</td>
-                                        <td className="px-6 py-4 whitespace-normal max-w-lg truncate" title={agendamento.observacao}>{agendamento.observacao}</td>
-                                        {/* Adicionar tds de Cliente/Veículo aqui */}
+                                        <td className="px-6 py-4 whitespace-normal max-w-lg truncate" title={agendamento.observacao}>
+                                            {agendamento.observacao}
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -119,17 +145,23 @@ export default function RelatorioAgendamentosFuturosPage() {
                     </div>
                 )}
 
-                {/* Controles de Paginação */}
                 {!isLoading && totalPages > 1 && (
                     <div className="flex justify-center items-center mt-6 gap-4">
-                        {/* ... botões de paginação ... */}
-                        <button onClick={handlePreviousPage} disabled={currentPage === 0} className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button
+                            onClick={handlePreviousPage}
+                            disabled={currentPage === 0}
+                            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             Anterior
                         </button>
                         <span className="text-slate-300">
-                             Página {currentPage + 1} de {totalPages}
-                         </span>
-                        <button onClick={handleNextPage} disabled={currentPage >= totalPages - 1} className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed">
+                            Página {currentPage + 1} de {totalPages}
+                        </span>
+                        <button
+                            onClick={handleNextPage}
+                            disabled={currentPage >= totalPages - 1}
+                            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             Próxima
                         </button>
                     </div>
