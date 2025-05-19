@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Script: converte-arquivos-csharp-em-txt-unico (versão 1)
+Script: converte-arquivos-csharp-em-txt-unico (versão 1.1)
 Descrição:
   Percorre recursivamente um projeto C#, concatena todos os .cs
   num único .txt e separa cada arquivo por blocos-comentário contendo
@@ -73,13 +73,12 @@ def main() -> None:
     agora = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     arquivos_cs = listar_arquivos_cs(projeto)
 
-    # Linha de separação usando comentário C#
     linha_sep = '//' + '―' * 100 + '\n'
 
     with open(saida, 'w', encoding='utf-8') as out:
 
         # Cabeçalho global
-        out.write('// Script: converte-arquivos-csharp-em-txt-unico (v1)\n')
+        out.write('// Script: converte-arquivos-csharp-em-txt-unico (v1.1)\n')
         out.write(f'// Data de criação do arquivo de saída: {agora}\n\n')
 
         out.write('// Estrutura de diretórios do projeto:\n')
@@ -88,7 +87,8 @@ def main() -> None:
         out.write('// Arquivos encontrados (Namespace.Tipo => caminho relativo):\n')
         for arq in arquivos_cs:
             rel = os.path.relpath(arq, projeto)
-            txt = open(arq, encoding='utf-8').read()
+            with open(arq, encoding='utf-8') as f:
+                txt = f.read()
             nome_tipo = extrair_nome_tipo(txt) or os.path.splitext(os.path.basename(arq))[0]
             namespace = extrair_namespace(txt)
             fqn = f"{namespace}.{nome_tipo}" if namespace else nome_tipo
@@ -98,18 +98,22 @@ def main() -> None:
         # Conteúdo de cada arquivo
         for arq in arquivos_cs:
             rel = os.path.relpath(arq, projeto)
-            conteudo = open(arq, encoding='utf-8').read()
+            with open(arq, encoding='utf-8') as f:
+                conteudo = f.read()
 
             nome_tipo = extrair_nome_tipo(conteudo) or os.path.splitext(os.path.basename(arq))[0]
             namespace = extrair_namespace(conteudo) or '(namespace padrão)'
 
-            # Bloco-comentário de separação
+            # Bloco de separação + metadados
+            out.write('\n\n\n')  # 3 linhas em branco entre arquivos
             out.write(linha_sep)
-            out.write(f"// {rel}   |   namespace {namespace}   |   tipo {nome_tipo}\n")
+            out.write(f"// Caminho: {rel}\n")
+            out.write(f"// Namespace: {namespace}\n")
+            out.write(f"// Tipo: {nome_tipo}\n")
             out.write(linha_sep + '\n')
 
-            out.write(conteudo.rstrip())  # remove quebra final extra
-            out.write('\n\n')  # separa arquivos com linha em branco
+            out.write(conteudo.rstrip())  # remove linha em branco no final do arquivo
+            out.write('\n')  # mantém separação suave
 
     print(f"Concluído! Arquivo de saída gerado: {saida}")
 

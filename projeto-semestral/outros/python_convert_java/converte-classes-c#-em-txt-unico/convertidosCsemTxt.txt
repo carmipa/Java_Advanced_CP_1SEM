@@ -1,5 +1,5 @@
-// Script: converte-arquivos-csharp-em-txt-unico (v1)
-// Data de criação do arquivo de saída: 2025-05-12 12:53:34
+// Script: converte-arquivos-csharp-em-txt-unico (v1.1)
+// Data de criação do arquivo de saída: 2025-05-18 21:46:06
 
 // Estrutura de diretórios do projeto:
 ChallengeMuttuApi/
@@ -35,6 +35,7 @@ ChallengeMuttuApi/
                         lib/
                             net8.0/
                 tr/
+                wwwroot/
                 zh-Hans/
                 zh-Hant/
     obj/
@@ -44,6 +45,7 @@ ChallengeMuttuApi/
                 ref/
                 refint/
                 staticwebassets/
+    wwwroot/
 
 // Arquivos encontrados (Namespace.Tipo => caminho relativo):
 // ChallengeMuttuApi.Controllers.BoxesController => Controllers\BoxesController.cs
@@ -76,15 +78,20 @@ ChallengeMuttuApi/
 // ChallengeMuttuApi.Model.Zona => Model\Zona.cs
 // ChallengeMuttuApi.Model.ZonaBox => Model\ZonaBox.cs
 // ChallengeMuttuApi.Model.ZonaPatio => Model\ZonaPatio.cs
-// do => Program.cs
+// Swagger => Program.cs
 // ChallengeMuttuApi.WeatherForecast => WeatherForecast.cs
 // .NETCoreApp,Version=v8.0.AssemblyAttributes => obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
 // ChallengeMuttuApi.AssemblyInfo => obj\Debug\net8.0\ChallengeMuttuApi.AssemblyInfo.cs
 // ChallengeMuttuApi.GlobalUsings.g => obj\Debug\net8.0\ChallengeMuttuApi.GlobalUsings.g.cs
 // ChallengeMuttuApi.MvcApplicationPartsAssemblyInfo => obj\Debug\net8.0\ChallengeMuttuApi.MvcApplicationPartsAssemblyInfo.cs
 
+
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\BoxesController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo BoxesController
+// Caminho: Controllers\BoxesController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: BoxesController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/BoxesController.cs
@@ -96,6 +103,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+// Se o erro CS1503 referente a MemoryExtensions.ToLowerInvariant persistir,
+// verifique se você tem alguma diretiva 'using static System.MemoryExtensions;'
+// ou uma extensão personalizada que possa estar causando conflito ou sendo chamada incorretamente.
+// As chamadas .ToLower() usadas aqui (string.ToLower()) são padrão e não deveriam causar esse erro.
 
 namespace ChallengeMuttuApi.Controllers
 {
@@ -202,7 +213,7 @@ namespace ChallengeMuttuApi.Controllers
             try
             {
                 var boxes = await _context.Boxes
-                    .Where(b => b.Nome.ToLower().Contains(nome.ToLower()))
+                    .Where(b => b.Nome.ToLower().Contains(nome.ToLower())) // Uso padrão de ToLower()
                     .ToListAsync();
 
                 if (!boxes.Any())
@@ -240,8 +251,27 @@ namespace ChallengeMuttuApi.Controllers
 
             try
             {
+                // A propriedade 'Status' na sua classe 'Box' é um bool.
+                // A conversão para string 'A'/'I' acontece no AppDbContext.OnModelCreating.
+                // Portanto, a comparação aqui deve ser com o valor booleano esperado
+                // ou você precisa converter 'status' (string) para bool primeiro.
+                // Assumindo que 'status' vem como "A" ou "I":
+                bool statusBool;
+                if (status.ToUpper() == "A")
+                {
+                    statusBool = true;
+                }
+                else if (status.ToUpper() == "I")
+                {
+                    statusBool = false;
+                }
+                else
+                {
+                    return BadRequest("Valor de status inválido. Use 'A' para Ativo ou 'I' para Inativo.");
+                }
+
                 var boxes = await _context.Boxes
-                    .Where(b => b.Status.ToLower() == status.ToLower())
+                    .Where(b => b.Status == statusBool) // Comparando com o bool
                     .ToListAsync();
 
                 if (!boxes.Any())
@@ -395,8 +425,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\ClientesController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo ClientesController
+// Caminho: Controllers\ClientesController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: ClientesController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/ClientesController.cs
@@ -771,8 +805,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\ContatosController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo ContatosController
+// Caminho: Controllers\ContatosController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: ContatosController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/ContatosController.cs
@@ -1105,8 +1143,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\EnderecosController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo EnderecosController
+// Caminho: Controllers\EnderecosController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: EnderecosController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/EnderecosController.cs
@@ -1418,8 +1460,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\PatiosController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo PatiosController
+// Caminho: Controllers\PatiosController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: PatiosController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/PatiosController.cs
@@ -1747,8 +1793,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\RastreamentosController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo RastreamentosController
+// Caminho: Controllers\RastreamentosController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: RastreamentosController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/RastreamentosController.cs
@@ -2072,8 +2122,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\VeiculosController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo VeiculosController
+// Caminho: Controllers\VeiculosController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: VeiculosController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/VeiculosController.cs
@@ -2408,8 +2462,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\WeatherForecastController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo WeatherForecastController
+// Caminho: Controllers\WeatherForecastController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: WeatherForecastController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 using Microsoft.AspNetCore.Mvc;
@@ -2446,8 +2504,12 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Controllers\ZonasController.cs   |   namespace ChallengeMuttuApi.Controllers   |   tipo ZonasController
+// Caminho: Controllers\ZonasController.cs
+// Namespace: ChallengeMuttuApi.Controllers
+// Tipo: ZonasController
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Controllers/ZonasController.cs
@@ -2774,18 +2836,19 @@ namespace ChallengeMuttuApi.Controllers
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Data\AppDbContext.cs   |   namespace ChallengeMuttuApi.Data   |   tipo AppDbContext
+// Caminho: Data\AppDbContext.cs
+// Namespace: ChallengeMuttuApi.Data
+// Tipo: AppDbContext
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-﻿// Path: ChallengeMuttuApi/Data/AppDbContext.cs - Este arquivo deve estar na pasta 'Data'
-using ChallengeMuttuApi.Model;
+﻿// Path: ChallengeMuttuApi/Data/AppDbContext.cs
 using ChallengeMuttuApi.Enums;
-// Se você criou uma subpasta "Relacionamento" dentro de "Model", ajuste o using abaixo:
 using ChallengeMuttuApi.Model;
-
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+// using System.ComponentModel.DataAnnotations; // Este using não parece ser necessário aqui.
 
 namespace ChallengeMuttuApi.Data
 {
@@ -2803,44 +2866,80 @@ namespace ChallengeMuttuApi.Data
 
         // 🔹 Todos os DbSets para suas tabelas principais
 
-        /// <summary>Representa a coleção de Boxes no banco de dados.</summary>
+        /// <summary>
+        /// Tabela dos boxex de entrada e saida dos conteiner. (Texto da sua imagem de erro)
+        /// </summary>
         public DbSet<Box> Boxes { get; set; }
-        /// <summary>Representa a coleção de Clientes no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Clientes no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Cliente> Clientes { get; set; }
-        /// <summary>Representa a coleção de Contatos no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Contatos no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Contato> Contatos { get; set; }
-        /// <summary>Representa a coleção de Endereços no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Endereços no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Endereco> Enderecos { get; set; }
-        /// <summary>Representa a coleção de Pátios no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Pátios no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Patio> Patios { get; set; }
-        /// <summary>Representa a coleção de Rastreamentos no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Rastreamentos no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Rastreamento> Rastreamentos { get; set; }
-        /// <summary>Representa a coleção de Veículos no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Veículos no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Veiculo> Veiculos { get; set; }
-        /// <summary>Representa a coleção de Zonas no banco de dados.</summary>
+        /// <summary>
+        /// Representa a coleção de Zonas no banco de dados. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<Zona> Zonas { get; set; }
 
         // 🔹 DbSets para suas tabelas de ligação (models que representam as tabelas de junção)
 
-        /// <summary>Representa a coleção de ligações entre Clientes e Veículos.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Clientes e Veículos. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<ClienteVeiculo> ClienteVeiculos { get; set; }
-        /// <summary>Representa a coleção de ligações entre Contatos e Pátios.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Contatos e Pátios. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<ContatoPatio> ContatoPatios { get; set; }
-        /// <summary>Representa a coleção de ligações entre Endereços e Pátios.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Endereços e Pátios. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<EnderecoPatio> EnderecoPatios { get; set; }
-        /// <summary>Representa a coleção de ligações entre Pátios e Boxes.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Pátios e Boxes. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<PatioBox> PatioBoxes { get; set; }
-        /// <summary>Representa a coleção de ligações entre Veículos e Boxes.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Veículos e Boxes. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<VeiculoBox> VeiculoBoxes { get; set; }
-        /// <summary>Representa a coleção de ligações entre Veículos e Pátios.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Veículos e Pátios. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<VeiculoPatio> VeiculoPatios { get; set; }
-        /// <summary>Representa a coleção de ligações entre Veículos e Rastreamentos.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Veículos e Rastreamentos. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<VeiculoRastreamento> VeiculoRastreamentos { get; set; }
-        /// <summary>Representa a coleção de ligações entre Veículos e Zonas.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Veículos e Zonas. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<VeiculoZona> VeiculoZonas { get; set; }
-        /// <summary>Representa a coleção de ligações entre Zonas e Boxes.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Zonas e Boxes. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<ZonaBox> ZonaBoxes { get; set; }
-        /// <summary>Representa a coleção de ligações entre Zonas e Pátios.</summary>
+        /// <summary>
+        /// Representa a coleção de ligações entre Zonas e Pátios. (Substitua pelo seu comentário original)
+        /// </summary>
         public DbSet<ZonaPatio> ZonaPatios { get; set; }
 
 
@@ -2854,10 +2953,11 @@ namespace ChallengeMuttuApi.Data
             base.OnModelCreating(modelBuilder);
 
             // 🔹 Configuração de Chaves Compostas para Tabelas de Ligação
+            // Os comentários XML para estas configurações de Fluent API não são obrigatórios
+            // e podem ser omitidos se causarem erros CS1587 e não forem desejados aqui.
+            // Se decidir mantê-los, garanta o posicionamento correto.
+            // Por simplicidade, vou manter os blocos de configuração como estavam no seu arquivo.
 
-            /// <summary>
-            /// Define a chave primária composta para a tabela ClienteVeiculo.
-            /// </summary>
             modelBuilder.Entity<ClienteVeiculo>()
                 .HasKey(cv => new {
                     cv.TbClienteIdCliente,
@@ -2866,7 +2966,6 @@ namespace ChallengeMuttuApi.Data
                     cv.TbVeiculoIdVeiculo
                 });
 
-            // 🔹 Definição das chaves estrangeiras para ClienteVeiculo
             modelBuilder.Entity<ClienteVeiculo>()
                 .HasOne(cv => cv.Cliente)
                 .WithMany(c => c.ClienteVeiculos)
@@ -2877,7 +2976,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(v => v.ClienteVeiculos)
                 .HasForeignKey(cv => cv.TbVeiculoIdVeiculo);
 
-            /// <summary>Define a chave primária composta para a tabela ContatoPatio.</summary>
             modelBuilder.Entity<ContatoPatio>()
                 .HasKey(cp => new { cp.TbPatioIdPatio, cp.TbContatoIdContato });
             modelBuilder.Entity<ContatoPatio>()
@@ -2889,7 +2987,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(c => c.ContatoPatios)
                 .HasForeignKey(cp => cp.TbContatoIdContato);
 
-            /// <summary>Define a chave primária composta para a tabela EnderecoPatio.</summary>
             modelBuilder.Entity<EnderecoPatio>()
                 .HasKey(ep => new { ep.TbEnderecoIdEndereco, ep.TbPatioIdPatio });
             modelBuilder.Entity<EnderecoPatio>()
@@ -2901,7 +2998,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(p => p.EnderecoPatios)
                 .HasForeignKey(ep => ep.TbPatioIdPatio);
 
-            /// <summary>Define a chave primária composta para a tabela PatioBox.</summary>
             modelBuilder.Entity<PatioBox>()
                 .HasKey(pb => new { pb.TbPatioIdPatio, pb.TbBoxIdBox });
             modelBuilder.Entity<PatioBox>()
@@ -2913,7 +3009,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(b => b.PatioBoxes)
                 .HasForeignKey(pb => pb.TbBoxIdBox);
 
-            /// <summary>Define a chave primária composta para a tabela VeiculoBox.</summary>
             modelBuilder.Entity<VeiculoBox>()
                 .HasKey(vb => new { vb.TbVeiculoIdVeiculo, vb.TbBoxIdBox });
             modelBuilder.Entity<VeiculoBox>()
@@ -2925,7 +3020,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(b => b.VeiculoBoxes)
                 .HasForeignKey(vb => vb.TbBoxIdBox);
 
-            /// <summary>Define a chave primária composta para a tabela VeiculoPatio.</summary>
             modelBuilder.Entity<VeiculoPatio>()
                 .HasKey(vp => new { vp.TbVeiculoIdVeiculo, vp.TbPatioIdPatio });
             modelBuilder.Entity<VeiculoPatio>()
@@ -2937,7 +3031,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(p => p.VeiculoPatios)
                 .HasForeignKey(vp => vp.TbPatioIdPatio);
 
-            /// <summary>Define a chave primária composta para a tabela VeiculoRastreamento.</summary>
             modelBuilder.Entity<VeiculoRastreamento>()
                 .HasKey(vr => new { vr.TbVeiculoIdVeiculo, vr.TbRastreamentoIdRastreamento });
             modelBuilder.Entity<VeiculoRastreamento>()
@@ -2949,7 +3042,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(r => r.VeiculoRastreamentos)
                 .HasForeignKey(vr => vr.TbRastreamentoIdRastreamento);
 
-            /// <summary>Define a chave primária composta para a tabela VeiculoZona.</summary>
             modelBuilder.Entity<VeiculoZona>()
                 .HasKey(vz => new { vz.TbVeiculoIdVeiculo, vz.TbZonaIdZona });
             modelBuilder.Entity<VeiculoZona>()
@@ -2961,7 +3053,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(z => z.VeiculoZonas)
                 .HasForeignKey(vz => vz.TbZonaIdZona);
 
-            /// <summary>Define a chave primária composta para a tabela ZonaBox.</summary>
             modelBuilder.Entity<ZonaBox>()
                 .HasKey(zb => new { zb.TbZonaIdZona, zb.TbBoxIdBox });
             modelBuilder.Entity<ZonaBox>()
@@ -2973,7 +3064,6 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(b => b.ZonaBoxes)
                 .HasForeignKey(zb => zb.TbBoxIdBox);
 
-            /// <summary>Define a chave primária composta para a tabela ZonaPatio.</summary>
             modelBuilder.Entity<ZonaPatio>()
                 .HasKey(zp => new { zp.TbPatioIdPatio, zp.TbZonaIdZona });
             modelBuilder.Entity<ZonaPatio>()
@@ -2985,56 +3075,42 @@ namespace ChallengeMuttuApi.Data
                 .WithMany(z => z.ZonaPatios)
                 .HasForeignKey(zp => zp.TbZonaIdZona);
 
-            // 🔹 Configuração de Índices Únicos usando Fluent API (Movido dos Models para cá)
-
-            /// <summary>
-            /// Configura o índice único para a coluna CPF na tabela Cliente.
-            /// </summary>
+            // 🔹 Configuração de Índices Únicos usando Fluent API
             modelBuilder.Entity<Cliente>()
                 .HasIndex(c => c.Cpf)
                 .IsUnique();
 
-            /// <summary>
-            /// Configura os índices únicos para as colunas PLACA, RENAVAM e CHASSI na tabela Veiculo.
-            /// </summary>
             modelBuilder.Entity<Veiculo>()
                 .HasIndex(v => v.Placa)
                 .IsUnique();
-
             modelBuilder.Entity<Veiculo>()
                 .HasIndex(v => v.Renavam)
                 .IsUnique();
-
             modelBuilder.Entity<Veiculo>()
                 .HasIndex(v => v.Chassi)
                 .IsUnique();
 
             // 🔹 Configurações adicionais de mapeamento
-
-            /// <summary>
-            /// Mapeamento da propriedade EstadoCivil do model Cliente para string no banco de dados,
-            /// garantindo que os valores do enum sejam persistidos como seus nomes em string.
-            /// </summary>
             modelBuilder.Entity<Cliente>()
                 .Property(c => c.EstadoCivil)
                 .HasConversion<string>();
 
-            /// <summary>
-            /// Mapeamento da propriedade Status do model Box para string no banco de dados,
-            /// convertendo entre bool (C#) e string ('A'/'I') (Oracle).
-            /// </summary>
             modelBuilder.Entity<Box>()
                 .Property(b => b.Status)
                 .HasConversion(
-                    v => v == "A" ? true : false,
-                    v => v ? "A" : "I"
+                    v => v ? "A" : "I", // De bool para string ('A' ou 'I')
+                    v => v == "A" // De string ('A' ou 'I') para bool
                 );
         }
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Enums\EstadoCivil.cs   |   namespace ChallengeMuttuApi.Enums   |   tipo EstadoCivil
+// Caminho: Enums\EstadoCivil.cs
+// Namespace: ChallengeMuttuApi.Enums
+// Tipo: EstadoCivil
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Enums/EstadoCivil.cs
@@ -3069,8 +3145,12 @@ namespace ChallengeMuttuApi.Enums
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Box.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Box
+// Caminho: Model\Box.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Box
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Box.cs
@@ -3094,7 +3174,7 @@ namespace ChallengeMuttuApi.Model
         public Box()
         {
             Nome = string.Empty;
-            Status = string.Empty;
+            Status = false; // Valor padrão para status (Inativo)
         }
 
         /// <summary>
@@ -3117,13 +3197,12 @@ namespace ChallengeMuttuApi.Model
 
         /// <summary>
         /// Obtém ou define o status atual do Box.
-        /// Mapeia para a coluna "STATUS" (VARCHAR2(1 CHAR), Obrigatório).
-        /// Pode ser 'A' para Ativo, 'I' para Inativo, etc. (depende da lógica de negócio).
+        /// Mapeia para a coluna "STATUS" (VARCHAR2(1 CHAR), Obrigatório) no banco de dados,
+        /// convertido para bool (true para Ativo ('A'), false para Inativo ('I')).
         /// </summary>
         [Column("STATUS")]
         [Required(ErrorMessage = "O status do Box é obrigatório.")]
-        [StringLength(1, ErrorMessage = "O status deve ter 1 caractere.")]
-        public string Status { get; set; } // Pode ser convertido para bool no DTO/negócio se 'A'/'I' ou similar
+        public bool Status { get; set; }
 
         /// <summary>
         /// Obtém ou define a data de entrada do Box.
@@ -3166,11 +3245,15 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Cliente.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Cliente
+// Caminho: Model\Cliente.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Cliente
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-﻿// Path: ChallengeMuttuApi/Model/Cliente.cs - Este arquivo deve estar na pasta 'Model'
+﻿// Path: ChallengeMuttuApi/Model/Cliente.cs
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -3197,6 +3280,9 @@ namespace ChallengeMuttuApi.Model
             Profissao = string.Empty;
             _sexo = string.Empty; // Inicializa o campo de apoio
             _cpf = string.Empty;   // Inicializa o campo de apoio
+            // ClienteVeiculos poderia ser inicializado aqui se não for anulável,
+            // mas como é ICollection?, está ok não inicializar ou pode-se optar por new List<ClienteVeiculo>();
+            // ClienteVeiculos = new List<ClienteVeiculo>();
         }
 
         /// <summary>
@@ -3226,15 +3312,15 @@ namespace ChallengeMuttuApi.Model
         [Column("SEXO")]
         [Required(ErrorMessage = "O Sexo é obrigatório.")]
         [StringLength(2, ErrorMessage = "O Sexo deve ter no máximo 2 caracteres.")]
-        public string Sexo
+        public required string Sexo
         {
             get => _sexo;
             set
             {
-                if (value == "M" || value == "H") // 'M' para Masculino, 'H' para Feminino, ou similar. Verifique seu padrão real.
+                if (value == "M" || value == "H") // 'M' para Masculino, 'F' para Feminino, ou conforme sua convenção.
                     _sexo = value;
                 else
-                    throw new ArgumentException("Sexo inválido! Use 'M' para Masculino ou 'H' para Feminino.", nameof(Sexo));
+                    throw new ArgumentException("Sexo inválido! Use 'M' ou 'F'.", nameof(Sexo)); // Ajuste a mensagem conforme sua convenção
             }
         }
 
@@ -3245,7 +3331,7 @@ namespace ChallengeMuttuApi.Model
         [Column("NOME")]
         [Required(ErrorMessage = "O Nome é obrigatório.")]
         [StringLength(100, ErrorMessage = "O Nome deve ter no máximo 100 caracteres.")]
-        public string Nome { get; set; }
+        public required string Nome { get; set; }
 
         /// <summary>
         /// Obtém ou define o sobrenome do cliente.
@@ -3275,8 +3361,7 @@ namespace ChallengeMuttuApi.Model
         [Column("CPF")]
         [Required(ErrorMessage = "O CPF é obrigatório.")]
         [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve ter exatamente 11 dígitos.")]
-        // O atributo [Index] foi removido daqui e será configurado via Fluent API no DbContext.
-        public string Cpf
+        public required string Cpf
         {
             get => _cpf;
             set
@@ -3318,15 +3403,6 @@ namespace ChallengeMuttuApi.Model
                 _estadoCivil = value;
             }
         }
-
-        /// <summary>
-        /// Obtém ou define o status do cliente.
-        /// OBS: Esta propriedade não está presente no DDL da tabela TB_CLIENTE original.
-        /// Assumimos que é um campo de status lógico (Ativo/Inativo), onde `true` é Ativo e `false` é Inativo.
-        /// </summary>
-        [Column("STATUS")]
-        [Required(ErrorMessage = "O Status do cliente é obrigatório.")]
-        public bool Status { get; set; }
 
         /// <summary>
         /// Obtém ou define o ID da chave estrangeira para a entidade Endereco.
@@ -3374,9 +3450,8 @@ namespace ChallengeMuttuApi.Model
         /// <param name="profissao">A profissão do cliente.</param>
         /// <param name="estadoCivil">O estado civil do cliente, usando o enum EstadoCivil.</param>
         /// <param name="dataNascimento">A data de nascimento do cliente.</param>
-        /// <param name="status">O status do cliente (true para Ativo, false para Inativo).</param>
         public Cliente(int idCliente, string nome, string sobrenome, string sexo, string cpf,
-                       string profissao, EstadoCivil estadoCivil, DateTime dataNascimento, bool status)
+                                string profissao, EstadoCivil estadoCivil, DateTime dataNascimento)
         {
             IdCliente = idCliente;
             Nome = nome;
@@ -3384,18 +3459,19 @@ namespace ChallengeMuttuApi.Model
             Profissao = profissao;
             EstadoCivil = estadoCivil;
             DataNascimento = dataNascimento;
-            Status = status;
-
             DataCadastro = DateTime.Now;
-
-            Sexo = sexo;
-            Cpf = cpf;
+            Sexo = sexo; // O setter fará a validação
+            Cpf = cpf;   // O setter fará a validação
         }
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\ClienteVeiculo.cs   |   namespace ChallengeMuttuApi.Model   |   tipo ClienteVeiculo
+// Caminho: Model\ClienteVeiculo.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: ClienteVeiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/ClienteVeiculo.cs - Este arquivo deve estar na pasta 'Model'
@@ -3408,7 +3484,11 @@ namespace ChallengeMuttuApi.Model
     /// Representa a tabela de ligação "TB_CLIENTEVEICULO" no banco de dados.
     /// Estabelece o relacionamento muitos-para-muitos entre Cliente e Veículo.
     /// A chave primária desta tabela é composta por uma combinação de IDs de Cliente, Endereço, Contato e Veículo.
+    /// <remarks>
     /// OBS: O design da PK composta (CLIENTEVEICULO_PK) é incomum e pode exigir configuração explícita no DbContext.
+    /// A chave primária inclui o ID do Endereço e Contato do Cliente, o que não é padrão em relacionamentos
+    /// muitos-para-muitos típicos. Considere revisar o design do banco de dados se essa granularidade não for intencional.
+    /// </remarks>
     /// </summary>
     [Table("TB_CLIENTEVEICULO")]
     public class ClienteVeiculo
@@ -3464,8 +3544,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Contato.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Contato
+// Caminho: Model\Contato.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Contato
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Contato.cs - Este arquivo deve estar na pasta 'Model'
@@ -3596,8 +3680,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\ContatoPatio.cs   |   namespace ChallengeMuttuApi.Model   |   tipo ContatoPatio
+// Caminho: Model\ContatoPatio.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: ContatoPatio
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/ContatoPatio.cs - Este arquivo deve estar na pasta 'Model'
@@ -3646,8 +3734,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Endereco.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Endereco
+// Caminho: Model\Endereco.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Endereco
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Endereco.cs - Este arquivo deve estar na pasta 'Model'
@@ -3780,8 +3872,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\EnderecoPatio.cs   |   namespace ChallengeMuttuApi.Model   |   tipo EnderecoPatio
+// Caminho: Model\EnderecoPatio.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: EnderecoPatio
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/EnderecoPatio.cs - Este arquivo deve estar na pasta 'Model'
@@ -3830,11 +3926,16 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Filial.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Filial
+// Caminho: Model\Filial.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Filial
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Path: ChallengeMuttuApi/Model/Filial.cs
+using System.ComponentModel.DataAnnotations;
 
 namespace ChallengeMuttuApi.Model
 {
@@ -3846,14 +3947,26 @@ namespace ChallengeMuttuApi.Model
         [Required]
         public string Nome { get; set; }
 
-        private string status;
-        public bool Status { get; set; } // 🔹 Agora trabalha com `true` (Ativo) ou `false` (Inativo)
+        // Construtor para inicializar propriedades não anuláveis (se Nullable estiver habilitado no projeto)
+        public Filial()
+        {
+            Nome = string.Empty; // Inicializa Nome para evitar o aviso/erro CS8618
+        }
 
+        // Construtor parametrizado opcional
+        public Filial(string nome)
+        {
+            Nome = nome;
+        }
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Patio.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Patio
+// Caminho: Model\Patio.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Patio
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Patio.cs - Este arquivo deve estar na pasta 'Model'
@@ -3950,8 +4063,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\PatioBox.cs   |   namespace ChallengeMuttuApi.Model   |   tipo PatioBox
+// Caminho: Model\PatioBox.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: PatioBox
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/PatioBox.cs - Este arquivo deve estar na pasta 'Model'
@@ -4000,8 +4117,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Rastreamento.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Rastreamento
+// Caminho: Model\Rastreamento.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Rastreamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Rastreamento.cs - Este arquivo deve estar na pasta 'Model'
@@ -4095,8 +4216,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Veiculo.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Veiculo
+// Caminho: Model\Veiculo.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Veiculo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Veiculo.cs - Este arquivo deve estar na pasta 'Model'
@@ -4239,8 +4364,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\VeiculoBox.cs   |   namespace ChallengeMuttuApi.Model   |   tipo VeiculoBox
+// Caminho: Model\VeiculoBox.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: VeiculoBox
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/VeiculoBox.cs - Este arquivo deve estar na pasta 'Model'
@@ -4289,8 +4418,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\VeiculoPatio.cs   |   namespace ChallengeMuttuApi.Model   |   tipo VeiculoPatio
+// Caminho: Model\VeiculoPatio.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: VeiculoPatio
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/VeiculoPatio.cs
@@ -4339,8 +4472,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\VeiculoRastreamento.cs   |   namespace ChallengeMuttuApi.Model   |   tipo VeiculoRastreamento
+// Caminho: Model\VeiculoRastreamento.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: VeiculoRastreamento
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/VeiculoRastreamento.cs
@@ -4389,8 +4526,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\VeiculoZona.cs   |   namespace ChallengeMuttuApi.Model   |   tipo VeiculoZona
+// Caminho: Model\VeiculoZona.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: VeiculoZona
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/VeiculoZona.cs
@@ -4439,8 +4580,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\Zona.cs   |   namespace ChallengeMuttuApi.Model   |   tipo Zona
+// Caminho: Model\Zona.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: Zona
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/Zona.cs - Este arquivo deve estar na pasta 'Model'
@@ -4527,8 +4672,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\ZonaBox.cs   |   namespace ChallengeMuttuApi.Model   |   tipo ZonaBox
+// Caminho: Model\ZonaBox.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: ZonaBox
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/ZonaBox.cs
@@ -4577,8 +4726,12 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Model\ZonaPatio.cs   |   namespace ChallengeMuttuApi.Model   |   tipo ZonaPatio
+// Caminho: Model\ZonaPatio.cs
+// Namespace: ChallengeMuttuApi.Model
+// Tipo: ZonaPatio
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 ﻿// Path: ChallengeMuttuApi/Model/ZonaPatio.cs
@@ -4627,100 +4780,183 @@ namespace ChallengeMuttuApi.Model
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// Program.cs   |   namespace (namespace padrão)   |   tipo do
+// Caminho: Program.cs
+// Namespace: (namespace padrão)
+// Tipo: Swagger
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-﻿using Microsoft.AspNetCore.Builder;
+﻿// Path: ChallengeMuttuApi/Program.cs
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.IO; // Necessário para Path.Combine
-using System.Reflection; // Necessário para Assembly
+using System.IO;
+using System.Reflection;
 using ChallengeMuttuApi.Data;
-using Microsoft.OpenApi.Models; // Necessário para OpenApiInfo
+using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 
+/// <summary>
+/// Inicializa a aplicação Web e configura os serviços.
+/// </summary>
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 Carregar configuração do appsettings.json
+/// <summary>
+/// Carrega a configuração do appsettings.json.
+/// </summary>
 var configuration = builder.Configuration;
 
-// 🔹 Adicionar serviços ao container (Injeção de Dependência)
+/// <summary>
+/// Define as URLs de execução da aplicação.
+/// </summary>
+builder.WebHost.UseUrls("http://localhost:5181", "https://localhost:7183");
 
 /// <summary>
-/// Adiciona o serviço de controllers à coleção de serviços da aplicação.
+/// Configura o sistema de logging da aplicação.
+/// </summary>
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+// builder.Logging.AddEventLog(); // Removido: Só há suporte para 'windows'
+builder.Logging.AddEventSourceLogger();
+
+/// <summary>
+/// Verifica e cria a pasta 'wwwroot' se não existir.
+/// </summary>
+string wwwrootPath = Path.Combine(AppContext.BaseDirectory, "wwwroot");
+if (!Directory.Exists(wwwrootPath))
+{
+    Directory.CreateDirectory(wwwrootPath);
+    Console.WriteLine($"📂 Pasta 'wwwroot' criada em: {wwwrootPath}");
+}
+else
+{
+    Console.WriteLine($"📂 Pasta 'wwwroot' já existe em: {wwwrootPath}");
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        /// <summary>
+        /// Configura a política de CORS (Cross-Origin Resource Sharing) padrão para a aplicação.
+        /// O CORS é um mecanismo de segurança do navegador que restringe requisições HTTP/HTTPS
+        /// de um recurso carregado em uma origem (domínio, protocolo ou porta) diferente.
+        /// Esta configuração permite que requisições originadas de "http://localhost:3000"
+        /// (onde sua aplicação Java provavelmente está rodando) acessem os recursos desta API.
+        /// </summary>
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5181") // Substitua pela origem do seu Swagger UI se for diferente
+                /// <summary>
+                /// Permite que a origem especificada utilize qualquer método HTTP (GET, POST, PUT, DELETE, etc.)
+                /// ao fazer requisições para esta API.
+                /// </summary>
+                .AllowAnyMethod()
+               /// <summary>
+               /// Permite que a origem especificada envie requisições com qualquer cabeçalho HTTP
+               /// para esta API.
+               /// </summary>
+               .AllowAnyHeader();
+    });
+});
+
+/// <summary>
+/// Adiciona os serviços necessários ao container de injeção de dependência.
 /// </summary>
 builder.Services.AddControllers();
-
-/// <summary>
-/// Configura o serviço de contexto de banco de dados (AppDbContext) para usar Oracle.
-/// A string de conexão "OracleDb" deve estar configurada no appsettings.json.
-/// </summary>
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseOracle(configuration.GetConnectionString("OracleDb")));
-
-/// <summary>
-/// Adiciona os exploradores de API para endpoints para habilitar o Swagger/OpenAPI.
-/// </summary>
 builder.Services.AddEndpointsApiExplorer();
 
 /// <summary>
-/// Configura o gerador do Swagger para incluir informações da API e documentação XML.
+/// Configura o contexto do banco de dados Oracle.
+/// </summary>
+try
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseOracle(configuration.GetConnectionString("OracleDb")));
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"❌ Erro ao conectar ao banco de dados Oracle: {ex.Message}");
+}
+
+/// <summary>
+/// Configura o Swagger para documentação da API.
 /// </summary>
 builder.Services.AddSwaggerGen(c =>
 {
-    // Define informações básicas sobre sua API para o Swagger
+    /// <summary>
+    /// Define informações básicas sobre a API.
+    /// </summary>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Challenge Muttu API",
         Version = "v1",
-        Description = "API RESTful para o Challenge Muttu, contendo operações CRUD para gestão de clientes, veículos, endereços, contatos, pátios, rastreamentos e zonas.",
+        Description = @"
+            API RESTful para o Challenge Muttu - Gestão de Clientes, Veículos, Endereços, Contatos e mais.
+
+            **Endereço do Projeto GitHub:** [https://github.com/carmipa/challenge_2025_1_semestre_mottu](https://github.com/carmipa/challenge_2025_1_semestre_mottu)
+
+            **Turma:** 2TDSPV / 2TDSPZ
+
+            **Contatos da Equipe:**
+            - Arthur Bispo de Lima RM557568: [https://github.com/ArthurBispo00](https://github.com/ArthurBispo00)
+            - João Paulo Moreira RM557808: [https://github.com/joao1015](https://github.com/joao1015)
+            - Paulo André Carminati RM557881: [https://github.com/carmipa](https://github.com/carmipa)
+        ",
         Contact = new OpenApiContact
         {
-            Name = "Seu Nome", // Opcional: seu nome
-            Email = "seu.email@exemplo.com" // Opcional: seu e-mail
+            Name = "Equipe Metamind Solution",
+            Email = "RM557881@fiap;RM557568@fiap.com.br;RM557808@fiap.com.br",
+            Url = new Uri("https://github.com/carmipa/challenge_2025_1_semestre_mottu")
         },
+
         License = new OpenApiLicense
         {
-            Name = "Licença de Exemplo", // Opcional: nome da licença
-            Url = new Uri("https://exemplo.com/licenca") // Opcional: URL da licença
+            Name = "Licença de Exemplo",
+            Url = new Uri("https://github.com/carmipa/challenge_2025_1_semestre_mottu/tree/main/Advanced_Business_Development_with.NET")
         }
     });
 
-    // Configura o Swagger para incluir os comentários XML da documentação.
-    // É necessário configurar o projeto (.csproj) para gerar este arquivo XML.
+    /// <summary>
+    /// Inclui o arquivo XML de documentação, se existente.
+    /// </summary>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath)) // Verifica se o arquivo XML existe antes de incluir
+
+    if (File.Exists(xmlPath))
     {
         c.IncludeXmlComments(xmlPath);
     }
     else
     {
-        Console.WriteLine($"Atenção: Arquivo de documentação XML não encontrado em: {xmlPath}");
-        Console.WriteLine("Certifique-se de que '<GenerateDocumentationFile>true</GenerateDocumentationFile>' está no seu .csproj.");
+        Console.WriteLine($"⚠️ Arquivo de documentação XML não encontrado: {xmlPath}");
     }
 });
 
+/// <summary>
+/// Cria a aplicação Web.
+/// </summary>
 var app = builder.Build();
 
-// 🔹 Configurar pipeline de requisição HTTP
-
 /// <summary>
-/// Habilita o middleware do Swagger e Swagger UI apenas em ambiente de desenvolvimento.
+/// Configura o pipeline de requisições HTTP.
 /// </summary>
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
 {
+    /// <summary>
+    /// Habilita o Swagger e a interface Swagger UI.
+    /// </summary>
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        // Define o endpoint Swagger JSON
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Challenge Muttu API v1");
-        // Opcional: Define a rota raiz para a interface do Swagger UI (ex: http://localhost:xxxx/)
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = "swagger";  // Define o caminho Swagger em /swagger
     });
 }
 
@@ -4730,31 +4966,56 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 /// <summary>
+/// Serve arquivos estáticos a partir da pasta 'wwwroot'.
+/// </summary>
+app.UseStaticFiles();
+
+/// <summary>
 /// Habilita o middleware de autorização.
 /// </summary>
 app.UseAuthorization();
 
 /// <summary>
-/// Mapeia os endpoints das controllers para o roteamento da aplicação.
+/// Mapeia os controllers para as rotas configuradas.
 /// </summary>
 app.MapControllers();
 
+/// <summary>
+/// Middleware global para tratamento de exceções.
+/// </summary>
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next.Invoke();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Erro durante a requisição: {ex.Message}");
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsync("Ocorreu um erro interno no servidor.");
+    }
+});
+
+/// <summary>
+/// Inicia a aplicação Web.
+/// </summary>
 try
 {
-    // 🔥 Executando aplicação
     app.Run();
 }
 catch (Exception ex)
 {
-    /// <summary>
-    /// Captura e exibe erros críticos que ocorrem durante a inicialização da aplicação.
-    /// </summary>
-    Console.WriteLine($"❌ Erro crítico na inicialização da aplicação: {ex.Message}");
-    // Em um ambiente de produção, você logaria isso em um sistema de log adequado
+    Console.WriteLine($"❌ Erro crítico durante a inicialização da aplicação: {ex.Message}");
+    throw;
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// WeatherForecast.cs   |   namespace ChallengeMuttuApi   |   tipo WeatherForecast
+// Caminho: WeatherForecast.cs
+// Namespace: ChallengeMuttuApi
+// Tipo: WeatherForecast
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 namespace ChallengeMuttuApi
@@ -4771,8 +5032,12 @@ namespace ChallengeMuttuApi
     }
 }
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs   |   namespace (namespace padrão)   |   tipo .NETCoreApp,Version=v8.0.AssemblyAttributes
+// Caminho: obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+// Namespace: (namespace padrão)
+// Tipo: .NETCoreApp,Version=v8.0.AssemblyAttributes
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // <autogenerated />
@@ -4780,8 +5045,12 @@ using System;
 using System.Reflection;
 [assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v8.0", FrameworkDisplayName = ".NET 8.0")]
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// obj\Debug\net8.0\ChallengeMuttuApi.AssemblyInfo.cs   |   namespace (namespace padrão)   |   tipo ChallengeMuttuApi.AssemblyInfo
+// Caminho: obj\Debug\net8.0\ChallengeMuttuApi.AssemblyInfo.cs
+// Namespace: (namespace padrão)
+// Tipo: ChallengeMuttuApi.AssemblyInfo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 //------------------------------------------------------------------------------
@@ -4801,15 +5070,19 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ChallengeMuttuApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5cce94ff9427459b0bbb99a02b0c77a51deba3cf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7622ef80f84b49a74787bc06b618b7eea8adb143")]
 [assembly: System.Reflection.AssemblyProductAttribute("ChallengeMuttuApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ChallengeMuttuApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Gerado pela classe WriteCodeFragment do MSBuild.
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// obj\Debug\net8.0\ChallengeMuttuApi.GlobalUsings.g.cs   |   namespace (namespace padrão)   |   tipo ChallengeMuttuApi.GlobalUsings.g
+// Caminho: obj\Debug\net8.0\ChallengeMuttuApi.GlobalUsings.g.cs
+// Namespace: (namespace padrão)
+// Tipo: ChallengeMuttuApi.GlobalUsings.g
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 // <auto-generated/>
@@ -4830,8 +5103,12 @@ global using global::System.Net.Http.Json;
 global using global::System.Threading;
 global using global::System.Threading.Tasks;
 
+
+
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// obj\Debug\net8.0\ChallengeMuttuApi.MvcApplicationPartsAssemblyInfo.cs   |   namespace (namespace padrão)   |   tipo ChallengeMuttuApi.MvcApplicationPartsAssemblyInfo
+// Caminho: obj\Debug\net8.0\ChallengeMuttuApi.MvcApplicationPartsAssemblyInfo.cs
+// Namespace: (namespace padrão)
+// Tipo: ChallengeMuttuApi.MvcApplicationPartsAssemblyInfo
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 //------------------------------------------------------------------------------
@@ -4850,4 +5127,3 @@ using System.Reflection;
 [assembly: Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPartAttribute("Swashbuckle.AspNetCore.SwaggerGen")]
 
 // Gerado pela classe WriteCodeFragment do MSBuild.
-
