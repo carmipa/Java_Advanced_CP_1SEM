@@ -1,5 +1,5 @@
 // Script: converte-arquivos-tsx-em-txt-unico
-// Data de criação do arquivo de saída: 2025-05-13 20:00:11
+// Data de criação do arquivo de saída: 2025-05-19 09:20:52
 
 // Estrutura de diretórios do projeto:
 src/
@@ -130,6 +130,7 @@ src/
 // app\veiculo\deletar\[id]\page.tsx
 // app\veiculo\listar\page.tsx
 // components\LeafletMap.tsx
+// components\ProtectedRoute.tsx
 // components\forms\TabbedForm.tsx
 // components\nav-bar.tsx
 
@@ -2869,215 +2870,214 @@ export default function ListarClientesPage() {
 }
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
-// app\clientes\listar\page.tsx   |   componente ListarClientesPage
+// app\clientes\listar\page.tsx   |   componente ListarVeiculosPage
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
-// --- Arquivo: src/app/clientes/listar/page.tsx (VERSÃO COM CARDS E ORDENAÇÃO POR ID) ---
+// src/app/veiculo/listar/page.tsx (COM ORDENAÇÃO POR ID)
 'use client';
-import { fetchAuthenticated } from '@/utils/apiService'; // <<< Adicionado import
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-// import { useRouter } from 'next/navigation';
-// Removido se não usar
+// REMOVER useRouter: import { useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
-// Importando Ícones
-import { User, Mail, MapPin, Edit3, Trash2, Hash } from 'lucide-react';
-import { MdPersonAdd, MdEdit, MdDelete, MdPeopleAlt, MdBadge, MdErrorOutline } from 'react-icons/md';
-// Usar MdBadge para documento
+import { fetchAuthenticated } from '@/utils/apiService';
+import ProtectedRoute from '@/components/ProtectedRoute'; // <<< IMPORTAR ProtectedRoute
+// Importando Ícones Lucide e React-Icons
+import {
+    Car, Hash, Palette, Calendar, User, Building, Settings, Info, CirclePlus, Search, Edit3, Trash2, ListChecks, ScanLine as ScanLicense
+} from 'lucide-react';
+import { MdBadge, MdErrorOutline } from 'react-icons/md';
 
-// --- Interfaces ---
-interface ClienteParaLista {
-    idCli: number;
-    idEndereco: number;
-    // Necessário para as ações (editar/deletar)
-    nomeCompleto: string;
-    documento: string;
-    email: string;
-    cidadeEstado: string;
-    // Adicionar tipoCliente se quiser mostrar PF/PJ no card
-    // tipoCliente: string;
-}
+// ... (Interface VeiculoResponse e helpers formatarData, etc. permanecem os mesmos) ...
 
-interface ClienteApiResponseDto {
-    idCli: number;
-    nome: string;
-    sobrenome: string;
-    tipoCliente: string;
-    numeroDocumento: string;
-    endereco: {
-        codigo: number;
-        cidade: string;
-        estado: string;
-    } | null;
-    contato: {
-        celular: string;
-        // Celular não está na ClienteParaLista atual, adicionar se necessário
-        email: string;
-    } | null;
-}
-// ------------------
-
-export default function ListarClientesPage() {
-    const [clientes, setClientes] = useState<ClienteParaLista[]>([]);
+export default function ListarVeiculosPage() {
+    // REMOVER a inicialização de useRouter: const router = useRouter();
+    const [veiculos, setVeiculos] = useState<VeiculoResponse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    // const router = useRouter();
-    // Descomentar se usar router.push
 
-    const fetchClientes = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetchAuthenticated("/rest/clientes/all"); // <<< Alterado call
-            if (!response.ok) {
-                let errorMsg = `Erro HTTP ${response.status}: ${response.statusText}`;
-                try { const errorData = await response.json(); errorMsg = errorData.message || errorMsg;
-                } catch (e) {}
-                throw new Error(errorMsg);
-            }
-            if (response.status === 204) { // Sem conteúdo
-                setClientes([]);
-                return;
-            }
 
-            const data: ClienteApiResponseDto[] = await response.json();
-            // <<< ORDENAÇÃO POR ID_CLI ANTES DE MAPEAR >>>
-            const sortedData = (data || []).sort((a, b) => a.idCli - b.idCli);
-            const clientesFormatados: ClienteParaLista[] = sortedData.map(dto => ({
-                idCli: dto.idCli,
-                idEndereco: dto.endereco?.codigo || 0, // Pega idEndereco para a chave composta
-                nomeCompleto: `${dto.nome || ''} ${dto.sobrenome || ''}`.trim(),
-                documento: dto.numeroDocumento || 'N/A',
-                email: dto.contato?.email || 'N/A',
-                cidadeEstado: dto.endereco ? `${dto.endereco.cidade || 'N/A'} / ${dto.endereco.estado || 'N/A'}` : 'N/A',
-                // tipoCliente: dto.tipoCliente // Descomentar se quiser usar no card
-            }));
-            setClientes(clientesFormatados);
-        } catch (err: any) {
-            console.error("Erro ao buscar clientes:", err);
-            setError(err.message || "Falha ao carregar dados dos clientes.");
-            setClientes([]); // Garante que está vazio em caso de erro
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+    // --- Fetch dos veículos ---
+    // Este useEffect permanece, pois ele busca dados protegidos usando fetchAuthenticated
     useEffect(() => {
-        fetchClientes();
-    }, []);
-    // --- Função de Delete (sem alterações na lógica interna) ---
-    const handleDelete = async (idCliente: number, idEndereco: number) => {
-        // Validação simples de ID (pode melhorar)
-        if (!idCliente || isNaN(idCliente) || !idEndereco || isNaN(idEndereco) || idEndereco === 0) {
-            setError("ID inválido ou endereço não associado corretamente para exclusão.");
-            return;
-        }
-        if (!window.confirm(`Tem certeza que deseja excluir o cliente ID ${idCliente} (Endereço ID ${idEndereco})?`)) {
-            return;
-        }
+        const fetchVeiculos = async () => {
+            setIsLoading(true);
+            setError(null);
 
-        // Aqui poderia setar um estado de loading específico para o botão clicado
-        setError(null);
-        try {
-            const response = await fetchAuthenticated(`/rest/clientes/${idCliente}/${idEndereco}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) {
-                const errorText = await response.text().catch(() => `Erro ${response.status}`);
-                throw new Error(`Falha ao deletar cliente: ${errorText}`);
+            try {
+                // USANDO fetchAuthenticated QUE VERIFICA O TOKEN
+                const response = await fetchAuthenticated('/rest/veiculo/all');
+                if (!response.ok) {
+                    let errorMsg = `Erro HTTP ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.message || errorMsg;
+                    } catch {
+                        // sem JSON de erro
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                if (response.status === 204) {
+                    setVeiculos([]);
+                } else {
+                    const data: VeiculoResponse[] = await response.json();
+                    // ORDENAÇÃO POR ID ADICIONADA AQUI
+                    const sortedData = (data || []).sort((a, b) => a.id - b.id);
+                    setVeiculos(sortedData);
+                }
+            } catch (err: any) {
+                setError(err.message || "Falha ao carregar veículos.");
+                console.error("Erro ao buscar veículos:", err);
+                setVeiculos([]);
+            } finally {
+                setIsLoading(false);
             }
+        };
+        fetchVeiculos();
+    }, []); // Roda apenas na montagem
 
-            alert("Cliente excluído com sucesso!");
-            // Usar um modal/toast seria melhor UX
-            // Remove o cliente da lista local
-            setClientes(prev => prev.filter(c => !(c.idCli === idCliente && c.idEndereco === idEndereco)));
-        } catch (err: any) {
-            console.error("Erro ao deletar cliente:", err);
-            setError(err.message || "Falha ao excluir cliente.");
-        } finally {
-            // Resetar loading específico do botão se implementado
+    // --- Navegação para delete ---
+    // SE useRouter for usado APENAS aqui, pode INITIALIZAR useRouter APENAS NESTE HANDLER
+    // OU MANTER A INICIALIZAÇÃO GLOBAL SE FOR USADO EM OUTROS LUGARES NA PÁGINA (ex: em outro handler)
+    const navigateToDelete = (id: number) => {
+        // Mantenha a lógica de confirmação e navegação se useRouter estiver inicializado globalmente
+        // ou inicialize-o aqui dentro se for o único lugar que o usa.
+        const router = useRouter(); // Inicialize aqui se for o único uso
+
+        if (id == null) {
+            console.error("Tentativa de navegar para deletar com ID inválido:", id);
+            setError("Não é possível deletar: ID do veículo inválido na lista.");
+            return;
+        }
+        if (window.confirm(`Tem certeza que deseja excluir o veículo ID: ${id}?`)) {
+            router.push(`/veiculo/deletar/${id}`);
         }
     };
+
+    // Helper para formatar data
+    const formatarData = (dataString: string | null | undefined): string => {
+        if (!dataString) return '-';
+        try {
+            return new Date(dataString + 'T00:00:00Z')
+                .toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        } catch {
+            return 'Inválida';
+        }
+    };
+
+
     return (
-        <>
-            <NavBar active="clientes" /> {/* Ajuste 'active' se o link na NavBar for diferente */}
+        // Envolve todo o conteúdo da página com o ProtectedRoute
+        <ProtectedRoute>
+            <> {/* Fragmento necessário se houver múltiplos elementos no topo */}
+                <NavBar active="veiculo-listar" />
+                <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
+                    {/* ... restante do conteúdo da sua página ListarVeiculosPage ... */}
 
-            <main className="container mx-auto px-4 py-8 bg-[#012A46] min-h-screen text-white">
-                {/* Cabeçalho e Botões */}
-                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                    <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold text-center sm:text-left">
-                        <MdPeopleAlt className="text-4xl text-sky-400" /> Lista de Clientes
-                    </h1>
-                    <div className="flex gap-2 flex-wrap justify-center">
-                        <Link href="/clientes/cadastrar">
-                            <button className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow whitespace-nowrap"> <MdPersonAdd /> Cadastrar Cliente </button>
+                    {/* Cabeçalho e Botões */}
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                        <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold text-center sm:text-left">
+                            <Car size={28} className="text-sky-400" /> Lista de Veículos Cadastrados
+                        </h1>
+                        <div className="flex gap-2 flex-wrap justify-center">
+                            <Link href="/veiculo/cadastrar">
+                                <button className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow whitespace-nowrap">
+                                    <CirclePlus size={18} /> Novo Veículo
+                                </button>
+                            </Link>
+                            <Link href="/veiculo/buscar">
+                                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow whitespace-nowrap">
+                                    <Search size={18} /> Buscar Veículo
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Mensagens */}
+                    {isLoading && (
+                        <p className="text-center text-sky-300 py-10">Carregando veículos...</p>
+                    )}
+                    {error && (
+                        <div
+                            className="relative mb-4 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500 max-w-3xl mx-auto"
+                            role="alert"
+                        >
+                            <MdErrorOutline className="inline mr-2" />
+                            {error}
+                            <button
+                                type="button"
+                                className="absolute top-0 bottom-0 right-0 px-4 py-3 text-red-400 hover:text-red-200"
+                                onClick={() => setError(null)}
+                                aria-label="Fechar"
+                            >
+                                <span className="text-xl" aria-hidden="true">
+                                    &times;
+                                </span>
+                            </button>
+                        </div>
+                    )}
+
+                    {/* <<< Lista de Cards >>> */}
+                    {!isLoading && !error && (
+                        <div>
+                            {veiculos.length === 0 ? (
+                                <p className="text-center text-slate-400 py-10 bg-slate-800/50 rounded-lg shadow-xl">
+                                    Nenhum veículo cadastrado.
+                                </p>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    {veiculos.map((veiculo) => {
+                                        const isIdValid = veiculo.id != null;
+                                        return (
+                                            <div
+                                                key={isIdValid ? veiculo.id : `invalid-${Math.random()}`}
+                                                className={`bg-slate-800 rounded-lg shadow-lg border border-slate-700 flex flex-col overflow-hidden hover:shadow-sky-700/20 transition-shadow duration-300 ${
+                                                    !isIdValid ? 'opacity-50' : ''
+                                                }`}
+                                            >
+                                                {/* Header do Card */}
+                                                <div className="bg-slate-700 p-3 flex justify-between items-center text-sm"> <span className="flex items-center gap-1 font-semibold text-sky-300"> <Hash size={16} /> ID: {isIdValid ? veiculo.id : 'Inválido'} </span> <span className="flex items-center gap-1 text-slate-400"> <Car size={16} /> {veiculo.tipoVeiculo || '-'} </span> </div>
+                                                {/* Corpo do Card */}
+                                                <div className="p-4 space-y-2 flex-grow text-sm">
+                                                    <p title={veiculo.modelo}><strong><Info size={16} className="inline -mt-1 mr-1"/> Modelo:</strong> {veiculo.modelo || '-'} ({veiculo.montadora || '-'})</p>
+                                                    <p title={veiculo.placa}><strong><MdBadge className="inline -mt-1 mr-1"/> Placa:</strong> <span className="font-mono bg-slate-700 px-1 rounded">{veiculo.placa || '-'}</span></p>
+                                                    <p><strong><Palette size={16} className="inline -mt-1 mr-1"/> Cor:</strong> {veiculo.cor || '-'}</p>
+                                                    <p><strong><Calendar size={16} className="inline -mt-1 mr-1"/> Ano:</strong> {formatarData(veiculo.anoFabricacao)}</p>
+                                                    <p><strong><Settings size={16} className="inline -mt-1 mr-1"/> Motor:</strong> {veiculo.motor || '-'}</p>
+                                                    <p><strong><Hash size={16} className="inline -mt-1 mr-1"/> Renavam:</strong> {veiculo.renavam || '-'}</p>
+                                                    <p title={veiculo.proprietario}><strong><User size={16} className="inline -mt-1 mr-1"/> Proprietário:</strong> {veiculo.proprietario || '-'}</p>
+                                                </div>
+                                                {/* Footer do Card (Ações) */}
+                                                <div className="bg-slate-900 p-3 mt-auto border-t border-slate-700 flex justify-end gap-2">
+                                                    {isIdValid ? (
+                                                        <>
+                                                            <Link href={`/veiculo/alterar/${veiculo.id}`}> <button className="inline-flex items-center px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-black rounded-md text-xs font-medium gap-1"> <Edit3 size={14} /> Editar </button> </Link>
+                                                            <button onClick={() => navigateToDelete(veiculo.id)} className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium gap-1"> <Trash2 size={14} /> Deletar </button>
+                                                        </>
+                                                    ) : ( <span className="text-xs text-red-400 italic">ID Inválido</span> )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Botão Voltar para Lista Completa (Opcional) */}
+                    <div className="mt-8 text-center">
+                        {/* Se esta é a lista principal, talvez um botão voltar não faça sentido.
+                         Pode ter um link para a página de menu principal de veículos. */}
+                        <Link href="/veiculo"> {/* Exemplo: link para a página de menu de veículos se houver */}
+                            <button className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-md shadow">
+                                Voltar ao Menu Veículos {/* Ajuste o texto conforme a navegação */}
+                            </button>
                         </Link>
-                        {/* Adicionar botão de busca se existir a página /clientes/buscar */}
-                        {/*
-                         <Link href="/clientes/buscar">
-                             <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow whitespace-nowrap"> <Search size={18} /> Buscar Cliente </button>
-                         </Link>
-                          */}
                     </div>
-                </div>
-
-                {/* Mensagens */}
-                {isLoading && <p className="text-center text-sky-300 py-10">Carregando clientes...</p>}
-                {error && ( <div className="relative mb-4 text-red-400 bg-red-900/50 p-4 pr-10 rounded border border-red-500 max-w-3xl mx-auto" role="alert"><MdErrorOutline className="inline mr-1"/>{error}<button type="button" className="absolute top-0 bottom-0 right-0 px-4 py-3 hover:text-red-200" onClick={() => setError(null)} aria-label="Fechar"><span className="text-xl">&times;</span></button></div> )}
-
-
-                {/* <<< Lista de Cards >>> */}
-                {!isLoading && !error && (
-                    <div>
-                        {clientes.length === 0 ? (
-                            <p className="text-center text-slate-400 py-10">Nenhum cliente cadastrado.</p>
-                        ) : (
-                            // Grid Layout para os Cards
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                {/* Mapeia sobre os clientes JÁ ORDENADOS */}
-                                {clientes.map((cliente) => {
-                                    // Chave composta para o card e para as ações
-                                    const cardKey = `${cliente.idCli}-${cliente.idEndereco}`;
-                                    const isIdValid = cliente.idCli !== null && cliente.idCli !== undefined && cliente.idEndereco !== 0; // Valida se temos ambos IDs
-
-                                    return (
-                                        // Card Individual
-                                        <div key={cardKey} className={`bg-slate-800 rounded-lg shadow-lg border border-slate-700 flex flex-col overflow-hidden hover:shadow-sky-700/20 transition-shadow duration-300 ${!isIdValid ? 'opacity-50' : ''}`}>
-                                            {/* Header do Card */}
-                                            <div className="bg-slate-700 p-3 flex justify-between items-center text-sm">
-                                                <span className="flex items-center gap-1 font-semibold text-sky-300"> <Hash size={16} /> ID Cliente: {isIdValid ? cliente.idCli : 'Inválido'} </span>
-                                                {/* Poderia adicionar o Tipo Cliente aqui se o trouxesse no DTO */}
-                                            </div>
-
-                                            {/* Corpo do Card */}
-                                            <div className="p-4 space-y-2 flex-grow text-sm">
-                                                <p title={cliente.nomeCompleto}><strong><User size={16} className="inline -mt-1 mr-1"/> Nome:</strong> {cliente.nomeCompleto || '-'} </p>
-                                                <p><strong><MdBadge className="inline -mt-1 mr-1"/> Documento:</strong> {cliente.documento || '-'} </p>
-                                                <p title={cliente.email}><strong><Mail size={16} className="inline -mt-1 mr-1"/> Email:</strong> {cliente.email || '-'} </p>
-                                                <p><strong><MapPin size={16} className="inline -mt-1 mr-1"/> Local:</strong> {cliente.cidadeEstado || '-'} </p>
-                                            </div>
-
-                                            {/* Footer do Card (Ações) */}
-                                            <div className="bg-slate-900 p-3 mt-auto border-t border-slate-700 flex justify-end gap-2">
-                                                {isIdValid ? (
-                                                    <>
-                                                        <Link href={`/clientes/alterar/${cliente.idCli}/${cliente.idEndereco}`}>
-                                                            <button className="inline-flex items-center px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-black rounded-md text-xs font-medium gap-1"> <Edit3 size={14} /> Alterar </button>
-                                                        </Link>
-                                                        <button onClick={() => handleDelete(cliente.idCli, cliente.idEndereco)} className="inline-flex items-center px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-medium gap-1" disabled={isLoading}> <MdDelete size={16} /> Deletar </button>
-                                                    </>
-                                                ) : ( <span className="text-xs text-red-400 italic">IDs Inválidos</span> )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-                )}
-                {/* <<< Fim da Lista de Cards >>> */}
-            </main>
-        </>
+                </main>
+            </>
+        </ProtectedRoute>
     );
 }
 
@@ -3394,40 +3394,45 @@ export default function ContatoPage() {
 // src/app/inicio/page.tsx
 'use client';
 
+// IMPORTANTE: Remover o import de useEffect daqui, pois a verificação será feita pelo ProtectedRoute.
+// import React, { useEffect } from 'react';
 import React from 'react';
+// IMPORTANTE: Remover o import de useRouter daqui, pois o redirecionamento será feito pelo ProtectedRoute.
+// import { useRouter } from 'next/navigation';
 import NavBar from '@/components/nav-bar';
-import { fetchAuthenticated } from '@/utils/apiService'; // <<< ADICIONADO PARA CHAMADAS FUTURAS SE NECESSÁRIO
+// import { fetchAuthenticated } from '@/utils/apiService'; // Pode manter se a página fizer chamadas autenticadas
+import ProtectedRoute from '@/components/ProtectedRoute'; // <<< IMPORTAR O ProtectedRoute
 
 export default function InicioPage() {
-    return (
-        <>
-            <NavBar active="inicio" />
+    // IMPORTANTE: Remover a inicialização de useRouter e o useEffect daqui.
+    // const router = useRouter();
+    // useEffect(() => { /* ... lógica de verificação de token removida ... */ }, [router]);
 
-            {/* --- Modificações aqui --- */}
-            <main
-                className="flex items-center justify-center min-h-screen text-white bg-cover bg-center bg-no-repeat"
-                // Define a imagem de fundo usando valor arbitrário do Tailwind
-                // e define uma cor de fundo sólida como fallback caso a imagem não carregue
-                style={{
-                    backgroundImage: `url('/admin-ajax.png')`, // Caminho para a imagem na pasta public
-                    backgroundColor: '#012A46', // Cor de fundo de fallback
-                }}
-            >
-                {/* O conteúdo da seção agora fica sobre a imagem de fundo */}
-                <section className="bg-black/50 backdrop-blur-sm max-w-2xl p-8 m-4 rounded-xl text-center">
-                    {/* Ajustei o fundo da seção para melhor contraste */}
-                    <h1 className="mb-4 text-4xl font-bold">Bem-vindo à Oficina Virtual</h1>
-                    <p className="mb-8 text-lg">
-                        Descubra uma nova forma de cuidar do seu veículo com praticidade e eficiência. Experimente nossa plataforma e agende seu serviço online.
-                    </p>
-                    {/* Você precisa adicionar o texto ou ícone do botão aqui */}
-                    <button className="px-6 py-3 font-semibold text-white transition bg-[#075985] rounded-md shadow hover:bg-[#075985]/90">
-                        Agendar Serviço {/* Exemplo de texto para o botão */}
-                    </button>
-                </section>
-            </main>
-            {/* --- Fim das Modificações --- */}
-        </>
+    return (
+        // Envolve todo o conteúdo da página com o ProtectedRoute
+        <ProtectedRoute>
+            <>
+                <NavBar active="inicio" />
+
+                <main
+                    className="flex items-center justify-center min-h-screen text-white bg-cover bg-center bg-no-repeat"
+                    style={{
+                        backgroundImage: `url('/admin-ajax.png')`,
+                        backgroundColor: '#012A46',
+                    }}
+                >
+                    <section className="bg-black/50 backdrop-blur-sm max-w-2xl p-8 m-4 rounded-xl text-center">
+                        <h1 className="mb-4 text-4xl font-bold">Bem-vindo à Oficina Virtual</h1>
+                        <p className="mb-8 text-lg">
+                            Descubra uma nova forma de cuidar do seu veículo com praticidade e eficiência. Experimente nossa plataforma e agende seu serviço online.
+                        </p>
+                        <button className="px-6 py-3 font-semibold text-white transition bg-[#075985] rounded-md shadow hover:bg-[#075985]/90">
+                            Agendar Serviço
+                        </button>
+                    </section>
+                </main>
+            </>
+        </ProtectedRoute>
     );
 }
 
@@ -3477,12 +3482,11 @@ export default function RootLayout({
 // src/app/login/page.tsx
 "use client"; // Este é um Client Component
 
-import { useState, FormEvent, useEffect } from 'react'; // Importar useEffect
+// IMPORTANTE: Readicionar o import de useEffect.
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MdLogin, MdEmail, MdLock } from 'react-icons/md';
-// Ícones para o formulário
 import { AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from 'lucide-react';
-// Ícones para feedback e olho mágico
 
 // Interface para o DTO de resposta do login (vindo do backend Java)
 interface LoginResponseDto {
@@ -3497,28 +3501,31 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
     // Estado para controlar a visibilidade da senha
     const [showPassword, setShowPassword] = useState(false);
 
     const router = useRouter();
 
-    // --- NOVO useEffect para verificar se já está logado ao CARREGAR A PÁGINA ---
+    // !!! READICIONAR ESTE useEffect !!!
+    // AGORA ELE NÃO CAUSARÁ CONFLITO COM O MIDDLEWARE SIMPLIFICADO
     useEffect(() => {
         console.log("[Login Page] useEffect rodando para verificar token...");
         // Esta lógica roda APENAS no ambiente do navegador (devido ao "use client")
         const token = localStorage.getItem('jwtToken');
+
         if (token) {
+            // Se encontrar um token, significa que o utilizador já está autenticado.
+            // Redireciona para a página inicial para evitar que ele veja o formulário de login novamente.
             console.log("[Login Page] Token encontrado no localStorage. Redirecionando para /inicio.");
-            // Redireciona se já estiver logado para evitar ficar preso na página de login
-            router.replace('/inicio'); // Use router.replace para não adicionar a página de login ao histórico de navegação
+            // Use router.replace para não adicionar a página de login ao histórico de navegação
+            router.replace('/inicio');
         } else {
+            // Se não houver token, garante que o estado de erro está limpo ao carregar (se houver algum de uma tentativa anterior)
             console.log("[Login Page] Nenhum token encontrado no localStorage ao carregar.");
-            // Se não houver token, garante que o estado de erro está limpo ao carregar
-            setError(null);
+            setError(null); // Limpa qualquer erro anterior ao mostrar o formulário
         }
-    }, [router]); // Roda uma vez na montagem do componente. 'router' na dependência para evitar warnings.
-    // ----------------------------------------------------------
+    }, [router]); // Roda uma vez na montagem do componente. 'router' na dependência é boa prática.
+    // !!! FIM DO useEffect READICIONADO !!!
 
 
     const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
@@ -3527,8 +3534,7 @@ export default function LoginPage() {
         setError(null); // Limpa erro em cada tentativa
 
         // Endpoint de login da sua API Java
-        // Certifique-se que o método é POST e a URL está correta
-        const apiUrl = "http://localhost:8080/auth/login"; // <<< URL CORRETA PARA SEU ENDPOINT DE LOGIN NO BACKEND
+        const apiUrl = "http://localhost:8080/auth/login"; // URL CORRETA PARA SEU ENDPOINT DE LOGIN NO BACKEND
 
         try {
             console.log(`[Login Page] Tentando POST para ${apiUrl} com usuário: ${username}`);
@@ -3545,18 +3551,16 @@ export default function LoginPage() {
                     senha: password    // O nome do campo deve bater com o DTO LoginRequestDto no Java
                 }),
             });
-
             console.log(`[Login Page] Resposta recebida do backend: Status ${response.status}`);
 
             // Verifica a resposta
             if (!response.ok) {
-                // Se o status for 401 (Unauthorized), são credenciais inválidas
+                // Se o status for 401 (Unauthorized), são credenciais inválvidas
                 if (response.status === 401) {
                     setError("Credenciais inválidas. Por favor, tente novamente.");
                     console.warn("[Login Page] Login falhou: Credenciais inválidas (Status 401).");
                 } else {
                     // Para outros erros HTTP, tentamos ler a mensagem de erro do corpo da resposta.
-                    // É importante ler o corpo, mesmo que não seja JSON, para não deixar a Promise pendente.
                     const errorBody = await response.text().catch(() => "Erro desconhecido");
                     let errorMessage = `Erro ao fazer login: ${response.status}.`;
                     try {
@@ -3572,29 +3576,25 @@ export default function LoginPage() {
                     setError(errorMessage);
                     console.error(`[Login Page] Login falhou: Status ${response.status}`, errorMessage);
                 }
-                // Se a resposta não foi OK (qualquer status diferente de 2xx), paramos o processo de login.
-                return;
+                return; // Se a resposta não foi OK, para o processo de login.
             }
 
             // Se a resposta for OK (HTTP 200), o login foi bem-sucedido.
-            // A resposta deve conter o token JWT no corpo JSON.
             const data: LoginResponseDto = await response.json();
-
             // *** 1. Armazenar o Token JWT ***
-            // Armazenamos o token no localStorage.
             localStorage.setItem('jwtToken', data.token);
             console.log("[Login Page] Login bem-sucedido! Token armazenado em localStorage.");
 
             // *** 2. Redirecionar para uma página protegida ***
-            // Redireciona para a página inicial (ou a página que o usuário tentou acessar antes)
-            router.replace('/inicio'); // Use router.replace para substituir a entrada no histórico do navegador
-            console.log("[Login Page] Redirecionando para /inicio após login bem-sucedido.");
-
+            // Agora, simplesmente navegamos. O useEffect acima irá detectar o token
+            // e redirecionar se o utilizador tentar acessar a página de login novamente.
+            // Mas após um login bem sucedido, queremos ir para a página inicial protegida.
+            router.replace('/inicio'); // Redireciona para /inicio (ou outra página inicial protegida)
+            console.log("[Login Page] Navegando para /inicio após login bem-sucedido.");
 
         } catch (err: any) {
             // Captura erros de rede que impediram o fetch de completar (ex: servidor backend offline)
             console.error("[Login Page] Erro na requisição de login (catch):", err);
-            // Verifica se é o erro "Failed to fetch" comum
             if (err instanceof TypeError && err.message === 'Failed to fetch') {
                 setError("Não foi possível conectar ao servidor backend (API). Verifique se o backend está rodando.");
             } else {
@@ -3630,7 +3630,7 @@ export default function LoginPage() {
                             <div className="flex items-center gap-2"> <AlertCircle size={18} /> <span>{error}</span> </div>
                             <button
                                 type="button"
-                                className="absolute top-1 right-1 p-1 text-red-400 hover:text-red-200"
+                                className="absolute top-1 right-1 p-1 hover:text-red-200 text-red-400" // Corrigido cor do botão fechar
                                 onClick={() => setError(null)}
                                 aria-label="Fechar"
                             >
@@ -3639,11 +3639,6 @@ export default function LoginPage() {
                         </div>
                     )}
                     {/* Removendo a exibição da mensagem de sucesso aqui para simplificar o fluxo */}
-                    {/* {success && (
-                        <div className="flex items-center justify-center gap-2 text-green-400 p-3 rounded bg-green-900/30 border border-green-700 text-sm">
-                            <CheckCircle size={18} /> <span>{success}</span>
-                        </div>
-                    )} */}
 
                     {/* Campo Nome de Usuário */}
                     <div>
@@ -3665,25 +3660,21 @@ export default function LoginPage() {
                         <label htmlFor="password" className="flex items-center gap-1 block text-sm font-medium text-slate-300 mb-1">
                             <MdLock size={16} /> Senha:
                         </label>
-                        {/* Container flex para input e botão */}
                         <div className="flex items-center bg-slate-800 border border-slate-700 rounded-md focus-within:ring-2 focus-within:ring-sky-500">
                             <input
-                                // Tipo do input controlado pelo estado showPassword
                                 type={showPassword ? 'text' : 'password'}
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="w-full px-3 py-2 bg-transparent outline-none border-none" // Estilo para input dentro do flex
+                                className="w-full px-3 py-2 bg-transparent outline-none border-none"
                             />
-                            {/* Botão Olho Mágico */}
                             <button
-                                type="button" // Importante: type="button" para não submeter o formulário
+                                type="button"
                                 onClick={togglePasswordVisibility}
                                 className="p-2 text-slate-400 hover:text-sky-400 focus:outline-none"
                                 aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
                             >
-                                {/* Ícone muda com base no estado showPassword */}
                                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
@@ -3704,7 +3695,7 @@ export default function LoginPage() {
 
                     {/* Opcional: Link para página de registro, se houver */}
                     {/* <div className="text-center mt-4">
-                        <Link href="/register" className="text-sm text-sky-400 hover:underline">
+                         <Link href="/register" className="text-sm text-sky-400 hover:underline">
                             Não tem conta? Cadastre-se
                         </Link>
                     </div> */}
@@ -15836,6 +15827,86 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
 };
 
 export default LeafletMap;
+
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+// components\ProtectedRoute.tsx   |   componente validateToken
+//――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+
+// src/components/ProtectedRoute.tsx
+'use client';
+
+import React, { useEffect, ReactNode, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react'; // Ícone de loading
+
+interface ProtectedRouteProps {
+    children: ReactNode;
+}
+
+/**
+ * Componente que protege rotas do lado do cliente.
+ * Verifica a existência de um token JWT no localStorage.
+ * Se o token não for encontrado, redireciona para a página de login.
+ * Caso contrário, renderiza o conteúdo filho.
+ */
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true); // Estado para mostrar um loading enquanto verifica
+
+    useEffect(() => {
+        console.log("[ProtectedRoute] Verificando token no localStorage...");
+        const token = localStorage.getItem('jwtToken');
+
+        if (!token) {
+            console.log("[ProtectedRoute] Token não encontrado. Redirecionando para /login.");
+            // Se não houver token, redireciona para a página de login
+            // Usamos replace para que a página protegida não fique no histórico do navegador
+            router.replace('/login');
+        } else {
+            console.log("[ProtectedRoute] Token encontrado. Permitindo acesso.");
+            // Opcional: Adicionar uma chamada ao backend para validar o token (expiração, etc.)
+            // Se a validação falhar, remover o token do localStorage e redirecionar para /login.
+            // Exemplo básico (requer implementação de um endpoint de validação no backend e adaptar fetchAuthenticated):
+            // async function validateToken() {
+            //   try {
+            //     const isValid = await fetchAuthenticated('/auth/validate', { method: 'POST' }); // Exemplo de endpoint no backend
+            //     if (!isValid.ok) {
+            //       console.log("[ProtectedRoute] Token inválido ou expirado. Redirecionando para /login.");
+            //       localStorage.removeItem('jwtToken');
+            //       router.replace('/login');
+            //     } else {
+            //        setIsLoading(false); // Token válido, para o loading e renderiza children
+            //     }
+            //   } catch (error) {
+            //     console.error("[ProtectedRoute] Erro na validação do token:", error);
+            //     localStorage.removeItem('jwtToken'); // Em caso de erro na validação (rede, etc.), assume que o token é inválido por segurança
+            //     router.replace('/login');
+            //   }
+            // }
+            // validateToken();
+
+            // Para esta implementação simples, apenas a existência do token já permite renderizar.
+            // A validação mais completa pode ser um passo futuro.
+            setIsLoading(false); // Assume que a existência do token é suficiente por agora e para o loading.
+        }
+    }, [router]); // Dependência 'router' é boa prática
+
+    // Enquanto verifica, pode renderizar um loading simples
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#012A46] text-white flex items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-sky-400" />
+                <p className="ml-4 text-lg text-sky-300">Verificando autenticação...</p>
+            </div>
+        );
+    }
+
+    // Se o token for encontrado e a verificação terminar (ou for ignorada inicialmente), renderiza o conteúdo filho.
+    // Se o redirecionamento ocorreu no useEffect, este ponto não será alcançado para utilizadores não autenticados.
+    return <>{children}</>;
+};
+
+export default ProtectedRoute;
 
 //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 // components\forms\TabbedForm.tsx   |   componente TabbedForm

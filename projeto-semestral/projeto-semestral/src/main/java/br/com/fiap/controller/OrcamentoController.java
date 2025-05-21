@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,9 @@ import org.springframework.web.server.ResponseStatusException; // Import para Re
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rest/orcamentos")
@@ -136,7 +139,59 @@ public class OrcamentoController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao deletar orçamento. Verifique dependências.", e);
         }
     }
-    // A linha 102 original provavelmente estava aqui, após o fechamento da classe,
-    // ou dentro de um método que não foi fechado corretamente.
-    // Garantindo que a classe seja fechada corretamente:
-} // <<< ESTA É A CHAVE DE FECHAMENTO DA CLASSE OrcamentoController
+
+    // Dentro da classe br.com.fiap.controller.OrcamentoController
+
+// ... (outros imports e métodos) ...
+
+    @GetMapping("/buscar/filtrado") // Este é o endpoint que o frontend está chamando
+    @Operation(summary = "Buscar Orçamentos (Simples/Placeholder)",
+            description = "Retorna uma lista de orçamentos. ATENÇÃO: Filtros avançados (clienteNome, veiculoPlaca) não estão implementados nesta versão; apenas dataInicio e dataFim são considerados de forma básica.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Nenhum orçamento encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    public ResponseEntity<List<OrcamentoResponseDto>> buscarOrcamentosFiltrados(
+            @Parameter(description = "Filtrar por data inicial do orçamento (formato AAAA-MM-DD)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+
+            @Parameter(description = "Filtrar por data final do orçamento (formato AAAA-MM-DD)")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+
+            @Parameter(description = "Filtrar por parte do nome do cliente (NÃO IMPLEMENTADO NESTA VERSÃO SIMPLES)")
+            @RequestParam(required = false) String clienteNome,
+
+            @Parameter(description = "Filtrar pela placa do veículo (NÃO IMPLEMENTADO NESTA VERSÃO SIMPLES)")
+            @RequestParam(required = false) String veiculoPlaca
+    ) {
+        log.info("Requisição GET /rest/orcamentos/buscar/filtrado com filtros: dataInicio={}, dataFim={}, clienteNome={}, veiculoPlaca={}",
+                dataInicio, dataFim, clienteNome, veiculoPlaca);
+        try {
+            // LÓGICA SIMPLIFICADA: Retorna todos e filtra na memória apenas por data (se fornecida)
+            // Idealmente, isso seria feito no banco de dados.
+            List<OrcamentoResponseDto> todosOrcamentos = orcamentoService.findAll(); // Busca todos
+
+            List<OrcamentoResponseDto> orcamentosFiltrados = todosOrcamentos.stream()
+                    .filter(o -> dataInicio == null || o.getDataOrcamento() == null || !o.getDataOrcamento().isBefore(dataInicio))
+                    .filter(o -> dataFim == null || o.getDataOrcamento() == null || !o.getDataOrcamento().isAfter(dataFim))
+                    // ATENÇÃO: Filtros por clienteNome e veiculoPlaca não estão sendo aplicados aqui
+                    // porque exigiriam buscar e processar dados de outras entidades,
+                    // o que seria ineficiente sem queries otimizadas no banco.
+                    .collect(Collectors.toList());
+
+            if (orcamentosFiltrados.isEmpty()) {
+                log.info("Nenhum orçamento encontrado após filtragem básica por data.");
+                return ResponseEntity.noContent().build();
+            }
+            log.info("Retornando {} orçamentos após filtragem básica por data.", orcamentosFiltrados.size());
+            return ResponseEntity.ok(orcamentosFiltrados);
+
+        } catch (Exception e) {
+            log.error("Erro ao buscar orçamentos (versão simplificada): {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
+}

@@ -283,24 +283,44 @@ export default function IniciarOrcamentoPage() {
     }, []);
 
     const iniciarGeracaoOrcamento = useCallback(() => {
+        console.log("[IniciarOrcamentoPage] Botão 'Gerar Orçamento' clicado.");
+        console.log("[IniciarOrcamentoPage] Cliente Selecionado:", JSON.stringify(clienteSelecionado, null, 2));
+        console.log("[IniciarOrcamentoPage] Veículo Selecionado:", JSON.stringify(veiculoSelecionado, null, 2));
+
         if (!clienteSelecionado || !veiculoSelecionado) {
             setError("Erro interno: Selecione um cliente e um veículo primeiro.");
+            console.error("[IniciarOrcamentoPage] ERRO: Cliente ou Veículo não selecionado.");
             return;
         }
+
+        // MUITO IMPORTANTE: Verifique os IDs aqui!
         const cliIdStr = clienteSelecionado.idCli?.toString();
-        const endIdStr = clienteSelecionado.idEndereco?.toString();
+        const endIdStr = clienteSelecionado.idEndereco?.toString(); // Supondo que idEndereco vem de clienteSelecionado
         const veiIdStr = veiculoSelecionado.id?.toString();
+
+        console.log(`[IniciarOrcamentoPage] IDs extraídos: cliIdStr=${cliIdStr}, endIdStr=${endIdStr}, veiIdStr=${veiIdStr}`);
+
         if (!cliIdStr || !endIdStr || !veiIdStr) {
-            setError("Erro interno: IDs inválidos no cliente ou veículo.");
+            setError("Erro interno: IDs inválidos no cliente ou veículo selecionado. Verifique os dados carregados.");
+            console.error("[IniciarOrcamentoPage] ERRO: IDs inválidos ou ausentes:", { cliIdStr, endIdStr, veiIdStr });
             return;
         }
+
         const queryParams = new URLSearchParams({
             cliId: cliIdStr,
             endId: endIdStr,
             veiId: veiIdStr,
         }).toString();
-        router.push(`/orcamento/gerar?${queryParams}`);
-    }, [clienteSelecionado, veiculoSelecionado, router]);
+
+        console.log(`[IniciarOrcamentoPage] Tentando navegar para: /orcamento/gerar?${queryParams}`);
+        try {
+            router.push(`/orcamento/gerar?${queryParams}`);
+            console.log("[IniciarOrcamentoPage] router.push() chamado com sucesso.");
+        } catch (e) {
+            console.error("[IniciarOrcamentoPage] ERRO durante router.push:", e);
+            setError("Falha crítica ao tentar navegar para a página de geração de orçamento.");
+        }
+    }, [clienteSelecionado, veiculoSelecionado, router, setError]); // Certifique-se que setError (se for um setState de um hook) esteja listado se usado dentro do useCallback. Se for o setError do escopo do componente, não precisa.
 
     // ---------------------------------------------------------------------------
     // Render

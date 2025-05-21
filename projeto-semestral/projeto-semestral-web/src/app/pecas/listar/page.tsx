@@ -9,6 +9,7 @@ import {
     Loader2, AlertCircle, XCircle
 } from 'lucide-react';
 import { MdErrorOutline, MdCheckCircle, MdCancel, MdDelete } from 'react-icons/md';
+import { fetchAuthenticated } from '@/utils/apiService'; // Ajuste o caminho se necessário
 
 // Interface para os dados da peça como vêm da API
 interface PecaResponseDto {
@@ -58,29 +59,34 @@ export default function ListarPecasPage() {
     };
 
     // Função para buscar peças
+    // Dentro de src/app/pecas/listar/page.tsx
+
     const fetchPecas = async () => {
         setIsLoading(true);
         setError(null);
         setSuccessMessage(null); // Limpa mensagem de sucesso anterior
         try {
-            const response = await fetch('http://localhost:8080/rest/pecas/all');
+            // MODIFIQUE ESTA LINHA:
+            // const response = await fetch('http://localhost:8080/rest/pecas/all'); // LINHA ANTIGA
+            const response = await fetchAuthenticated('/rest/pecas/all'); // <<< LINHA CORRIGIDA
+
             if (!response.ok) {
                 if (response.status === 204) { // No Content
                     setPecas([]);
                     return;
                 }
-                throw new Error(`Erro HTTP ${response.status}: Falha ao buscar peças.`);
+                // Se fetchAuthenticated já trata 401/403 lançando AuthError,
+                // este erro aqui pode ser mais genérico ou específico para outros status.
+                const errorData = await response.json().catch(() => ({ message: `Erro HTTP ${response.status} ao buscar peças.` }));
+                throw new Error(errorData.message);
             }
             const data: PecaResponseDto[] = await response.json();
-
-            // Ordena por ID ascendente (ou como preferir)
             data.sort((a, b) => a.id - b.id);
-
             const pecasFormatadas: PecaParaLista[] = data.map(dto => ({
                 id: dto.id,
                 tipoVeiculo: dto.tipoVeiculo || '-',
                 fabricante: dto.fabricante || '-',
-                descricaoPeca: dto.descricao || '-', // Mapeia de 'descricao' do DTO
+                descricaoPeca: dto.descricao || '-',
                 dataCompraFormatada: dto.dataCompra ? formatDate(dto.dataCompra) : '-',
                 precoFormatado: formatCurrency(dto.preco),
                 descontoFormatado: formatCurrency(dto.desconto),
@@ -89,7 +95,14 @@ export default function ListarPecasPage() {
             setPecas(pecasFormatadas);
 
         } catch (err: any) {
-            setError(err.message || "Erro desconhecido ao carregar peças.");
+            // Se você implementou AuthError em fetchAuthenticated, pode querer tratá-lo aqui também
+            // para redirecionar para login se for o caso, ou apenas mostrar o erro.
+            if (err.name === "AuthError") {
+                setError("Sessão expirada ou token inválido. Por favor, faça login novamente.");
+                // router.replace('/login'); // Opcional: redirecionar
+            } else {
+                setError(err.message || "Erro desconhecido ao carregar peças.");
+            }
             setPecas([]);
         } finally {
             setIsLoading(false);

@@ -209,7 +209,7 @@ export default function BuscarClientesPage() {
 
 
                 {/* <<< Área de Resultados com Cards >>> */}
-                {!isLoading && hasSearched && !error && (
+                {!isLoading && buscaRealizada && !error && (
                     <div className="mt-8">
                         <h2 className="text-xl font-semibold mb-4 text-center text-sky-300">Resultados da Busca</h2>
                         {isSearching ? (
