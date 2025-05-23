@@ -20,7 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin; // Importe CrossOrigin
+// import org.springframework.web.bind.annotation.CrossOrigin; // Comentado ou Removido
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +31,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth") // Prefixo para endpoints de autenticação
 @Tag(name = "Autenticação", description = "Gerenciamento de usuários e login com JWT") // Atualize a descrição
-@CrossOrigin(origins = "http://localhost:3000") // ADICIONADO: Permite requisições do seu frontend Next.js
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);

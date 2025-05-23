@@ -29,7 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/veiculo") // Mantendo o path base original
-@CrossOrigin(origins = "http://localhost:3000") // Ajuste se necessário
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Veículos", description = "Operações relacionadas a veículos e seu histórico de serviços") // Tag atualizada
 public class VeiculoController {
 
