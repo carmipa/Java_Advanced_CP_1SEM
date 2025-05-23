@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/relatorios/cliente") // <<< Novo RequestMapping base para relatórios de cliente
-@CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Relatórios Cliente", description = "Endpoints para gerar relatórios específicos de clientes") // <<< Nova Tag
 public class ClienteRelatorioController {
 

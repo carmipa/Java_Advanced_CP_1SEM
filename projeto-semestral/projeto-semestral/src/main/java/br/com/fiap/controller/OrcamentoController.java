@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rest/orcamentos")
-@CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Orçamentos", description = "Operações relacionadas a orçamentos de serviços")
 public class OrcamentoController {
 

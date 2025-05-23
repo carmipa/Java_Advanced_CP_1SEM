@@ -32,7 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/clientes") // Mapping base permanece o mesmo
-@CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Clientes", description = "Gerenciamento de clientes e seus dados associados")
 public class ClientesController {
 

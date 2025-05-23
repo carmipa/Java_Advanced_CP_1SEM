@@ -29,7 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/agenda")
-@CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Agendamentos", description = "Operações relacionadas a agendamentos de serviços") // <<< TAG ATUALIZADA
 public class AgendaController {
 

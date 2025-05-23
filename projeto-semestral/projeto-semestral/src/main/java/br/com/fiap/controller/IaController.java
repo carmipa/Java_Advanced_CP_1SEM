@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/ia")
-@CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "IA Service", description = "Endpoint para interação com a IA Generativa (Google Gemini)") // Descrição um pouco mais específica
 public class IaController {
 

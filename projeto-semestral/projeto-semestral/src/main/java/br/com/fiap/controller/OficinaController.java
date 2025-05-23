@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/oficina")
-@CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Oficina (Diagnósticos)", description = "Operações relacionadas aos registros de diagnóstico da oficina") // <<< TAG ADICIONADA
 public class OficinaController {
 

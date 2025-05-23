@@ -31,7 +31,7 @@ import java.util.List; // Necessário se for manter o método listarTodos sem pa
 
 @RestController
 @RequestMapping("/rest/pagamentos")
-@CrossOrigin(origins = "*") // Ajuste em produção!
+// @CrossOrigin(origins = "*") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Pagamentos (Simulado)", description = "Operações para registro e consulta de pagamentos simulados (controle interno).") // <<< TAG
 public class PagamentoController {
 

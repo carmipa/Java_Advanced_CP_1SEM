@@ -29,7 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/relatorios")
-@CrossOrigin(origins = "http://localhost:3000") // Ajuste para sua URL de frontend
+// @CrossOrigin(origins = "http://localhost:3000") // REMOVIDO: A configuração global de CORS em SecurityConfig será usada
 @Tag(name = "Relatórios", description = "Endpoints para geração de relatórios consolidados")
 public class RelatorioController {
 
